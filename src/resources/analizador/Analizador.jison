@@ -25,7 +25,8 @@
         ErrorLS.lexema = yytext;
         ErrorLS.linea = yylloc.first_line;
         ErrorLS.columna = yylloc.first_column;
-        ErrorLS.descripcion = 'Error léxico en '+yytext;
+        ErrorLS.tipo = 'Léxico';
+        ErrorLS.descripcion = 'El lexema '+yytext+' no es válido.';
         errores.push(ErrorLS);
     }
 
@@ -37,6 +38,12 @@
 
 %{
     let errores = [] ;
+
+    exports.errores = errores;
+
+    exports.reset = function(){
+        errores.splice(0, errores.length);
+    }
 %}
 
 %%
@@ -45,6 +52,7 @@ inicial :  a0 EOF
         ;
 
 a0 :    a1 b1 ET_PROGRAMA
+        | err
         ;
 
 a1 : ET_PY
@@ -63,7 +71,8 @@ err : error {
                 ErrorLS.lexema = yytext;
                 ErrorLS.linea = this._$.first_line;
                 ErrorLS.columna = this._$.first_column;
-                ErrorLS.descripcion = expected;
+                ErrorLS.tipo = 'Sintáctico';
+                ErrorLS.descripcion = '';
                 errores.push(ErrorLS);
         }
         ;

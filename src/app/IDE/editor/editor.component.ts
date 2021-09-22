@@ -29,7 +29,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     const aceEditor = ace.edit(this.editor.nativeElement);
     aceEditor.session.selection.on('changeCursor',()=>{
       this.linea = aceEditor.getCursorPosition().row+1;
-      this.columna = aceEditor.getCursorPosition().column+1;
+      this.columna = aceEditor.getCursorPosition().column;
     });
 
     aceEditor.setTheme('ace/theme/eclipse');

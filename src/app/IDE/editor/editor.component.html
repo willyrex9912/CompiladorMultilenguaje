@@ -29,10 +29,10 @@
         </div>
         <div class="row" style="margin-top: 20px;">
             <div class="col-1"></div>
-            <div class="col-10">
-                <button type="button" class="btn btn-danger" >Compilar</button>
+            <div class="col-3">
+                <button type="button" class="btn btn-danger" style="width: 100%;" (click)="compilar()" >Compilar</button>
             </div>
-            <div class="col-1"></div>
+            <div class="col-8"></div>
         </div>
     </div>
     <div class="col-5">
@@ -41,7 +41,7 @@
                 Consola
             </h1>
             <div class="mb-3">
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="6" readonly></textarea>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="6" readonly>{{getTxtConsola()}}</textarea>
             </div>
         </div>
     </div>

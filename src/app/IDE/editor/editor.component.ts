@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ViewChildren, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import * as ace from "ace-builds";
+import { Analizador } from 'src/controllers/ControladorAnalisis';
 
 @Component({
   selector: 'app-editor',
@@ -12,6 +13,8 @@ export class EditorComponent implements OnInit, AfterViewInit {
   private linea:Number = 0;
   private columna:Number = 0;
   @ViewChild('editor') private editor:ElementRef<HTMLElement>;
+  private txtConsola:String = "";
+  private analizador = new Analizador();
 
   constructor(private router:Router) { }
 
@@ -33,9 +36,10 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   }
   
-  
-  onChange(code) {
-    console.log("new code", code);
+
+  compilar(){
+    const aceEditor = ace.edit(this.editor.nativeElement);
+    this.txtConsola = this.analizador.analizar(aceEditor.getValue());
   }
 
   public getLinea(){
@@ -44,6 +48,10 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   public getColumna(){
     return this.columna;
+  }
+
+  public getTxtConsola(){
+    return this.txtConsola;
   }
 
 }

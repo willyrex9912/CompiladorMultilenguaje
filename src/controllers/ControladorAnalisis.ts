@@ -4,10 +4,10 @@ export class Analizador{
 
     public analizar(codigo:String):String{
 
-        let resultado:String = "";
-        AnalizadorJison.reset();
+        //let resultado:String = "";
+        //AnalizadorJison.reset();
         AnalizadorJison.parse(codigo);
-
+        /*
         if(AnalizadorJison.errores.length>0){
             resultado+="Errores encontrados: "+AnalizadorJison.errores.length+"\n\n";
             for(let i=0; i<AnalizadorJison.errores.length; i++){
@@ -16,7 +16,8 @@ export class Analizador{
             return resultado;
         }else{
             return "No se encontraron errores.";
-        }
+        }*/
+        return "vacio";
     }
 
 }

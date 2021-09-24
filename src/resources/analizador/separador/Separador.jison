@@ -3,11 +3,26 @@
 
 
 %%
-[ \r\t\n]+                   { agregarTexto(yytext); }
+[ \r\t\n]+                      { agregarTexto(yytext); }
 
-"%%PY"                       { codigoActual = 1; return 'ET_PY'; }
-"%%JAVA"                     { codigoActual = 2; return 'ET_JAVA'; }
-"%%PROGRAMA"                 { codigoActual = 3; return 'ET_PROGRAMA'; }
+"paquete"                       { 
+                                        if(paquete == "" && codigoActual==0){
+                                                return 'PR_PAQUETE';
+                                        }else{
+                                                agregarTexto(yytext);
+                                        }
+                                }
+"com"("."[a-zA-Z0-9_]+)+        { 
+                                        if(paquete == "" && codigoActual==0){
+                                                paquete = yytext; 
+                                                return 'NOMBRE_PAQUETE';
+                                        }else{
+                                                agregarTexto(yytext);
+                                        } 
+                                }
+"%%PY"                          { codigoActual = 1; return 'ET_PY'; }
+"%%JAVA"                        { codigoActual = 2; return 'ET_JAVA'; }
+"%%PROGRAMA"                    { codigoActual = 3; return 'ET_PROGRAMA'; }
 
 <<EOF>>                       return 'EOF'
 .       {/*Instertar codigo para recuperar el error lexico*/
@@ -20,6 +35,7 @@
 %start inicial
 
 %{
+        let paquete = "";
         let codigoPY = "";
         let codigoJAVA = "";
         let codigoPROGRAMA = "";
@@ -40,6 +56,7 @@
                 codigoJAVA = "";
                 codigoPROGRAMA = "";
                 codigoActual = 0;
+                paquete = "";
         }
 
         exports.getCodigoPython = function(){
@@ -54,6 +71,10 @@
                 return codigoPROGRAMA;
         }
 
+        exports.getPaquete = function(){
+                return paquete;
+        }
+
 %}
 
 %%
@@ -61,8 +82,8 @@
 inicial :  a1 EOF
     ;
 
-a1 :    a2 a3 a4 
-        | error
+a1 :    paq a2 a3 a4 
+        | error a2 a3 a4
         ;
 
 a2 :    ET_PY 
@@ -74,5 +95,9 @@ a3 :    ET_JAVA
         ;
 
 a4 :    ET_PROGRAMA 
+        | //lambda
+        ;
+
+paq : PR_PAQUETE NOMBRE_PAQUETE
         | //lambda
         ;

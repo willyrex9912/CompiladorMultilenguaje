@@ -3,7 +3,11 @@
 
 
 %%
-[ \r\t\n]+                      { agregarTexto(yytext); }
+[ \r\t]+                        { agregarTexto(yytext); }
+[\n]                            { 
+                                        contadorSalto++;
+                                        agregarTexto(yytext);
+                                }
 
 "paquete"                       { 
                                         if(paquete == "" && codigoActual==0){
@@ -20,9 +24,21 @@
                                                 agregarTexto(yytext);
                                         } 
                                 }
-"%%PY"                          { codigoActual = 1; return 'ET_PY'; }
-"%%JAVA"                        { codigoActual = 2; return 'ET_JAVA'; }
-"%%PROGRAMA"                    { codigoActual = 3; return 'ET_PROGRAMA'; }
+"%%PY"                          {
+                                        inicioPython = contadorSalto; 
+                                        codigoActual = 1;
+                                        return 'ET_PY';
+                                }
+"%%JAVA"                        { 
+                                        inicioJava = contadorSalto;
+                                        codigoActual = 2;
+                                        return 'ET_JAVA';
+                                }
+"%%PROGRAMA"                    { 
+                                        inicioPrograma = contadorSalto;
+                                        codigoActual = 3;
+                                        return 'ET_PROGRAMA';
+                                }
 
 <<EOF>>                       return 'EOF'
 .       {/*Instertar codigo para recuperar el error lexico*/
@@ -40,6 +56,10 @@
         let codigoJAVA = "";
         let codigoPROGRAMA = "";
         let codigoActual = 0;
+        let contadorSalto = 0;
+        let inicioPython = null;
+        let inicioJava = null;
+        let inicioPrograma = null;
 
         function agregarTexto(texto){
                 if(codigoActual==1){
@@ -57,6 +77,10 @@
                 codigoPROGRAMA = "";
                 codigoActual = 0;
                 paquete = "";
+                inicioPython = null;
+                inicioJava = null;
+                inicioPrograma = null;
+                contadorSalto = 0;
         }
 
         exports.getCodigoPython = function(){
@@ -73,6 +97,18 @@
 
         exports.getPaquete = function(){
                 return paquete;
+        }
+
+        exports.getInicioPython = function(){
+                return inicioPython;
+        }
+        
+        exports.getInicioJava = function(){
+                return inicioJava;
+        }
+
+        exports.getInicioPrograma = function(){
+                return inicioPrograma;
         }
 
 %}

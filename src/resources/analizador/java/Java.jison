@@ -83,6 +83,17 @@
         errores.splice(0, errores.length);
     }
 
+    function errorSemantico(descripcion){
+        ErrorLS = new Object();
+        ErrorLS.lexema = "";
+        //ErrorLS.linea = this._$.first_line;
+        ErrorLS.linea = 0;
+        ErrorLS.columna = 0;
+        ErrorLS.tipo = 'Semántico';
+        ErrorLS.descripcion = descripcion;
+        errores.push(ErrorLS);
+    }
+
 %}
 
 %%
@@ -149,78 +160,191 @@ asignacion : PUNTO_Y_COMA
 //EXPRESION MULTIPLE----------------------------------------------------------------
 expresion_multiple : a3;
 
-a3 : b3 a3p;
+
+//---------------------A3---------------------
+a3 : b3 a3p  {
+                if($2!=null){
+
+                }else{
+                    $$ = $1;
+                }
+            }
+    ;
 
 a3p : a3bp b3 a3p
-    | //Lambda
+    | /*Lambda*/    { $$ = null; }
     ;
 
-a3bp : OR
-    | XOR
+a3bp : OR { $$ = yy.OR; }
+    | XOR { $$ = yy.XOR; }
     ;
 
-b3 : c3 b3p;
+//---------------------B3---------------------
+b3 : c3 b3p {
+                if($2!=null){
+
+                }else{
+                    $$ = $1;
+                }
+            }
+    ;
 
 b3p : b3bp c3 b3p
-    | //Lambda
+    | /*Lambda*/    { $$ = null; }
     ;
     
-b3bp : AND
+b3bp : AND { $$ = yy.AND; }
     ;
 
-c3 : d3 c3p;
+//---------------------C3---------------------
+
+c3 : d3 c3p {
+                if($2!=null){
+
+                }else{
+                    $$ = $1;
+                }
+            }
+    ;
 
 c3p : c3bp d3 c3p
-    | //Lambda
+    | /*Lambda*/    { $$ = null; }
     ;
 
-c3bp : IGUAL
-    | NO_IGUAL
-    | MAYOR
-    | MENOR
-    | MAYOR_IGUAL
-    | MENOR_IGUAL
+c3bp : IGUAL { $$ = yy.IGUAL; }
+    | NO_IGUAL { $$ = yy.NO_IGUAL; }
+    | MAYOR { $$ = yy.MAYOR; }
+    | MENOR { $$ = yy.MENOR; }
+    | MAYOR_IGUAL { $$ = yy.MAYOR_IGUAL; }
+    | MENOR_IGUAL { $$ = yy.MENOR_IGUAL; }
     ;
 
-d3 : e3 d3p
+//---------------------D3---------------------
+
+d3 : e3 d3p {
+                if($2!=null){
+
+                }else{
+                    $$ = $1;
+                }
+            }
     ;
 
 d3p : d3bp e3 d3p
-    | //Lambda
+    | /*Lambda*/    { $$ = null; }
     ;
 
-d3bp : SUMA
-    | RESTA
+d3bp : SUMA { $$ = yy.SUMA; }
+    | RESTA { $$ = yy.RESTA; }
     ;
 
-e3 : f3 e3p
+//---------------------E3---------------------
+
+e3 : f3 e3p {
+                if($2!=null){
+
+                }else{
+                    $$ = $1;
+                }
+            }
     ;
 
 e3p : e3bp f3 e3p
-    | //Lambda
+    | /*Lambda*/    { $$ = null; }
     ;
 
-e3bp : MULTIPLICACION
-    | DIVISION
-    | MODULO
+e3bp : MULTIPLICACION { $$ = yy.MULTIPLICACION; }
+    | DIVISION { $$ = yy.DIVISION; }
+    | MODULO { $$ = yy.MODULO; }
     ;
 
-f3 : g3 f3p
+//---------------------F3---------------------
+
+f3 : g3 f3p {
+                if($2!=null){
+                    //Analizar tipo de resultado
+                    console.log("Analizando tipo de resultado");
+                    if($2!=null){
+                        let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                        if(tipoResultado!=null){
+                            operacion = new Object();
+                            operacion.tipoResultado = tipoResultado;
+                            operacion.operacionPendiente = $1;
+                            $$ = operacion;
+                        }else{
+                            errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .");
+                            $$ = null;
+                        }
+                    }
+                }else{
+                    $$ = $1;
+                }
+            }
     ;
 
-f3p : f3bp g3 f3p
-    | //Lambda
+f3p : f3bp g3 f3p   {
+                        if($3==null){
+                            console.log("Pasando aqui");
+                            operacion = new Object();
+                            operacion.tipoResultado = $2.tipoResultado;
+                            operacion.operacionPendiente = $1;
+                            $$ = operacion;
+                        }else{
+                            //Analizar tipo de resultado
+                            console.log("Analizando tipo de resultado");
+                            if($2!=null){
+                                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                                if(tipoResultado!=null){
+                                    operacion = new Object();
+                                    operacion.tipoResultado = tipoResultado;
+                                    operacion.operacionPendiente = $1;
+                                    $$ = operacion;
+                                }else{
+                                    errorSemantico("Operandos incorrectos para el operador "+$1+" .");
+                                    $$ = null;
+                                }
+                            }
+                        }
+                    }
+    | /*Lambda*/    { $$ = null; }
     ;
 
-f3bp : POTENCIA
+f3bp : POTENCIA { $$ = yy.POTENCIA; }
     ;
 
 
-g3 : INT
-    | DOUBLE
-    | CHAR
-    | STRING
-    | BOOLEAN
+//---------------------G3---------------------
+
+g3 : INT        {
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.INT;
+                    $$ = operacion;
+                }
+    | DOUBLE    {
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.DOUBLE;
+                    $$ = operacion;
+                }
+    | CHAR      {
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.CHAR;
+                    $$ = operacion;
+                }
+    | STRING    {
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.STRING;
+                    $$ = operacion;
+                }
+    | BOOLEAN   {
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.BOOLEAN;
+                    $$ = operacion;
+                }
+    | ID        {
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.ID;
+                    $$ = operacion;
+                }
     ;
 
 

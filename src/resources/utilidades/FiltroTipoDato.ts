@@ -193,6 +193,126 @@ export class FiltroTipoDato{
             }else{
                 return null;
             }
+        }else if(tipoOperacion==this.RESTA){
+            if(tipo1 == this.INT){
+                if(tipo2 == this.INT){
+                    return this.INT;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.DOUBLE;
+                }else if(tipo2 == this.CHAR){
+                    return this.INT;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.DOUBLE){
+                if(tipo2 == this.INT){
+                    return this.DOUBLE;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.DOUBLE;
+                }else if(tipo2 == this.CHAR){
+                    return this.DOUBLE;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.CHAR){
+                if(tipo2 == this.INT){
+                    return this.INT;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.DOUBLE;
+                }else if(tipo2 == this.CHAR){
+                    return this.INT;
+                }else{
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }else if(tipoOperacion==this.IGUAL || tipoOperacion==this.NO_IGUAL){
+            if(tipo1 == this.INT){
+                if(tipo2 == this.INT){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.CHAR){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.DOUBLE){
+                if(tipo2 == this.INT){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.CHAR){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.CHAR){
+                if(tipo2 == this.INT){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.CHAR){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.STRING){
+                if(tipo2 == this.STRING){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.BOOLEAN){
+                if(tipo2 == this.BOOLEAN){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }else if(tipoOperacion==this.MAYOR || tipoOperacion==this.MENOR || tipoOperacion==this.MAYOR_IGUAL || tipoOperacion==this.MENOR_IGUAL){
+            if(tipo1 == this.INT){
+                if(tipo2 == this.INT){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.CHAR){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.DOUBLE){
+                if(tipo2 == this.INT){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.CHAR){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else if(tipo1 == this.CHAR){
+                if(tipo2 == this.INT){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.DOUBLE){
+                    return this.BOOLEAN;
+                }else if(tipo2 == this.CHAR){
+                    return this.BOOLEAN;
+                }else{
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }else if(tipoOperacion == this.AND || tipoOperacion == this.OR || tipoOperacion == this.XOR){
+            if(tipo1==this.BOOLEAN || tipo2==this.BOOLEAN){
+                return this.BOOLEAN;
+            }else{
+                return null;
+            }
         }else{
             return null;
         }

@@ -83,12 +83,11 @@
         errores.splice(0, errores.length);
     }
 
-    function errorSemantico(descripcion){
+    function errorSemantico(descripcion,linea,columna){
         ErrorLS = new Object();
         ErrorLS.lexema = "";
-        //ErrorLS.linea = this._$.first_line;
-        ErrorLS.linea = 0;
-        ErrorLS.columna = 0;
+        ErrorLS.linea = linea;
+        ErrorLS.columna = columna;
         ErrorLS.tipo = 'Semántico';
         ErrorLS.descripcion = descripcion;
         errores.push(ErrorLS);
@@ -263,7 +262,6 @@ e3bp : MULTIPLICACION { $$ = yy.MULTIPLICACION; }
 f3 : g3 f3p {
                 if($2!=null){
                     //Analizar tipo de resultado
-                    console.log("Analizando tipo de resultado");
                     if($2!=null){
                         let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
                         if(tipoResultado!=null){
@@ -272,7 +270,7 @@ f3 : g3 f3p {
                             operacion.operacionPendiente = $1;
                             $$ = operacion;
                         }else{
-                            errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .");
+                            errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",this._$.first_line,this._$.first_column);
                             $$ = null;
                         }
                     }
@@ -284,14 +282,12 @@ f3 : g3 f3p {
 
 f3p : f3bp g3 f3p   {
                         if($3==null){
-                            console.log("Pasando aqui");
                             operacion = new Object();
                             operacion.tipoResultado = $2.tipoResultado;
                             operacion.operacionPendiente = $1;
                             $$ = operacion;
                         }else{
                             //Analizar tipo de resultado
-                            console.log("Analizando tipo de resultado");
                             if($2!=null){
                                 let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
                                 if(tipoResultado!=null){
@@ -300,7 +296,7 @@ f3p : f3bp g3 f3p   {
                                     operacion.operacionPendiente = $1;
                                     $$ = operacion;
                                 }else{
-                                    errorSemantico("Operandos incorrectos para el operador "+$1+" .");
+                                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",this._$.first_line,this._$.first_column);
                                     $$ = null;
                                 }
                             }

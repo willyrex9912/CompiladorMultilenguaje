@@ -153,7 +153,6 @@ case 48:
 
                 if($$[$0]!=null){
                     //Analizar tipo de resultado
-                    console.log("Analizando tipo de resultado");
                     if($$[$0]!=null){
                         let tipoResultado = yy.filtrarOperacion($$[$0-1].tipoResultado,$$[$0].tipoResultado,$$[$0].operacionPendiente);
                         if(tipoResultado!=null){
@@ -162,7 +161,7 @@ case 48:
                             operacion.operacionPendiente = $$[$0-1];
                             this.$ = operacion;
                         }else{
-                            errorSemantico("Operandos incorrectos para el operador "+$$[$0].operacionPendiente+" .");
+                            errorSemantico("Operandos incorrectos para el operador "+$$[$0].operacionPendiente+" .",this._$.first_line,this._$.first_column);
                             this.$ = null;
                         }
                     }
@@ -174,14 +173,12 @@ break;
 case 49:
 
                         if($$[$0]==null){
-                            console.log("Pasando aqui");
                             operacion = new Object();
                             operacion.tipoResultado = $$[$0-1].tipoResultado;
                             operacion.operacionPendiente = $$[$0-2];
                             this.$ = operacion;
                         }else{
                             //Analizar tipo de resultado
-                            console.log("Analizando tipo de resultado");
                             if($$[$0-1]!=null){
                                 let tipoResultado = yy.filtrarOperacion($$[$0-1].tipoResultado,$$[$0].tipoResultado,$$[$0-2]);
                                 if(tipoResultado!=null){
@@ -190,7 +187,7 @@ case 49:
                                     operacion.operacionPendiente = $$[$0-2];
                                     this.$ = operacion;
                                 }else{
-                                    errorSemantico("Operandos incorrectos para el operador "+$$[$0-2]+" .");
+                                    errorSemantico("Operandos incorrectos para el operador "+$$[$0-2]+" .",this._$.first_line,this._$.first_column);
                                     this.$ = null;
                                 }
                             }
@@ -504,12 +501,11 @@ _handle_error:
         errores.splice(0, errores.length);
     }
 
-    function errorSemantico(descripcion){
+    function errorSemantico(descripcion,linea,columna){
         ErrorLS = new Object();
         ErrorLS.lexema = "";
-        //ErrorLS.linea = this._$.first_line;
-        ErrorLS.linea = 0;
-        ErrorLS.columna = 0;
+        ErrorLS.linea = linea;
+        ErrorLS.columna = columna;
         ErrorLS.tipo = 'Semántico';
         ErrorLS.descripcion = descripcion;
         errores.push(ErrorLS);

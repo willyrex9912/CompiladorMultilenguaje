@@ -45,6 +45,7 @@
 ">="                            return 'MAYOR_IGUAL'
 "<="                            return 'MENOR_IGUAL'
 ";"                             return 'PUNTO_Y_COMA'
+","                             return 'COMA'
 "="                             return 'ASIGNACION'
 
 [a-zA-Z]+[a-zA-Z0-9_]*          return 'ID'
@@ -74,6 +75,9 @@
 
 %{
     let errores = [];
+    let tablaDeSimbolos = [];
+    let ambitoActual = "";
+    let ids = [];
 
     exports.getErrores = function (){
         return errores;
@@ -81,6 +85,9 @@
 
     exports.reset = function(){
         errores.splice(0, errores.length);
+        tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
+        ambitoActual = "";
+        ids.splice(0, ids.length);
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -140,11 +147,28 @@
         }
     }
 
+    function existeVariable(id,ambito){
+        for(let simbolo in tablaDeSimbolos){
+            if(tablaDeSimbolos[simbolo].id==id){
+                return true;
+            }
+        }
+        return false;
+    }
+
 %}
 
 %%
 
-inicial :  a1 EOF
+inicial :  a1 EOF   {
+                        console.log("pasando aqui");
+                        for(const simbolo in tablaDeSimbolos){
+                            console.log("-----------------");
+                            console.log("Id: "+tablaDeSimbolos[simbolo].id);
+                            console.log("Tipo: "+tablaDeSimbolos[simbolo].tipo);
+                            console.log("Ambito: "+tablaDeSimbolos[simbolo].ambito);
+                        }
+                    }
     ;
 
     
@@ -167,8 +191,13 @@ a1 : declaracion_clase
 
 //DECLARACION DE CLASE ---------------------------------------------------------------
 
-declaracion_clase : PR_PUBLIC PR_CLASS ID LLAVE_A instrucciones_clase LLAVE_C
+declaracion_clase : declaracion_clase_p LLAVE_A instrucciones_clase LLAVE_C
     | err
+    ;
+
+declaracion_clase_p : PR_PUBLIC PR_CLASS ID {
+            ambitoActual = "class "+$3;
+        }
     ;
 
 //------------------------------------------------------------------------------------
@@ -187,18 +216,37 @@ instrucciones_clase_p : declaracion_variable
 
 //DECLARACION DE VARIABLE ------------------------------------------------------------
 
-declaracion_variable : tipo ID asignacion {
+declaracion_variable : tipo ids asignacion {
             if($3==null){
                 //solo declaracion
             }else{
                 //declaracion y asignacion
                 if($1 == $3.tipoResultado){
-                    //asignacion de tipo correcta
+                    while(ids.length>0){
+                        //asignacion de tipo correcta
+                        let id = ids.pop();
+                        if(existeVariable(id,ambitoActual)){
+                            errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual+".",this._$.first_line,this._$.first_column);
+                        }else{
+                            simbolo = new Object();
+                            simbolo.id = 
+                            simbolo.tipo = id;
+                            simbolo.ambito = ambitoActual;
+                            tablaDeSimbolos.push(simbolo);
+                        }
+                    }
                 }else{
                     errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado,this._$.first_line,this._$.first_column);
                 }
             }
         }
+    ;
+
+ids : ids_p
+    | ids_p COMA ids
+    ;
+
+ids_p : ID { ids.push($1); }
     ;
 
 tipo : PR_INT { $$ = yy.INT; }
@@ -323,6 +371,11 @@ f3bp : POTENCIA { $$ = yy.POTENCIA; }
 
 
 //---------------------G3---------------------
+
+//+++++++++++++++++++++++++=PARENTESIS Y NOT
+
+g3 : PARENT_A a3 PARENT_C { $$ = $2; }
+    ;
 
 g3 : INT        {
                     operacion = new Object();

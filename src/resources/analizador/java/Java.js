@@ -95,17 +95,53 @@ case 2:
             errores.push(ErrorLS);
     
 break;
-case 19: case 24: case 28: case 37: case 42:
+case 10:
 
-                if($$[$0]!=null){
-
+            if($$[$0]==null){
+                //solo declaracion
+            }else{
+                //declaracion y asignacion
+                if($$[$0-2] == $$[$0].tipoResultado){
+                    //asignacion de tipo correcta
                 }else{
-                    this.$ = $$[$0-1];
+                    errorSemantico("Tipo de dato requerido : "+$$[$0-2]+" . Obtenido: "+$$[$0].tipoResultado,this._$.first_line,this._$.first_column);
                 }
+            }
+        
+break;
+case 11:
+ this.$ = yy.INT; 
+break;
+case 12:
+ this.$ = yy.DOUBLE; 
+break;
+case 13:
+ this.$ = yy.CHAR; 
+break;
+case 14:
+ this.$ = yy.STRING; 
+break;
+case 15:
+ this.$ = yy.BOOLEAN; 
+break;
+case 16: case 21: case 26: case 30: case 39: case 44: case 50:
+ this.$ = null; 
+break;
+case 17:
+ this.$ = $$[$0-1]; 
+break;
+case 18:
+ this.$ = $$[$0]; 
+break;
+case 19: case 24: case 28: case 37: case 42: case 48:
+
+                this.$ = produccion(yy,$$[$0-1],$$[$0],this._$.first_line,this._$.first_column);
             
 break;
-case 21: case 26: case 30: case 39: case 44: case 50:
- this.$ = null; 
+case 20: case 25: case 29: case 38: case 43: case 49:
+
+                        this.$ = produccionPrima(yy,$$[$0-2],$$[$0-1],$$[$0],this._$.first_line,this._$.first_column);
+                    
 break;
 case 22:
  this.$ = yy.OR; 
@@ -148,51 +184,6 @@ case 46:
 break;
 case 47:
  this.$ = yy.MODULO; 
-break;
-case 48:
-
-                if($$[$0]!=null){
-                    //Analizar tipo de resultado
-                    if($$[$0]!=null){
-                        let tipoResultado = yy.filtrarOperacion($$[$0-1].tipoResultado,$$[$0].tipoResultado,$$[$0].operacionPendiente);
-                        if(tipoResultado!=null){
-                            operacion = new Object();
-                            operacion.tipoResultado = tipoResultado;
-                            operacion.operacionPendiente = $$[$0-1];
-                            this.$ = operacion;
-                        }else{
-                            errorSemantico("Operandos incorrectos para el operador "+$$[$0].operacionPendiente+" .",this._$.first_line,this._$.first_column);
-                            this.$ = null;
-                        }
-                    }
-                }else{
-                    this.$ = $$[$0-1];
-                }
-            
-break;
-case 49:
-
-                        if($$[$0]==null){
-                            operacion = new Object();
-                            operacion.tipoResultado = $$[$0-1].tipoResultado;
-                            operacion.operacionPendiente = $$[$0-2];
-                            this.$ = operacion;
-                        }else{
-                            //Analizar tipo de resultado
-                            if($$[$0-1]!=null){
-                                let tipoResultado = yy.filtrarOperacion($$[$0-1].tipoResultado,$$[$0].tipoResultado,$$[$0-2]);
-                                if(tipoResultado!=null){
-                                    operacion = new Object();
-                                    operacion.tipoResultado = tipoResultado;
-                                    operacion.operacionPendiente = $$[$0-2];
-                                    this.$ = operacion;
-                                }else{
-                                    errorSemantico("Operandos incorrectos para el operador "+$$[$0-2]+" .",this._$.first_line,this._$.first_column);
-                                    this.$ = null;
-                                }
-                            }
-                        }
-                    
 break;
 case 51:
  this.$ = yy.POTENCIA; 
@@ -509,6 +500,53 @@ _handle_error:
         ErrorLS.tipo = 'Semántico';
         ErrorLS.descripcion = descripcion;
         errores.push(ErrorLS);
+    }
+
+    function produccion(yy,$1,$2,linea,columna){
+        if($2!=null){
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }else{
+            return $1;
+        }
+    }
+
+    function produccionPrima(yy,$1,$2,$3,linea,columna){
+        if($3==null){
+            operacion = new Object();
+            operacion.tipoResultado = $2.tipoResultado;
+            operacion.operacionPendiente = $1;
+            return operacion;
+        }else{
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }
     }
 
 /* generated by jison-lex 0.3.4 */

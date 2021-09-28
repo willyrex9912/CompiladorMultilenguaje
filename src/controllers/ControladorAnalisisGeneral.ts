@@ -1,13 +1,16 @@
 import { ConstructorMensajeError } from 'src/resources/utilidades/ConstructorMensajeError';
+import { FiltroTipoDato } from 'src/resources/utilidades/FiltroTipoDato';
 import * as AnalizadorJava from '../resources/analizador/java/Java';
-import * as Filtro from '../resources/utilidades/FiltroTipoDato'
+//import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
 
     private constructorRespuesta:ConstructorMensajeError;
+    private filtroTipoDato:FiltroTipoDato;
 
     public constructor(){
         this.constructorRespuesta = new ConstructorMensajeError();
+        this.filtroTipoDato = new FiltroTipoDato();
         this.inicializarYY();
     }
 
@@ -35,28 +38,28 @@ export class ControladorAnalisisGeneral{
 
     private inicializarYY(){
         let yy = AnalizadorJava.parser.yy;
-        yy.INT = Filtro.INT;
-        yy.DOUBLE = Filtro.DOUBLE;
-        yy.CHAR = Filtro.CHAR;
-        yy.STRING = Filtro.STRING;
-        yy.BOOLEAN = Filtro.BOOLEAN;
-        yy.POTENCIA = Filtro.POTENCIA;
-        yy.MODULO = Filtro.MODULO;
-        yy.DIVISION = Filtro.DIVISION;
-        yy.MULTIPLICACION = Filtro.MULTIPLICACION;
-        yy.SUMA = Filtro.SUMA;
-        yy.RESTA = Filtro.RESTA;
-        yy.IGUAL = Filtro.IGUAL;
-        yy.NO_IGUAL = Filtro.NO_IGUAL;
-        yy.MAYOR = Filtro.MAYOR;
-        yy.MENOR = Filtro.MENOR;
-        yy.MAYOR_IGUAL = Filtro.MAYOR_IGUAL;
-        yy.MENOR_IGUAL = Filtro.MENOR_IGUAL;
-        yy.AND = Filtro.AND;
-        yy.OR = Filtro.OR;
-        yy.XOR = Filtro.XOR;
+        yy.INT = this.filtroTipoDato.INT;
+        yy.DOUBLE = this.filtroTipoDato.DOUBLE;
+        yy.CHAR = this.filtroTipoDato.CHAR;
+        yy.STRING = this.filtroTipoDato.STRING;
+        yy.BOOLEAN = this.filtroTipoDato.BOOLEAN;
+        yy.POTENCIA = this.filtroTipoDato.POTENCIA;
+        yy.MODULO = this.filtroTipoDato.MODULO;
+        yy.DIVISION = this.filtroTipoDato.DIVISION;
+        yy.MULTIPLICACION = this.filtroTipoDato.MULTIPLICACION;
+        yy.SUMA = this.filtroTipoDato.SUMA;
+        yy.RESTA = this.filtroTipoDato.RESTA;
+        yy.IGUAL = this.filtroTipoDato.IGUAL;
+        yy.NO_IGUAL = this.filtroTipoDato.NO_IGUAL;
+        yy.MAYOR = this.filtroTipoDato.MAYOR;
+        yy.MENOR = this.filtroTipoDato.MENOR;
+        yy.MAYOR_IGUAL = this.filtroTipoDato.MAYOR_IGUAL;
+        yy.MENOR_IGUAL = this.filtroTipoDato.MENOR_IGUAL;
+        yy.AND = this.filtroTipoDato.AND;
+        yy.OR = this.filtroTipoDato.OR;
+        yy.XOR = this.filtroTipoDato.XOR;
         
-        yy.filtrarOperacion = Filtro.filtrarOperacion;
+        yy.filtrarOperacion = this.filtroTipoDato.filtrarOperacion;
     }
 
 }

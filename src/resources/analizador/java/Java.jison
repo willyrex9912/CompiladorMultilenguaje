@@ -93,6 +93,53 @@
         errores.push(ErrorLS);
     }
 
+    function produccion(yy,$1,$2,linea,columna){
+        if($2!=null){
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }else{
+            return $1;
+        }
+    }
+
+    function produccionPrima(yy,$1,$2,$3,linea,columna){
+        if($3==null){
+            operacion = new Object();
+            operacion.tipoResultado = $2.tipoResultado;
+            operacion.operacionPendiente = $1;
+            return operacion;
+        }else{
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }
+    }
+
 %}
 
 %%
@@ -140,37 +187,46 @@ instrucciones_clase_p : declaracion_variable
 
 //DECLARACION DE VARIABLE ------------------------------------------------------------
 
-declaracion_variable : tipo ID asignacion 
+declaracion_variable : tipo ID asignacion {
+            if($3==null){
+                //solo declaracion
+            }else{
+                //declaracion y asignacion
+                if($1 == $3.tipoResultado){
+                    //asignacion de tipo correcta
+                }else{
+                    errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado,this._$.first_line,this._$.first_column);
+                }
+            }
+        }
     ;
 
-tipo : PR_INT
-    | PR_DOUBLE
-    | PR_CHAR
-    | PR_STRING
-    | PR_BOOLEAN
+tipo : PR_INT { $$ = yy.INT; }
+    | PR_DOUBLE { $$ = yy.DOUBLE; }
+    | PR_CHAR { $$ = yy.CHAR; }
+    | PR_STRING { $$ = yy.STRING; }
+    | PR_BOOLEAN { $$ = yy.BOOLEAN; }
     ;
 
-asignacion : PUNTO_Y_COMA
-    | ASIGNACION expresion_multiple PUNTO_Y_COMA
+asignacion : PUNTO_Y_COMA { $$ = null; }
+    | ASIGNACION expresion_multiple PUNTO_Y_COMA { $$ = $2; }
     ;
 
 //------------------------------------------------------------------------------------
 
 //EXPRESION MULTIPLE----------------------------------------------------------------
-expresion_multiple : a3;
+expresion_multiple : a3 { $$ = $1; };
 
 
 //---------------------A3---------------------
-a3 : b3 a3p  {
-                if($2!=null){
-
-                }else{
-                    $$ = $1;
-                }
+a3 : b3 a3p {
+                $$ = produccion(yy,$1,$2,this._$.first_line,this._$.first_column);
             }
     ;
 
-a3p : a3bp b3 a3p
+a3p : a3bp b3 a3p   {
+                        $$ = produccionPrima(yy,$1,$2,$3,this._$.first_line,this._$.first_column);
+                    }
     | /*Lambda*/    { $$ = null; }
     ;
 
@@ -180,15 +236,13 @@ a3bp : OR { $$ = yy.OR; }
 
 //---------------------B3---------------------
 b3 : c3 b3p {
-                if($2!=null){
-
-                }else{
-                    $$ = $1;
-                }
+                $$ = produccion(yy,$1,$2,this._$.first_line,this._$.first_column);
             }
     ;
 
-b3p : b3bp c3 b3p
+b3p : b3bp c3 b3p   {
+                        $$ = produccionPrima(yy,$1,$2,$3,this._$.first_line,this._$.first_column);
+                    }
     | /*Lambda*/    { $$ = null; }
     ;
     
@@ -198,15 +252,13 @@ b3bp : AND { $$ = yy.AND; }
 //---------------------C3---------------------
 
 c3 : d3 c3p {
-                if($2!=null){
-
-                }else{
-                    $$ = $1;
-                }
+                $$ = produccion(yy,$1,$2,this._$.first_line,this._$.first_column);
             }
     ;
 
-c3p : c3bp d3 c3p
+c3p : c3bp d3 c3p   {
+                        $$ = produccionPrima(yy,$1,$2,$3,this._$.first_line,this._$.first_column);
+                    }
     | /*Lambda*/    { $$ = null; }
     ;
 
@@ -221,15 +273,13 @@ c3bp : IGUAL { $$ = yy.IGUAL; }
 //---------------------D3---------------------
 
 d3 : e3 d3p {
-                if($2!=null){
-
-                }else{
-                    $$ = $1;
-                }
+                $$ = produccion(yy,$1,$2,this._$.first_line,this._$.first_column);
             }
     ;
 
-d3p : d3bp e3 d3p
+d3p : d3bp e3 d3p   {
+                        $$ = produccionPrima(yy,$1,$2,$3,this._$.first_line,this._$.first_column);
+                    }
     | /*Lambda*/    { $$ = null; }
     ;
 
@@ -240,15 +290,13 @@ d3bp : SUMA { $$ = yy.SUMA; }
 //---------------------E3---------------------
 
 e3 : f3 e3p {
-                if($2!=null){
-
-                }else{
-                    $$ = $1;
-                }
+                $$ = produccion(yy,$1,$2,this._$.first_line,this._$.first_column);
             }
     ;
 
-e3p : e3bp f3 e3p
+e3p : e3bp f3 e3p   {
+                        $$ = produccionPrima(yy,$1,$2,$3,this._$.first_line,this._$.first_column);
+                    }
     | /*Lambda*/    { $$ = null; }
     ;
 
@@ -260,47 +308,12 @@ e3bp : MULTIPLICACION { $$ = yy.MULTIPLICACION; }
 //---------------------F3---------------------
 
 f3 : g3 f3p {
-                if($2!=null){
-                    //Analizar tipo de resultado
-                    if($2!=null){
-                        let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
-                        if(tipoResultado!=null){
-                            operacion = new Object();
-                            operacion.tipoResultado = tipoResultado;
-                            operacion.operacionPendiente = $1;
-                            $$ = operacion;
-                        }else{
-                            errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",this._$.first_line,this._$.first_column);
-                            $$ = null;
-                        }
-                    }
-                }else{
-                    $$ = $1;
-                }
+                $$ = produccion(yy,$1,$2,this._$.first_line,this._$.first_column);
             }
     ;
 
 f3p : f3bp g3 f3p   {
-                        if($3==null){
-                            operacion = new Object();
-                            operacion.tipoResultado = $2.tipoResultado;
-                            operacion.operacionPendiente = $1;
-                            $$ = operacion;
-                        }else{
-                            //Analizar tipo de resultado
-                            if($2!=null){
-                                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
-                                if(tipoResultado!=null){
-                                    operacion = new Object();
-                                    operacion.tipoResultado = tipoResultado;
-                                    operacion.operacionPendiente = $1;
-                                    $$ = operacion;
-                                }else{
-                                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",this._$.first_line,this._$.first_column);
-                                    $$ = null;
-                                }
-                            }
-                        }
+                        $$ = produccionPrima(yy,$1,$2,$3,this._$.first_line,this._$.first_column);
                     }
     | /*Lambda*/    { $$ = null; }
     ;

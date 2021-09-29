@@ -44,6 +44,7 @@
 "<"                             return 'MENOR'
 ">="                            return 'MAYOR_IGUAL'
 "<="                            return 'MENOR_IGUAL'
+"!"                             return 'NOT'
 ";"                             return 'PUNTO_Y_COMA'
 ","                             return 'COMA'
 "="                             return 'ASIGNACION'
@@ -156,12 +157,20 @@
         return false;
     }
 
+    function obtenerSimbolo(id){
+        for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
+            if(id==tablaDeSimbolos[i].id){
+                return tablaDeSimbolos[i];
+            }
+        }
+        return null;
+    }
+
 %}
 
 %%
 
 inicial :  a1 EOF   {
-                        console.log("pasando aqui");
                         for(const simbolo in tablaDeSimbolos){
                             console.log("-----------------");
                             console.log("Id: "+tablaDeSimbolos[simbolo].id);
@@ -228,15 +237,15 @@ declaracion_variable : tipo ids asignacion {
                         if(existeVariable(id,ambitoActual)){
                             errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual+".",this._$.first_line,this._$.first_column);
                         }else{
-                            simbolo = new Object();
-                            simbolo.id = 
-                            simbolo.tipo = id;
+                            let simbolo = new Object();
+                            simbolo.id = id;
+                            simbolo.tipo = $1;
                             simbolo.ambito = ambitoActual;
                             tablaDeSimbolos.push(simbolo);
                         }
                     }
                 }else{
-                    errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado,this._$.first_line,this._$.first_column);
+                    errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
             }
         }
@@ -375,6 +384,41 @@ f3bp : POTENCIA { $$ = yy.POTENCIA; }
 //+++++++++++++++++++++++++=PARENTESIS Y NOT
 
 g3 : PARENT_A a3 PARENT_C { $$ = $2; }
+    | NOT ID    {
+        let simbolo = obtenerSimbolo($2);
+        if(simbolo==null){
+            errorSemantico("No se encuentra el símbolo "+$2+" .",this._$.first_line,this._$.first_column);
+            $$ = null;
+        }else{
+            if(simbolo.tipo==yy.BOOLEAN){
+                operacion = new Object();
+                operacion.tipoResultado = yy.BOOLEAN;
+                $$ = operacion;
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+simbolo.tipo+" .",this._$.first_line,this._$.first_column);
+                $$ = null;
+            }
+        }
+    }
+    | NOT BOOLEAN    {
+        operacion = new Object();
+        operacion.tipoResultado = yy.BOOLEAN;
+        $$ = operacion;
+    }
+    | NOT PARENT_A a3 PARENT_C {
+        if($3==null){
+            $$ = null;
+        }else{
+            if($3.tipoResultado==yy.BOOLEAN){
+                operacion = new Object();
+                operacion.tipoResultado = yy.BOOLEAN;
+                $$ = operacion;
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+                $$ = null;
+            }
+        }
+    }
     ;
 
 g3 : INT        {

@@ -225,12 +225,17 @@ instrucciones_clase_p : declaracion_variable
 
 //DECLARACION DE VARIABLE ------------------------------------------------------------
 
-declaracion_variable : tipo ids asignacion {
-            if($3==null){
+declaracion_variable : visibilidad tipo ids asignacion {
+            if($1 != yy.DEFAULT){
+                if(!ambitoActual.startsWith('class')){
+                    errorSemantico("Ilegal inicio de expression: "+$1+".",this._$.first_line,this._$.first_column);
+                }
+            }
+            if($4==null){
                 //solo declaracion
             }else{
                 //declaracion y asignacion
-                if($1 == $3.tipoResultado){
+                if($2 == $4.tipoResultado){
                     while(ids.length>0){
                         //asignacion de tipo correcta
                         let id = ids.pop();
@@ -239,13 +244,14 @@ declaracion_variable : tipo ids asignacion {
                         }else{
                             let simbolo = new Object();
                             simbolo.id = id;
-                            simbolo.tipo = $1;
+                            simbolo.tipo = $2;
                             simbolo.ambito = ambitoActual;
+                            simbolo.visibilidad = $1;
                             tablaDeSimbolos.push(simbolo);
                         }
                     }
                 }else{
-                    errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+                    errorSemantico("Tipo de dato requerido : "+$2+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
             }
         }
@@ -270,6 +276,24 @@ asignacion : PUNTO_Y_COMA { $$ = null; }
     ;
 
 //------------------------------------------------------------------------------------
+
+//VISIBILIDAD-------------------------------------------------------------------------
+
+visibilidad : PR_PUBLIC { $$ = yy.PUBLIC; }
+    | PR_PRIVATE { $$ = yy.PRIVATE; }
+    | /*Lambda*/ { $$ = yy.DEFAULT; }
+    ;
+
+//------------------------------------------------------------------------------------
+
+//DECLARACION DE METODOS -------------------------------------------------------------
+
+declaracion_metodo : 
+    ;
+
+//------------------------------------------------------------------------------------
+
+
 
 //EXPRESION MULTIPLE----------------------------------------------------------------
 expresion_multiple : a3 { $$ = $1; };

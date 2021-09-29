@@ -58,6 +58,9 @@ export class ControladorAnalisisGeneral{
         yy.AND = this.filtroTipoDato.AND;
         yy.OR = this.filtroTipoDato.OR;
         yy.XOR = this.filtroTipoDato.XOR;
+        yy.PUBLIC = this.filtroTipoDato.PUBLIC;
+        yy.PRIVATE = this.filtroTipoDato.PRIVATE;
+        yy.DEFAULT = this.filtroTipoDato.DEFAULT;
         
         yy.filtrarOperacion = this.filtroTipoDato.filtrarOperacion;
     }

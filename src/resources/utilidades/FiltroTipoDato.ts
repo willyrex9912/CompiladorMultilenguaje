@@ -22,6 +22,10 @@ export class FiltroTipoDato{
     public OR:String = "|";
     public XOR:String = "||";
 
+    public PUBLIC:String = "public";
+    public PRIVATE:String = "private";
+    public DEFAULT:String = "default";
+
     public filtrarOperacion(tipo1:String, tipo2:String, tipoOperacion:String):String{
         if(tipoOperacion==this.POTENCIA){
             if(tipo1 == this.INT){

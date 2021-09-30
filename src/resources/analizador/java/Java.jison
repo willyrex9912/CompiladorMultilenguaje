@@ -80,6 +80,7 @@
     let ambitoActual = [];
     let ids = [];
     let cadParametros = "";
+    let ambitoClase = true;
 
     exports.getErrores = function (){
         return errores;
@@ -91,6 +92,7 @@
         ambitoActual.splice(0, ambitoActual.length);
         ids.splice(0, ids.length);
         cadParametros = "";
+        ambitoClase = true;
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -274,33 +276,32 @@ instrucciones_metodo_p : declaracion_variable
 
 declaracion_variable : visibilidad tipo ids asignacion {
             if($1 != yy.DEFAULT){
-                if(!ambitoActual.at(-1).startsWith('class')){
+                if(!ambitoClase){
                     errorSemantico("Ilegal inicio de expression: "+$1+".",this._$.first_line,this._$.first_column);
                 }
             }
-            if($4==null){
-                //solo declaracion
-            }else{
-                //declaracion y asignacion
-                if($2 == $4.tipoResultado){
-                    while(ids.length>0){
-                        //asignacion de tipo correcta
-                        let id = ids.pop();
-                        if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
-                            errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
-                        }else{
-                            let simboloVariable = new Object();
-                            simboloVariable.id = id;
-                            simboloVariable.tipo = $2;
-                            simboloVariable.ambito = ambitoActual.at(-1);
-                            simboloVariable.visibilidad = $1;
-                            simboloVariable.rol = yy.VARIABLE
-                            tablaDeSimbolos.push(simboloVariable);
+            //declaracion y asignacion
+            if($4==null || $2 == $4.tipoResultado){
+                while(ids.length>0){
+                    //asignacion de tipo correcta
+                    let id = ids.pop();
+                    if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                        errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                    }else{
+                        let simboloVariable = new Object();
+                        simboloVariable.id = id;
+                        simboloVariable.tipo = $2;
+                        simboloVariable.ambito = ambitoActual.at(-1);
+                        simboloVariable.visibilidad = $1;
+                        simboloVariable.rol = yy.VARIABLE;
+                        if($4 != null){
+                            //simboloVariable.valor = $4.valor;
                         }
+                        tablaDeSimbolos.push(simboloVariable);
                     }
-                }else{
-                    errorSemantico("Tipo de dato requerido : "+$2+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
+            }else{
+                errorSemantico("Tipo de dato requerido : "+$2+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
         }
     ;
@@ -348,8 +349,14 @@ declaracion_metodo : visibilidad tipo declaracion_metodo_p {
     }
     ;
 
-declaracion_metodo_p : declaracion_metodo_p_a LLAVE_A instrucciones_metodo LLAVE_C { ambitoActual.pop(); }
-    | declaracion_metodo_p_a LLAVE_A LLAVE_C { ambitoActual.pop(); }
+declaracion_metodo_p : declaracion_metodo_p_a LLAVE_A instrucciones_metodo LLAVE_C { 
+        ambitoActual.pop(); 
+        ambitoClase = true;
+    }
+    | declaracion_metodo_p_a LLAVE_A LLAVE_C { 
+        ambitoActual.pop();
+        ambitoClase = true; 
+    }
     ;
 
 declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
@@ -365,6 +372,7 @@ declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
         tablaDeSimbolos.push(simboloMetodo);
         
         ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
+        ambitoClase = false;
         cadParametros = "";
     }
     ;

@@ -112,7 +112,7 @@ case 5:
         ambitoActual.pop();
     
 break;
-case 6: case 32: case 33:
+case 6:
  ambitoActual.pop(); 
 break;
 case 8:
@@ -133,33 +133,32 @@ break;
 case 16:
 
             if($$[$0-3] != yy.DEFAULT){
-                if(!ambitoActual.at(-1).startsWith('class')){
+                if(!ambitoClase){
                     errorSemantico("Ilegal inicio de expression: "+$$[$0-3]+".",this._$.first_line,this._$.first_column);
                 }
             }
-            if($$[$0]==null){
-                //solo declaracion
-            }else{
-                //declaracion y asignacion
-                if($$[$0-2] == $$[$0].tipoResultado){
-                    while(ids.length>0){
-                        //asignacion de tipo correcta
-                        let id = ids.pop();
-                        if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
-                            errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
-                        }else{
-                            let simboloVariable = new Object();
-                            simboloVariable.id = id;
-                            simboloVariable.tipo = $$[$0-2];
-                            simboloVariable.ambito = ambitoActual.at(-1);
-                            simboloVariable.visibilidad = $$[$0-3];
-                            simboloVariable.rol = yy.VARIABLE
-                            tablaDeSimbolos.push(simboloVariable);
+            //declaracion y asignacion
+            if($$[$0]==null || $$[$0-2] == $$[$0].tipoResultado){
+                while(ids.length>0){
+                    //asignacion de tipo correcta
+                    let id = ids.pop();
+                    if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                        errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                    }else{
+                        let simboloVariable = new Object();
+                        simboloVariable.id = id;
+                        simboloVariable.tipo = $$[$0-2];
+                        simboloVariable.ambito = ambitoActual.at(-1);
+                        simboloVariable.visibilidad = $$[$0-3];
+                        simboloVariable.rol = yy.VARIABLE;
+                        if($$[$0] != null){
+                            //simboloVariable.valor = $$[$0].valor;
                         }
+                        tablaDeSimbolos.push(simboloVariable);
                     }
-                }else{
-                    errorSemantico("Tipo de dato requerido : "+$$[$0-2]+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
+            }else{
+                errorSemantico("Tipo de dato requerido : "+$$[$0-2]+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
         
 break;
@@ -210,6 +209,18 @@ case 31:
         ultimoMetodoDeclarado1.tipo = $$[$0-1];
     
 break;
+case 32:
+ 
+        ambitoActual.pop(); 
+        ambitoClase = true;
+    
+break;
+case 33:
+ 
+        ambitoActual.pop();
+        ambitoClase = true; 
+    
+break;
 case 34:
 
         if(existeVariableMetodo(ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros,ambitoActual.at(-1),yy.METODO)){
@@ -224,6 +235,7 @@ case 34:
         tablaDeSimbolos.push(simboloMetodo);
         
         ambitoActual.push(ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros);
+        ambitoClase = false;
         cadParametros = "";
     
 break;
@@ -628,6 +640,7 @@ _handle_error:
     let ambitoActual = [];
     let ids = [];
     let cadParametros = "";
+    let ambitoClase = true;
 
     exports.getErrores = function (){
         return errores;
@@ -639,6 +652,7 @@ _handle_error:
         ambitoActual.splice(0, ambitoActual.length);
         ids.splice(0, ids.length);
         cadParametros = "";
+        ambitoClase = true;
     }
 
     function errorSemantico(descripcion,linea,columna){

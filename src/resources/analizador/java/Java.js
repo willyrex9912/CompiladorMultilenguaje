@@ -196,6 +196,20 @@ break;
 case 29:
  this.$ = yy.DEFAULT; 
 break;
+case 30:
+ 
+        let ultimoMetodoDeclarado = obtenerUltimoMetodo(yy);
+        ultimoMetodoDeclarado.visibilidad = $$[$0-2];
+        ultimoMetodoDeclarado.tipo = $$[$0-1];
+    
+break;
+case 31:
+
+        let ultimoMetodoDeclarado1 = obtenerUltimoMetodo(yy);
+        ultimoMetodoDeclarado1.visibilidad = $$[$0-2];
+        ultimoMetodoDeclarado1.tipo = $$[$0-1];
+    
+break;
 case 34:
 
         if(existeVariableMetodo(ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros,ambitoActual.at(-1),yy.METODO)){
@@ -203,12 +217,12 @@ case 34:
         }
         let simboloMetodo = new Object();
         simboloMetodo.id = ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros;
-        simboloMetodo.tipo = $$[$0-2];
+        simboloMetodo.tipo = "---";
         simboloMetodo.ambito = ambitoActual.at(-1);
-        simboloMetodo.visibilidad = $$[$0-3];
+        simboloMetodo.visibilidad = "---";
         simboloMetodo.rol = yy.METODO
         tablaDeSimbolos.push(simboloMetodo);
-
+        
         ambitoActual.push(ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros);
         cadParametros = "";
     
@@ -705,6 +719,15 @@ _handle_error:
     function obtenerSimbolo(id){
         for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
             if(id==tablaDeSimbolos[i].id){
+                return tablaDeSimbolos[i];
+            }
+        }
+        return null;
+    }
+
+    function obtenerUltimoMetodo(yy){
+        for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
+            if(tablaDeSimbolos[i].rol == yy.METODO){
                 return tablaDeSimbolos[i];
             }
         }

@@ -177,6 +177,15 @@
         return null;
     }
 
+    function obtenerUltimoMetodo(yy){
+        for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
+            if(tablaDeSimbolos[i].rol == yy.METODO){
+                return tablaDeSimbolos[i];
+            }
+        }
+        return null;
+    }
+
 %}
 
 %%
@@ -327,8 +336,16 @@ visibilidad : PR_PUBLIC { $$ = yy.PUBLIC; }
 
 //DECLARACION DE METODOS -------------------------------------------------------------
 
-declaracion_metodo : visibilidad tipo declaracion_metodo_p
-    | visibilidad PR_VOID declaracion_metodo_p
+declaracion_metodo : visibilidad tipo declaracion_metodo_p { 
+        let ultimoMetodoDeclarado = obtenerUltimoMetodo(yy);
+        ultimoMetodoDeclarado.visibilidad = $1;
+        ultimoMetodoDeclarado.tipo = $2;
+    }
+    | visibilidad PR_VOID declaracion_metodo_p {
+        let ultimoMetodoDeclarado1 = obtenerUltimoMetodo(yy);
+        ultimoMetodoDeclarado1.visibilidad = $1;
+        ultimoMetodoDeclarado1.tipo = $2;
+    }
     ;
 
 declaracion_metodo_p : declaracion_metodo_p_a LLAVE_A instrucciones_metodo LLAVE_C { ambitoActual.pop(); }
@@ -341,12 +358,12 @@ declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
         }
         let simboloMetodo = new Object();
         simboloMetodo.id = ambitoActual.at(-1)+"_"+$1+cadParametros;
-        simboloMetodo.tipo = $2;
+        simboloMetodo.tipo = "---";
         simboloMetodo.ambito = ambitoActual.at(-1);
-        simboloMetodo.visibilidad = $1;
+        simboloMetodo.visibilidad = "---";
         simboloMetodo.rol = yy.METODO
         tablaDeSimbolos.push(simboloMetodo);
-
+        
         ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
         cadParametros = "";
     }

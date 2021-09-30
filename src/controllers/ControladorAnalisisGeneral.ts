@@ -43,6 +43,13 @@ export class ControladorAnalisisGeneral{
         yy.CHAR = this.filtroTipoDato.CHAR;
         yy.STRING = this.filtroTipoDato.STRING;
         yy.BOOLEAN = this.filtroTipoDato.BOOLEAN;
+
+        yy.VOID = this.filtroTipoDato.VOID;
+
+        yy.METODO = this.filtroTipoDato.METODO;
+        yy.VARIABLE = this.filtroTipoDato.VARIABLE;
+        yy.CLASE = this.filtroTipoDato.CLASE;
+
         yy.POTENCIA = this.filtroTipoDato.POTENCIA;
         yy.MODULO = this.filtroTipoDato.MODULO;
         yy.DIVISION = this.filtroTipoDato.DIVISION;

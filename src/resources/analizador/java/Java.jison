@@ -77,8 +77,9 @@
 %{
     let errores = [];
     let tablaDeSimbolos = [];
-    let ambitoActual = "";
+    let ambitoActual = [];
     let ids = [];
+    let cadParametros = "";
 
     exports.getErrores = function (){
         return errores;
@@ -87,8 +88,9 @@
     exports.reset = function(){
         errores.splice(0, errores.length);
         tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
-        ambitoActual = "";
+        ambitoActual.splice(0, ambitoActual.length);
         ids.splice(0, ids.length);
+        cadParametros = "";
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -148,9 +150,18 @@
         }
     }
 
-    function existeVariable(id,ambito){
+    function existeVariableMetodo(id,ambito,rol){
         for(let simbolo in tablaDeSimbolos){
-            if(tablaDeSimbolos[simbolo].id==id){
+            if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function existeClase(id,yy){
+        for(let simbolo in tablaDeSimbolos){
+            if(tablaDeSimbolos[simbolo].rol==yy.CLASE && tablaDeSimbolos[simbolo].id==id){
                 return true;
             }
         }
@@ -176,6 +187,8 @@ inicial :  a1 EOF   {
                             console.log("Id: "+tablaDeSimbolos[simbolo].id);
                             console.log("Tipo: "+tablaDeSimbolos[simbolo].tipo);
                             console.log("Ambito: "+tablaDeSimbolos[simbolo].ambito);
+                            console.log("Visibilidad: "+tablaDeSimbolos[simbolo].visibilidad);
+                            console.log("Rol: "+tablaDeSimbolos[simbolo].rol);
                         }
                     }
     ;
@@ -200,12 +213,25 @@ a1 : declaracion_clase
 
 //DECLARACION DE CLASE ---------------------------------------------------------------
 
-declaracion_clase : declaracion_clase_p LLAVE_A instrucciones_clase LLAVE_C
+declaracion_clase : declaracion_clase_p LLAVE_A instrucciones_clase LLAVE_C {
+        ambitoActual.pop();
+    }
+    | declaracion_clase_p LLAVE_A LLAVE_C { ambitoActual.pop(); }
     | err
     ;
 
 declaracion_clase_p : PR_PUBLIC PR_CLASS ID {
-            ambitoActual = "class "+$3;
+            if(existeClase($3,yy)){
+                errorSemantico("La clase "+$3+" ya ha sido declarada.",this._$.first_line,this._$.first_column);
+            }
+            let simboloClase = new Object();
+            simboloClase.id = $3;
+            simboloClase.tipo = "";
+            simboloClase.ambito = "";
+            simboloClase.visibilidad = yy.PUBLIC;
+            simboloClase.rol = yy.CLASE;
+            tablaDeSimbolos.push(simboloClase);
+            ambitoActual.push("class "+$3);
         }
     ;
 
@@ -219,6 +245,18 @@ instrucciones_clase : instrucciones_clase_p
     ;
 
 instrucciones_clase_p : declaracion_variable
+    | declaracion_metodo
+    ;
+
+//-------------------------------------------------------------------------------------
+
+//INSTRUCCIONES DENTRO DE METODO--------------------------------------------------------
+
+instrucciones_metodo : instrucciones_metodo_p
+    | instrucciones_metodo_p instrucciones_metodo
+    ;
+
+instrucciones_metodo_p : declaracion_variable
     ;
 
 //-------------------------------------------------------------------------------------
@@ -227,7 +265,7 @@ instrucciones_clase_p : declaracion_variable
 
 declaracion_variable : visibilidad tipo ids asignacion {
             if($1 != yy.DEFAULT){
-                if(!ambitoActual.startsWith('class')){
+                if(!ambitoActual.at(-1).startsWith('class')){
                     errorSemantico("Ilegal inicio de expression: "+$1+".",this._$.first_line,this._$.first_column);
                 }
             }
@@ -239,15 +277,16 @@ declaracion_variable : visibilidad tipo ids asignacion {
                     while(ids.length>0){
                         //asignacion de tipo correcta
                         let id = ids.pop();
-                        if(existeVariable(id,ambitoActual)){
-                            errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual+".",this._$.first_line,this._$.first_column);
+                        if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                            errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
                         }else{
-                            let simbolo = new Object();
-                            simbolo.id = id;
-                            simbolo.tipo = $2;
-                            simbolo.ambito = ambitoActual;
-                            simbolo.visibilidad = $1;
-                            tablaDeSimbolos.push(simbolo);
+                            let simboloVariable = new Object();
+                            simboloVariable.id = id;
+                            simboloVariable.tipo = $2;
+                            simboloVariable.ambito = ambitoActual.at(-1);
+                            simboloVariable.visibilidad = $1;
+                            simboloVariable.rol = yy.VARIABLE
+                            tablaDeSimbolos.push(simboloVariable);
                         }
                     }
                 }else{
@@ -288,7 +327,40 @@ visibilidad : PR_PUBLIC { $$ = yy.PUBLIC; }
 
 //DECLARACION DE METODOS -------------------------------------------------------------
 
-declaracion_metodo : 
+declaracion_metodo : visibilidad tipo declaracion_metodo_p
+    | visibilidad PR_VOID declaracion_metodo_p
+    ;
+
+declaracion_metodo_p : declaracion_metodo_p_a LLAVE_A instrucciones_metodo LLAVE_C { ambitoActual.pop(); }
+    | declaracion_metodo_p_a LLAVE_A LLAVE_C { ambitoActual.pop(); }
+    ;
+
+declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
+        if(existeVariableMetodo(ambitoActual.at(-1)+"_"+$1+cadParametros,ambitoActual.at(-1),yy.METODO)){
+            errorSemantico("El método "+$1+cadParametros+" ya ha sido declarado en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+        }
+        let simboloMetodo = new Object();
+        simboloMetodo.id = ambitoActual.at(-1)+"_"+$1+cadParametros;
+        simboloMetodo.tipo = $2;
+        simboloMetodo.ambito = ambitoActual.at(-1);
+        simboloMetodo.visibilidad = $1;
+        simboloMetodo.rol = yy.METODO
+        tablaDeSimbolos.push(simboloMetodo);
+
+        ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
+        cadParametros = "";
+    }
+    ;
+
+parametros : parametros_p 
+    | parametros_p COMA parametros
+    ;
+
+parametros_p : tipo ID { cadParametros+="_"+$1; }
+    ;
+
+parametros_b_p : parametros
+    | /*Lambda*/ 
     ;
 
 //------------------------------------------------------------------------------------

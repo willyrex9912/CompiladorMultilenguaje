@@ -1,11 +1,21 @@
 export class FiltroTipoDato{
 
+    //tipos de datos
     public INT:String = "int";
     public DOUBLE:String = "double";
     public CHAR:String = "char";
     public STRING:String = "String";
     public BOOLEAN:String = "boolean";
 
+    //void para complemento de tipo de metodo
+    public VOID:String = "void";
+
+    //tipos de roles de simbolos
+    public METODO:String = "metodo";
+    public VARIABLE:String = "variable";
+    public CLASE:String = "clase";
+
+    //tipos de operaciones
     public POTENCIA:String = "^";
     public MODULO:String = "%";
     public DIVISION:String = "/";

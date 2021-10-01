@@ -188,6 +188,16 @@
         return null;
     }
 
+    function agregarSimbolo(id,tipo,ambito,visibilidad,rol){
+        let simboloNuevo = new Object();
+        simboloNuevo.id = id;
+        simboloNuevo.tipo = tipo;
+        simboloNuevo.ambito = ambito;
+        simboloNuevo.visibilidad = visibilidad;
+        simboloNuevo.rol = rol;
+        tablaDeSimbolos.push(simboloNuevo);
+    }
+
 %}
 
 %%
@@ -235,13 +245,7 @@ declaracion_clase_p : PR_PUBLIC PR_CLASS ID {
             if(existeClase($3,yy)){
                 errorSemantico("La clase "+$3+" ya ha sido declarada.",this._$.first_line,this._$.first_column);
             }
-            let simboloClase = new Object();
-            simboloClase.id = $3;
-            simboloClase.tipo = "";
-            simboloClase.ambito = "";
-            simboloClase.visibilidad = yy.PUBLIC;
-            simboloClase.rol = yy.CLASE;
-            tablaDeSimbolos.push(simboloClase);
+            agregarSimbolo($3,"","",yy.PUBLIC,yy.CLASE);
             ambitoActual.push("class "+$3);
         }
     ;
@@ -288,16 +292,10 @@ declaracion_variable : visibilidad tipo ids asignacion {
                     if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
                         errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
                     }else{
-                        let simboloVariable = new Object();
-                        simboloVariable.id = id;
-                        simboloVariable.tipo = $2;
-                        simboloVariable.ambito = ambitoActual.at(-1);
-                        simboloVariable.visibilidad = $1;
-                        simboloVariable.rol = yy.VARIABLE;
                         if($4 != null){
                             //simboloVariable.valor = $4.valor;
                         }
-                        tablaDeSimbolos.push(simboloVariable);
+                        agregarSimbolo(id,$2,ambitoActual.at(-1),$1,yy.VARIABLE);
                     }
                 }
             }else{
@@ -363,13 +361,7 @@ declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
         if(existeVariableMetodo(ambitoActual.at(-1)+"_"+$1+cadParametros,ambitoActual.at(-1),yy.METODO)){
             errorSemantico("El método "+$1+cadParametros+" ya ha sido declarado en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
         }
-        let simboloMetodo = new Object();
-        simboloMetodo.id = ambitoActual.at(-1)+"_"+$1+cadParametros;
-        simboloMetodo.tipo = "---";
-        simboloMetodo.ambito = ambitoActual.at(-1);
-        simboloMetodo.visibilidad = "---";
-        simboloMetodo.rol = yy.METODO
-        tablaDeSimbolos.push(simboloMetodo);
+        agregarSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,"",ambitoActual.at(-1),"",yy.METODO);
         
         ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
         ambitoClase = false;

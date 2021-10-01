@@ -22,6 +22,12 @@
 "char"                          return 'PR_CHAR'
 "boolean"                       return 'PR_BOOLEAN'
 "String"                        return 'PR_STRING'
+
+//  instrucciones
+"if"                            return 'PR_IF'
+"else"                          return 'PR_ELSE'
+
+
 //simbolos
 [+]                             return 'SUMA'
 [-]                             return 'RESTA'
@@ -272,6 +278,7 @@ instrucciones_metodo : instrucciones_metodo_p
     ;
 
 instrucciones_metodo_p : declaracion_variable
+    | instruccion_if
     ;
 
 //-------------------------------------------------------------------------------------
@@ -374,6 +381,9 @@ parametros : parametros_p
     ;
 
 parametros_p : tipo ID { cadParametros+="_"+$1; }
+    /*+++++++++++++++++AGREGAR IDS COMO SIMBOLOS ++++++++++++++++++++++++++++++++++++++*/
+    /*+++++++++++++++++AGREGAR IDS COMO SIMBOLOS ++++++++++++++++++++++++++++++++++++++*/
+    /*+++++++++++++++++AGREGAR IDS COMO SIMBOLOS ++++++++++++++++++++++++++++++++++++++*/
     ;
 
 parametros_b_p : parametros
@@ -382,7 +392,28 @@ parametros_b_p : parametros
 
 //------------------------------------------------------------------------------------
 
+//CONDICIONAL IF ELSE-IF ELSE --------------------------------------------------------
 
+instruccion_if : PR_IF PARENT_A PARENT_C LLAVE_A LLAVE_C instruccion_if_p
+    ;
+
+instruccion_if_p : instrucciones_else_if
+    | instrucciones_else_if instruccion_else
+    | instruccion_else
+    | /*Lambda*/
+    ;
+
+instrucciones_else_if : instruccion_else_if
+    | instrucciones_else_if instruccion_else_if
+    ;
+
+instruccion_else_if : PR_ELSE PR_IF PARENT_A PARENT_C LLAVE_A LLAVE_C
+    ;
+
+instruccion_else : PR_ELSE LLAVE_A LLAVE_C 
+    ;
+
+//------------------------------------------------------------------------------------
 
 //EXPRESION MULTIPLE----------------------------------------------------------------
 expresion_multiple : a3 { $$ = $1; };

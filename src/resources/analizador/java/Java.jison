@@ -41,15 +41,15 @@
 "]"                             return 'CORCH_C'
 "("                             return 'PARENT_A'
 ")"                             return 'PARENT_C'
+"||"                            return 'XOR'
 "|"                             return 'OR'
-"||"                            return 'NOR'
 "&&"                            return 'AND'
 "=="                            return 'IGUAL'
 "!="                            return 'NO_IGUAL'
-">"                             return 'MAYOR'
-"<"                             return 'MENOR'
 ">="                            return 'MAYOR_IGUAL'
 "<="                            return 'MENOR_IGUAL'
+">"                             return 'MAYOR'
+"<"                             return 'MENOR'
 "!"                             return 'NOT'
 ";"                             return 'PUNTO_Y_COMA'
 ","                             return 'COMA'
@@ -394,7 +394,17 @@ parametros_b_p : parametros
 
 //CONDICIONAL IF ELSE-IF ELSE --------------------------------------------------------
 
-instruccion_if : PR_IF PARENT_A PARENT_C LLAVE_A LLAVE_C instruccion_if_p
+instruccion_if : instruccion_if_b_p LLAVE_A LLAVE_C instruccion_if_p
+    ;
+
+instruccion_if_b_p : PR_IF PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($3.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
     ;
 
 instruccion_if_p : instrucciones_else_if
@@ -407,7 +417,17 @@ instrucciones_else_if : instruccion_else_if
     | instrucciones_else_if instruccion_else_if
     ;
 
-instruccion_else_if : PR_ELSE PR_IF PARENT_A PARENT_C LLAVE_A LLAVE_C
+instruccion_else_if : instruccion_else_if_b_p  LLAVE_A LLAVE_C
+    ;
+
+instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($4.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
     ;
 
 instruccion_else : PR_ELSE LLAVE_A LLAVE_C 

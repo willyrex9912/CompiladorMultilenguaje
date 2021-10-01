@@ -322,7 +322,7 @@ export class FiltroTipoDato{
                 return null;
             }
         }else if(tipoOperacion == this.AND || tipoOperacion == this.OR || tipoOperacion == this.XOR){
-            if(tipo1==this.BOOLEAN || tipo2==this.BOOLEAN){
+            if(tipo1==this.BOOLEAN && tipo2==this.BOOLEAN){
                 return this.BOOLEAN;
             }else{
                 return null;

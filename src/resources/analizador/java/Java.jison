@@ -23,12 +23,15 @@
 "boolean"                       return 'PR_BOOLEAN'
 "String"                        return 'PR_STRING'
 
-//  instrucciones
+//  instrucciones y ciclos
 "if"                            return 'PR_IF'
 "else"                          return 'PR_ELSE'
+"for"                           return 'PR_FOR'
 
 
 //simbolos
+"++"                            return 'INCREMENTO'
+"--"                            return 'DECREMENTO'
 [+]                             return 'SUMA'
 [-]                             return 'RESTA'
 [*]                             return 'MULTIPLICACION'
@@ -204,6 +207,21 @@
         tablaDeSimbolos.push(simboloNuevo);
     }
 
+    function validarVariable(id,yy){
+        let tabla = tablaDeSimbolos.slice();
+        while(tabla.length>0){
+            let sim = tabla.pop();
+            if(sim.rol==yy.VARIABLE && sim.id==id){
+                let ambitos = ambitoActual.slice();
+                while(ambitos.length>0){
+                    if(sim.ambito==ambitos.pop()){
+                        return sim;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 %}
 
 %%
@@ -278,6 +296,7 @@ instrucciones_metodo : instrucciones_metodo_p
     ;
 
 instrucciones_metodo_p : declaracion_variable
+    | asignacion_variable
     | instruccion_if
     ;
 
@@ -327,6 +346,47 @@ tipo : PR_INT { $$ = yy.INT; }
 
 asignacion : PUNTO_Y_COMA { $$ = null; }
     | ASIGNACION expresion_multiple PUNTO_Y_COMA { $$ = $2; }
+    ;
+
+//------------------------------------------------------------------------------------
+
+//ASIGNACION DE VARIABLES ------------------------------------------------------------
+
+asignacion_variable : ID ASIGNACION expresion_multiple PUNTO_Y_COMA {
+        //validando id
+        let simId = validarVariable($1,yy);
+        if(simId==null){
+            errorSemantico("No se encuentra el símbolo "+$1+" .",this._$.first_line,this._$.first_column);
+        }else{
+            if(simId.tipo == $3.tipoResultado){
+                //asignacion exitosa;
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+            }else{
+                errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }
+    }
+    | ID inc_dec PUNTO_Y_COMA {
+        let simId_a = validarVariable($1,yy);
+        if(simId_a==null){
+            errorSemantico("No se encuentra el símbolo "+$1+" .",this._$.first_line,this._$.first_column);
+        }else{
+            if(simId_a.tipo == yy.INT || simId_a.tipo == yy.DOUBLE){
+                //asignacion exitosa;
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
+            }
+        }
+    }
+    ;
+
+inc_dec : INCREMENTO
+    | DECREMENTO
     ;
 
 //------------------------------------------------------------------------------------
@@ -432,6 +492,25 @@ instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
 
 instruccion_else : PR_ELSE LLAVE_A LLAVE_C 
     ;
+
+//------------------------------------------------------------------------------------
+
+
+
+//CICLO FOR --------------------------------------------------------------------------
+
+ciclo_for : PR_FOR PARENT_A ciclo_for_p PARENT_C LLAVE_A LLAVE_C
+    ;
+
+ciclo_for_p : declaracion_variable COMA expresion_multiple COMA accion_posterior
+    ;
+
+accion_posterior : asignacion_variable
+    | /*Lambda*/
+    ;
+
+//------------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------------
 

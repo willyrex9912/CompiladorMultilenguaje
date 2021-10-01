@@ -283,7 +283,7 @@ instrucciones_clase : instrucciones_clase_p
     | instrucciones_clase_p instrucciones_clase
     ;
 
-instrucciones_clase_p : declaracion_variable
+instrucciones_clase_p : declaracion_variable PUNTO_Y_COMA
     | declaracion_metodo
     ;
 
@@ -295,9 +295,10 @@ instrucciones_metodo : instrucciones_metodo_p
     | instrucciones_metodo_p instrucciones_metodo
     ;
 
-instrucciones_metodo_p : declaracion_variable
-    | asignacion_variable
+instrucciones_metodo_p : declaracion_variable PUNTO_Y_COMA
+    | asignacion_variable PUNTO_Y_COMA
     | instruccion_if
+    | ciclo_for
     ;
 
 //-------------------------------------------------------------------------------------
@@ -307,7 +308,7 @@ instrucciones_metodo_p : declaracion_variable
 declaracion_variable : visibilidad tipo ids asignacion {
             if($1 != yy.DEFAULT){
                 if(!ambitoClase){
-                    errorSemantico("Ilegal inicio de expression: "+$1+".",this._$.first_line,this._$.first_column);
+                    errorSemantico("Ilegal inicio de expresión: "+$1+".",this._$.first_line,this._$.first_column);
                 }
             }
             //declaracion y asignacion
@@ -344,15 +345,15 @@ tipo : PR_INT { $$ = yy.INT; }
     | PR_BOOLEAN { $$ = yy.BOOLEAN; }
     ;
 
-asignacion : PUNTO_Y_COMA { $$ = null; }
-    | ASIGNACION expresion_multiple PUNTO_Y_COMA { $$ = $2; }
+asignacion : /*Lambda*/ { $$ = null; }
+    | ASIGNACION expresion_multiple { $$ = $2; }
     ;
 
 //------------------------------------------------------------------------------------
 
 //ASIGNACION DE VARIABLES ------------------------------------------------------------
 
-asignacion_variable : ID ASIGNACION expresion_multiple PUNTO_Y_COMA {
+asignacion_variable : ID ASIGNACION expresion_multiple {
         //validando id
         let simId = validarVariable($1,yy);
         if(simId==null){
@@ -368,7 +369,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple PUNTO_Y_COMA {
             }
         }
     }
-    | ID inc_dec PUNTO_Y_COMA {
+    | ID inc_dec {
         let simId_a = validarVariable($1,yy);
         if(simId_a==null){
             errorSemantico("No se encuentra el símbolo "+$1+" .",this._$.first_line,this._$.first_column);
@@ -499,10 +500,17 @@ instruccion_else : PR_ELSE LLAVE_A LLAVE_C
 
 //CICLO FOR --------------------------------------------------------------------------
 
-ciclo_for : PR_FOR PARENT_A ciclo_for_p PARENT_C LLAVE_A LLAVE_C
+ciclo_for : ciclo_for_b_p PARENT_A ciclo_for_p PARENT_C LLAVE_A LLAVE_C {
+        ambitoActual.pop();
+    }
     ;
 
-ciclo_for_p : declaracion_variable COMA expresion_multiple COMA accion_posterior
+ciclo_for_b_p : PR_FOR {
+        ambitoActual.push(ambitoActual.at(-1)+"_for");
+    }
+    ;
+
+ciclo_for_p : declaracion_variable PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior
     ;
 
 accion_posterior : asignacion_variable
@@ -691,7 +699,13 @@ g3 : INT        {
                 }
     | ID        {
                     operacion = new Object();
-                    operacion.tipoResultado = yy.ID;
+                    let sim_id_a = validarVariable($1,yy);
+                    if(sim_id_a==null){
+                        errorSemantico("No se encuentra el símbolo "+$1+" .",this._$.first_line,this._$.first_column);
+                        operacion.tipoResultado = yy.ID;
+                    }else{
+                        operacion.tipoResultado = sim_id_a.tipo;
+                    }
                     $$ = operacion;
                 }
     ;

@@ -27,6 +27,7 @@
 "if"                            return 'PR_IF'
 "else"                          return 'PR_ELSE'
 "for"                           return 'PR_FOR'
+"switch"                        return 'PR_SWITCH'
 
 
 //simbolos
@@ -88,6 +89,7 @@
     let tablaDeSimbolos = [];
     let ambitoActual = [];
     let ids = [];
+    let simbolosParametros = [];
     let cadParametros = "";
     let ambitoClase = true;
 
@@ -100,6 +102,7 @@
         tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
         ambitoActual.splice(0, ambitoActual.length);
         ids.splice(0, ids.length);
+        simbolosParametros.splice(0, simbolosParametros.length);
         cadParametros = "";
         ambitoClase = true;
     }
@@ -207,11 +210,28 @@
         tablaDeSimbolos.push(simboloNuevo);
     }
 
+    function agregarSimboloParametro(id,tipo,visibilidad,rol){
+        let simboloNuevo = new Object();
+        simboloNuevo.id = id;
+        simboloNuevo.tipo = tipo;
+        simboloNuevo.ambito = "";
+        simboloNuevo.visibilidad = visibilidad;
+        simboloNuevo.rol = rol;
+        simbolosParametros.push(simboloNuevo);
+    }
+
+    function pushSimbolosParametros(){
+        while(simbolosParametros.length>0){
+            tablaDeSimbolos.push(simbolosParametros.pop());
+            tablaDeSimbolos.at(-1).ambito = ambitoActual.at(-1);
+        }
+    }
+
     function validarVariable(id,yy){
         let tabla = tablaDeSimbolos.slice();
         while(tabla.length>0){
             let sim = tabla.pop();
-            if(sim.rol==yy.VARIABLE && sim.id==id){
+            if((sim.rol==yy.VARIABLE || sim.rol==yy.PARAMETRO) && sim.id==id){
                 let ambitos = ambitoActual.slice();
                 while(ambitos.length>0){
                     if(sim.ambito==ambitos.pop()){
@@ -299,6 +319,7 @@ instrucciones_metodo_p : declaracion_variable PUNTO_Y_COMA
     | asignacion_variable PUNTO_Y_COMA
     | instruccion_if
     | ciclo_for
+    | instruccion_switch
     ;
 
 //-------------------------------------------------------------------------------------
@@ -434,6 +455,7 @@ declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
         ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
         ambitoClase = false;
         cadParametros = "";
+        pushSimbolosParametros();
     }
     ;
 
@@ -441,10 +463,14 @@ parametros : parametros_p
     | parametros_p COMA parametros
     ;
 
-parametros_p : tipo ID { cadParametros+="_"+$1; }
-    /*+++++++++++++++++AGREGAR IDS COMO SIMBOLOS ++++++++++++++++++++++++++++++++++++++*/
-    /*+++++++++++++++++AGREGAR IDS COMO SIMBOLOS ++++++++++++++++++++++++++++++++++++++*/
-    /*+++++++++++++++++AGREGAR IDS COMO SIMBOLOS ++++++++++++++++++++++++++++++++++++++*/
+parametros_p : tipo ID { 
+        cadParametros+="_"+$1; 
+        if(existeVariableMetodo($1,ambitoActual.at(-1),yy.VARIABLE)){
+            errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+        }else{
+            agregarSimboloParametro($2,$1,yy.PRIVATE,yy.PARAMETRO);
+        }
+    }
     ;
 
 parametros_b_p : parametros
@@ -510,7 +536,14 @@ ciclo_for_b_p : PR_FOR {
     }
     ;
 
-ciclo_for_p : declaracion_variable PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior
+ciclo_for_p : declaracion_variable PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior {
+        try{
+            if($3.tipoResultado!=yy.BOOLEAN){
+            errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column); 
+            }
+        }catch(e){
+        }
+    }
     ;
 
 accion_posterior : asignacion_variable
@@ -519,6 +552,13 @@ accion_posterior : asignacion_variable
 
 //------------------------------------------------------------------------------------
 
+
+instruccion_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C LLAVE_A LLAVE_C {
+        if($3.tipoResultado == yy.DOUBLE || $3.tipoResultado == yy.BOOLEAN){
+            errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.CHAR+","+yy.STRING+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+        }
+    }
+    ;
 
 //------------------------------------------------------------------------------------
 

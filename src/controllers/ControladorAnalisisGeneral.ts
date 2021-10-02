@@ -49,6 +49,7 @@ export class ControladorAnalisisGeneral{
         yy.METODO = this.filtroTipoDato.METODO;
         yy.VARIABLE = this.filtroTipoDato.VARIABLE;
         yy.CLASE = this.filtroTipoDato.CLASE;
+        yy.PARAMETRO = this.filtroTipoDato.PARAMETRO;
 
         yy.POTENCIA = this.filtroTipoDato.POTENCIA;
         yy.MODULO = this.filtroTipoDato.MODULO;

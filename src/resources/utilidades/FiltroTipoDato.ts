@@ -14,6 +14,7 @@ export class FiltroTipoDato{
     public METODO:String = "metodo";
     public VARIABLE:String = "variable";
     public CLASE:String = "clase";
+    public PARAMETRO:String = "parametro";
 
     //tipos de operaciones
     public POTENCIA:String = "^";

@@ -33,6 +33,8 @@
 "case"                          return 'PR_CASE'
 "default"                       return 'PR_DEFAULT'
 "break"                         return 'PR_BREAK'
+"println"                       return 'PR_PRINTLN'
+"print"                         return 'PR_PRINT'
 
 
 //simbolos
@@ -326,6 +328,8 @@ instrucciones_metodo_p : declaracion_variable PUNTO_Y_COMA
     | instruccion_if
     | ciclo_for
     | instruccion_switch
+    | instruccion_print
+    | instruccion_println
     ;
 
 //-------------------------------------------------------------------------------------
@@ -481,6 +485,20 @@ parametros_p : tipo ID {
 
 parametros_b_p : parametros
     | /*Lambda*/ 
+    ;
+
+//------------------------------------------------------------------------------------
+
+//INSTRUCCIONES PRINT Y PRINTLN ------------------------------------------------------
+
+instruccion_print : PR_PRINT PARENT_A expresion_multiple PARENT_C PUNTO_Y_COMA {
+
+    }
+    ;
+
+instruccion_println : PR_PRINTLN PARENT_A expresion_multiple PARENT_C PUNTO_Y_COMA {
+
+    }
     ;
 
 //------------------------------------------------------------------------------------

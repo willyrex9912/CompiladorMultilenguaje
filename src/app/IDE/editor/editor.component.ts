@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ViewChildren, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import * as ace from "ace-builds";
+import { ServicioService } from 'src/app/Servicio/servicio.service';
 import { Analizador } from 'src/controllers/ControladorAnalisis';
+import { Cuadrupla } from 'src/model/Cuadrupla';
 
 @Component({
   selector: 'app-editor',
@@ -16,7 +18,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   private txtConsola:String = "";
   private analizador = new Analizador();
 
-  constructor(private router:Router) { }
+  constructor(private servicio:ServicioService, private router:Router) { }
 
   ngOnInit(): void {
   }
@@ -37,9 +39,20 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
   
 
-  compilar(){
+  public compilar(){
     const aceEditor = ace.edit(this.editor.nativeElement);
     this.txtConsola = this.analizador.analizar(aceEditor.getValue());
+  }
+
+  public generarCodigo3d(){
+    let cuadruplas:Array<Cuadrupla> = new Array();
+    cuadruplas.push(new Cuadrupla("+","t3","t1","t2"));
+    cuadruplas.push(new Cuadrupla("-","t13","t11","t12"));
+    cuadruplas.push(new Cuadrupla("*","t23","t21","t22"));
+    cuadruplas.push(new Cuadrupla("/","t33","t31","t32"));
+    this.servicio.enviarCuadruplas(cuadruplas).subscribe(data=>{
+      console.log(data);
+    });
   }
 
   public getLinea(){

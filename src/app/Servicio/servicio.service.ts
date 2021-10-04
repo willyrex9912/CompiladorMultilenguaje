@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Instruccion } from 'src/model/Instruccion';
+import { Cuadrupla } from 'src/model/Cuadrupla';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,10 @@ export class ServicioService {
 
   public getInstrucciones(){
     return this.http.get<Instruccion[]>(this.url);
+  }
+
+  public enviarCuadruplas(cuadruplas:Array<Cuadrupla>){
+    return this.http.post<Array<Cuadrupla>>(this.url,cuadruplas);
   }
 
 }

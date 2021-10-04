@@ -5,6 +5,8 @@
 %%
 
 [ \r\t\n]+                   { /*ignorar*/}
+[/][/].*                                        { /*ignorar comentario de linea*/}
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]             { /*ignorar comentario de bloque*/}
 
 [0-9]+"."[0-9]+                 return 'DOUBLE'
 [0-9]+                          return 'INT'
@@ -28,6 +30,9 @@
 "else"                          return 'PR_ELSE'
 "for"                           return 'PR_FOR'
 "switch"                        return 'PR_SWITCH'
+"case"                          return 'PR_CASE'
+"default"                       return 'PR_DEFAULT'
+"break"                         return 'PR_BREAK'
 
 
 //simbolos
@@ -56,13 +61,12 @@
 "<"                             return 'MENOR'
 "!"                             return 'NOT'
 ";"                             return 'PUNTO_Y_COMA'
+":"                             return 'DOS_PUNTOS'
 ","                             return 'COMA'
 "="                             return 'ASIGNACION'
 
 [a-zA-Z]+[a-zA-Z0-9_]*          return 'ID'
 
-[/][/].*                                        { /*ignorar comentario de linea*/}
-[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]             { /*ignorar comentario de bloque*/}
 
 
 
@@ -92,6 +96,7 @@
     let simbolosParametros = [];
     let cadParametros = "";
     let ambitoClase = true;
+    let tipoDatoSwtich = "";
 
     exports.getErrores = function (){
         return errores;
@@ -105,6 +110,7 @@
         simbolosParametros.splice(0, simbolosParametros.length);
         cadParametros = "";
         ambitoClase = true;
+        tipoDatoSwtich = "";
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -553,14 +559,46 @@ accion_posterior : asignacion_variable
 //------------------------------------------------------------------------------------
 
 
-instruccion_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C LLAVE_A LLAVE_C {
+instruccion_switch : inicio_switch instruccion_switch_c_p 
+    ;
+
+inicio_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C {
         if($3.tipoResultado == yy.DOUBLE || $3.tipoResultado == yy.BOOLEAN){
             errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.CHAR+","+yy.STRING+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+        }
+        tipoDatoSwtich = $3.tipoResultado;
+    }
+    ;
+
+instruccion_switch_c_p : LLAVE_A LLAVE_C
+    | LLAVE_A instruccion_switch_t_p LLAVE_C
+    | LLAVE_A instruccion_switch_default LLAVE_C
+    | LLAVE_A instruccion_switch_t_p instruccion_switch_default LLAVE_C
+    ;
+
+instruccion_switch_t_p : instruccion_switch_b_p
+    | instruccion_switch_b_p instruccion_switch_t_p
+    ;
+
+instruccion_switch_b_p : PR_CASE expresion_multiple DOS_PUNTOS /*INSTRUCCIONES*/ instruccion_break {
+        if($2.tipoResultado != tipoDatoSwtich){
+            errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$2.tipoResultado+" .",this._$.first_line,this._$.first_column);
         }
     }
     ;
 
+instruccion_switch_default : PR_DEFAULT DOS_PUNTOS /*INSTRUCCIONES*/
+    ;
+
 //------------------------------------------------------------------------------------
+
+// INSTRUCCION BREAK ----------------------------------------------------------------
+
+instruccion_break : PR_BREAK PUNTO_Y_COMA
+    | /*Lambda*/
+    ;
+
+//-----------------------------------------------------------------------------------
 
 //EXPRESION MULTIPLE----------------------------------------------------------------
 expresion_multiple : a3 { $$ = $1; };

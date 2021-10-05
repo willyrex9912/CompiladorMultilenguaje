@@ -36,6 +36,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
     aceEditor.setTheme('ace/theme/eclipse');
     aceEditor.session.setMode('ace/mode/java');
+    aceEditor.session.setUseSoftTabs(false);
   }
   
 

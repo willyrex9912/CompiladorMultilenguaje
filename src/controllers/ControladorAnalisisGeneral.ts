@@ -1,6 +1,7 @@
 import { ConstructorMensajeError } from 'src/resources/utilidades/ConstructorMensajeError';
 import { FiltroTipoDato } from 'src/resources/utilidades/FiltroTipoDato';
 import * as AnalizadorJava from '../resources/analizador/java/Java';
+import * as AnalizadorPython from '../resources/analizador/python/Python';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
@@ -17,7 +18,15 @@ export class ControladorAnalisisGeneral{
     public analizar(separador):String{
 
         let respuesta:string = "";
-        //analizandp codigo python
+
+        //analizando codigo python
+        if(this.existeCodigo(separador.getCodigoPython())){
+            AnalizadorPython.reset();
+            AnalizadorPython.parse(separador.getCodigoPython());
+            if(AnalizadorPython.getErrores().length>0){
+                respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPython.getErrores(),separador.getInicioPython());
+            }
+        }
 
         //analizando codigo java
         if(this.existeCodigo(separador.getCodigoJava())){

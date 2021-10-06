@@ -5,7 +5,8 @@
 
 %%
 
-[ \r\n]+                                { /*ignorar por el momento*/ }
+[\n\r]+([ \t]+[\n\r]+)*                 return 'SALTO_DE_LINEA'
+[ ]+                                    { /*ignorar por el momento*/ }
 [\t]+                                   {
                                             let indentacion = yytext.length;
                                             if (indentacion > indent[0]) {
@@ -35,7 +36,9 @@
 "println"                               return 'PR_PRINTLN'
 
 //  instrucciones y ciclos
-"if"                            return 'PR_IF'
+"if"                                    return 'PR_IF'
+"elif"                                  return 'PR_ELIF'
+"else"                                  return 'PR_ELSE'
 
 //simbolos
 "**"                            return 'POTENCIA'
@@ -166,12 +169,17 @@
         }
     }
 
+    function cerrarAmbitos(){
+        indent = [0];
+    }
+
 %}
 
 %%
 
 /** gramatica **/
 inicio : a1 EOF
+    | SALTO_DE_LINEA a1 EOF
     ;
 
 a1 : declaracion_funcion
@@ -180,29 +188,39 @@ a1 : declaracion_funcion
 
 // DEFINICION DE FUNCION -------------------------------------------------------------------
 
-declaracion_funcion : PR_DEF ID PARENT_A PARENT_C DOS_PUNTOS INDENT instrucciones_metodo DEDENT
+declaracion_funcion : def ID PARENT_A PARENT_C DOS_PUNTOS SALTO_DE_LINEA declaracion_funcion_p
     ;
 
+def : PR_DEF { cerrarAmbitos(); };
 
+declaracion_funcion_p : INDENT instrucciones_metodo
+    | /*Lambda*/
+    ;
 //-----------------------------------------------------------------------------------------
 
 // INSTRUCCIONES DENTRO DE METODO ----------------------------------------------------------
 
-instrucciones_metodo : instruccion 
-    | instruccion instrucciones_metodo
+instrucciones_metodo : instruccion SALTO_DE_LINEA
+    | instruccion SALTO_DE_LINEA instrucciones_metodo
     ;
 
 instruccion : PR_PRINT
     | PR_PRINTLN
-    | temp_variable
+    | manejo_variable
     ;
 
 //-----------------------------------------------------------------------------------------
 
+//MANEJO DE VARIABLES ---------------------------------------------------------------------
 
-temp_variable : ID ASIGNACION expresion_multiple;
+manejo_variable : ID ASIGNACION expresion_multiple;
 
+//-----------------------------------------------------------------------------------------
 
+// CONDICIONAL IF -------------------------------------------------------------------------
+
+condicional_if : PR_IF PARENT_A expresion_multiple PARENT_C DOS_PUNTOS  
+    ;
 
 // EXPRESION MULTIPLE ---------------------------------------------------------------------
 

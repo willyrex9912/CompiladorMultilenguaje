@@ -26,7 +26,7 @@ export class ControladorAnalisisGeneral{
         //analizando codigo python
         if(this.existeCodigo(separador.getCodigoPython())){
             AnalizadorPython.reset();
-            AnalizadorPython.parse(separador.getCodigoPython());
+            AnalizadorPython.parse(separador.getCodigoPython()+"\n");
             if(AnalizadorPython.getErrores().length>0){
                 respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPython.getErrores(),separador.getInicioPython());
             }

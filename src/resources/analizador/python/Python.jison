@@ -27,7 +27,7 @@
 [0-9]+                                  return 'INT'
 "True"|"False"                          return 'BOOLEAN'
 \"[^"]*\"                               { yytext = yytext.substr(1,yyleng-2); return 'STRING'; }
-\'.\'                                   { yytext = yytext.substr(1,yyleng-2); return 'CHAR'; }
+\'[^']*\'                               { yytext = yytext.substr(1,yyleng-2); return 'STRING'; }
 
 //palabras reservadas
 "def"                                   return 'PR_DEF'
@@ -109,6 +109,63 @@
         indent = [0];
     }
 
+    function errorSemantico(descripcion,linea,columna){
+        ErrorLS = new Object();
+        ErrorLS.lexema = "";
+        ErrorLS.linea = linea;
+        ErrorLS.columna = columna;
+        ErrorLS.tipo = 'Semántico';
+        ErrorLS.descripcion = descripcion;
+        errores.push(ErrorLS);
+    }
+
+    function produccion(yy,$1,$2,linea,columna){
+        if($2!=null){
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }else{
+            return $1;
+        }
+    }
+
+    function produccionPrima(yy,$1,$2,$3,linea,columna){
+        if($3==null){
+            operacion = new Object();
+            operacion.tipoResultado = $2.tipoResultado;
+            operacion.operacionPendiente = $1;
+            return operacion;
+        }else{
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }
+    }
+
 %}
 
 %%
@@ -137,9 +194,15 @@ instrucciones_metodo : instruccion
 
 instruccion : PR_PRINT
     | PR_PRINTLN
+    | temp_variable
     ;
 
 //-----------------------------------------------------------------------------------------
+
+
+temp_variable : ID ASIGNACION expresion_multiple;
+
+
 
 // EXPRESION MULTIPLE ---------------------------------------------------------------------
 
@@ -300,11 +363,6 @@ g3 : INT        {
     | DOUBLE    {
                     operacion = new Object();
                     operacion.tipoResultado = yy.DOUBLE;
-                    $$ = operacion;
-                }
-    | CHAR      {
-                    operacion = new Object();
-                    operacion.tipoResultado = yy.CHAR;
                     $$ = operacion;
                 }
     | STRING    {

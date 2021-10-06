@@ -1,5 +1,6 @@
 import { ConstructorMensajeError } from 'src/resources/utilidades/ConstructorMensajeError';
 import { FiltroTipoDatoJava } from 'src/resources/utilidades/FiltroTipoDatoJava';
+import { FiltroTipoDatoPython } from 'src/resources/utilidades/FiltroTipoDatoPython';
 import * as AnalizadorJava from '../resources/analizador/java/Java';
 import * as AnalizadorPython from '../resources/analizador/python/Python';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
@@ -8,11 +9,14 @@ export class ControladorAnalisisGeneral{
 
     private constructorRespuesta:ConstructorMensajeError;
     private filtroTipoDatoJava:FiltroTipoDatoJava;
+    private filtroTipoDatoPython:FiltroTipoDatoPython;
 
     public constructor(){
         this.constructorRespuesta = new ConstructorMensajeError();
         this.filtroTipoDatoJava = new FiltroTipoDatoJava();
-        this.inicializarYY();
+        this.filtroTipoDatoPython = new FiltroTipoDatoPython();
+        this.inicializarYYJava();
+        this.inicializarYYPython();
     }
 
     public analizar(separador):String{
@@ -45,7 +49,7 @@ export class ControladorAnalisisGeneral{
         return !(codigo.trim()=="");
     }
 
-    private inicializarYY(){
+    private inicializarYYJava(){
         let yy = AnalizadorJava.parser.yy;
         yy.INT = this.filtroTipoDatoJava.INT;
         yy.DOUBLE = this.filtroTipoDatoJava.DOUBLE;
@@ -80,6 +84,35 @@ export class ControladorAnalisisGeneral{
         yy.DEFAULT = this.filtroTipoDatoJava.DEFAULT;
         
         yy.filtrarOperacion = this.filtroTipoDatoJava.filtrarOperacion;
+    }
+
+    private inicializarYYPython(){
+        let yy = AnalizadorPython.parser.yy;
+        yy.INT = this.filtroTipoDatoPython.INT;
+        yy.DOUBLE = this.filtroTipoDatoPython.DOUBLE;
+        yy.STRING = this.filtroTipoDatoPython.STRING;
+        yy.BOOLEAN = this.filtroTipoDatoPython.BOOLEAN;
+
+        yy.METODO = this.filtroTipoDatoPython.METODO;
+        yy.VARIABLE = this.filtroTipoDatoPython.VARIABLE;
+        yy.PARAMETRO = this.filtroTipoDatoPython.PARAMETRO;
+
+        yy.POTENCIA = this.filtroTipoDatoPython.POTENCIA;
+        yy.MODULO = this.filtroTipoDatoPython.MODULO;
+        yy.DIVISION = this.filtroTipoDatoPython.DIVISION;
+        yy.MULTIPLICACION = this.filtroTipoDatoPython.MULTIPLICACION;
+        yy.SUMA = this.filtroTipoDatoPython.SUMA;
+        yy.RESTA = this.filtroTipoDatoPython.RESTA;
+        yy.IGUAL = this.filtroTipoDatoPython.IGUAL;
+        yy.NO_IGUAL = this.filtroTipoDatoPython.NO_IGUAL;
+        yy.MAYOR = this.filtroTipoDatoPython.MAYOR;
+        yy.MENOR = this.filtroTipoDatoPython.MENOR;
+        yy.MAYOR_IGUAL = this.filtroTipoDatoPython.MAYOR_IGUAL;
+        yy.MENOR_IGUAL = this.filtroTipoDatoPython.MENOR_IGUAL;
+        yy.AND = this.filtroTipoDatoPython.AND;
+        yy.OR = this.filtroTipoDatoPython.OR;
+        
+        yy.filtrarOperacion = this.filtroTipoDatoPython.filtrarOperacion;
     }
 
 }

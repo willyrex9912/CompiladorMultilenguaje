@@ -72,21 +72,167 @@
   }
 */
 var Python = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,14],$V2=[1,15],$V3=[14,16,17];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,17],$V2=[1,14],$V3=[1,15],$V4=[8,14,16,17],$V5=[1,35],$V6=[1,29],$V7=[1,30],$V8=[1,34],$V9=[1,31],$Va=[1,32],$Vb=[1,33],$Vc=[8,10,14,16,17],$Vd=[2,14],$Ve=[1,38],$Vf=[1,39],$Vg=[8,10,14,16,17,25,26],$Vh=[2,19],$Vi=[1,42],$Vj=[8,10,14,16,17,25,26,30],$Vk=[2,23],$Vl=[1,45],$Vm=[1,46],$Vn=[1,47],$Vo=[1,48],$Vp=[1,49],$Vq=[1,50],$Vr=[8,10,14,16,17,25,26,30,34,35,36,37,38,39],$Vs=[2,32],$Vt=[1,53],$Vu=[1,54],$Vv=[8,10,14,16,17,25,26,30,34,35,36,37,38,39,43,44],$Vw=[2,37],$Vx=[1,57],$Vy=[1,58],$Vz=[1,59],$VA=[8,10,14,16,17,25,26,30,34,35,36,37,38,39,43,44,48,49,50],$VB=[2,43],$VC=[1,62],$VD=[8,10,14,16,17,25,26,30,34,35,36,37,38,39,43,44,48,49,50,54],$VE=[8,9,55,56,57,58,59];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"inicio":3,"a1":4,"EOF":5,"declaracion_funcion":6,"PR_DEF":7,"ID":8,"PARENT_A":9,"PARENT_C":10,"DOS_PUNTOS":11,"INDENT":12,"instrucciones_metodo":13,"DEDENT":14,"instruccion":15,"PR_PRINT":16,"PR_PRINTLN":17,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"PR_DEF",8:"ID",9:"PARENT_A",10:"PARENT_C",11:"DOS_PUNTOS",12:"INDENT",14:"DEDENT",16:"PR_PRINT",17:"PR_PRINTLN"},
-productions_: [0,[3,2],[4,1],[4,2],[6,8],[13,1],[13,2],[15,1],[15,1]],
+symbols_: {"error":2,"inicio":3,"a1":4,"EOF":5,"declaracion_funcion":6,"PR_DEF":7,"ID":8,"PARENT_A":9,"PARENT_C":10,"DOS_PUNTOS":11,"INDENT":12,"instrucciones_metodo":13,"DEDENT":14,"instruccion":15,"PR_PRINT":16,"PR_PRINTLN":17,"temp_variable":18,"ASIGNACION":19,"expresion_multiple":20,"a3":21,"b3":22,"a3p":23,"a3bp":24,"OR":25,"XOR":26,"c3":27,"b3p":28,"b3bp":29,"AND":30,"d3":31,"c3p":32,"c3bp":33,"IGUAL":34,"NO_IGUAL":35,"MAYOR":36,"MENOR":37,"MAYOR_IGUAL":38,"MENOR_IGUAL":39,"e3":40,"d3p":41,"d3bp":42,"SUMA":43,"RESTA":44,"f3":45,"e3p":46,"e3bp":47,"MULTIPLICACION":48,"DIVISION":49,"MODULO":50,"g3":51,"f3p":52,"f3bp":53,"POTENCIA":54,"NOT":55,"BOOLEAN":56,"INT":57,"DOUBLE":58,"STRING":59,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"PR_DEF",8:"ID",9:"PARENT_A",10:"PARENT_C",11:"DOS_PUNTOS",12:"INDENT",14:"DEDENT",16:"PR_PRINT",17:"PR_PRINTLN",19:"ASIGNACION",25:"OR",26:"XOR",30:"AND",34:"IGUAL",35:"NO_IGUAL",36:"MAYOR",37:"MENOR",38:"MAYOR_IGUAL",39:"MENOR_IGUAL",43:"SUMA",44:"RESTA",48:"MULTIPLICACION",49:"DIVISION",50:"MODULO",54:"POTENCIA",55:"NOT",56:"BOOLEAN",57:"INT",58:"DOUBLE",59:"STRING"},
+productions_: [0,[3,2],[4,1],[4,2],[6,8],[13,1],[13,2],[15,1],[15,1],[15,1],[18,3],[20,1],[21,2],[23,3],[23,0],[24,1],[24,1],[22,2],[28,3],[28,0],[29,1],[27,2],[32,3],[32,0],[33,1],[33,1],[33,1],[33,1],[33,1],[33,1],[31,2],[41,3],[41,0],[42,1],[42,1],[40,2],[46,3],[46,0],[47,1],[47,1],[47,1],[45,2],[52,3],[52,0],[53,1],[51,3],[51,2],[51,2],[51,4],[51,1],[51,1],[51,1],[51,1],[51,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
+case 11:
+ this.$ = $$[$0]; 
+break;
+case 12: case 17: case 21: case 30: case 35: case 41:
+
+                this.$ = produccion(yy,$$[$0-1],$$[$0],this._$.first_line,this._$.first_column);
+            
+break;
+case 13: case 18: case 22: case 31: case 36: case 42:
+
+                        this.$ = produccionPrima(yy,$$[$0-2],$$[$0-1],$$[$0],this._$.first_line,this._$.first_column);
+                    
+break;
+case 14: case 19: case 23: case 32: case 37: case 43:
+ this.$ = null; 
+break;
+case 15:
+ this.$ = yy.OR; 
+break;
+case 16:
+ this.$ = yy.XOR; 
+break;
+case 20:
+ this.$ = yy.AND; 
+break;
+case 24:
+ this.$ = yy.IGUAL; 
+break;
+case 25:
+ this.$ = yy.NO_IGUAL; 
+break;
+case 26:
+ this.$ = yy.MAYOR; 
+break;
+case 27:
+ this.$ = yy.MENOR; 
+break;
+case 28:
+ this.$ = yy.MAYOR_IGUAL; 
+break;
+case 29:
+ this.$ = yy.MENOR_IGUAL; 
+break;
+case 33:
+ this.$ = yy.SUMA; 
+break;
+case 34:
+ this.$ = yy.RESTA; 
+break;
+case 38:
+ this.$ = yy.MULTIPLICACION; 
+break;
+case 39:
+ this.$ = yy.DIVISION; 
+break;
+case 40:
+ this.$ = yy.MODULO; 
+break;
+case 44:
+ this.$ = yy.POTENCIA; 
+break;
+case 45:
+ this.$ = $$[$0-1]; 
+break;
+case 46:
+
+        let simbolo = obtenerSimbolo($$[$0]);
+        if(simbolo==null){
+            errorSemantico("No se encuentra el símbolo "+$$[$0]+" .",this._$.first_line,this._$.first_column);
+            this.$ = null;
+        }else{
+            if(simbolo.tipo==yy.BOOLEAN){
+                operacion = new Object();
+                operacion.tipoResultado = yy.BOOLEAN;
+                this.$ = operacion;
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+simbolo.tipo+" .",this._$.first_line,this._$.first_column);
+                this.$ = null;
+            }
+        }
+    
+break;
+case 47:
+
+        operacion = new Object();
+        operacion.tipoResultado = yy.BOOLEAN;
+        this.$ = operacion;
+    
+break;
+case 48:
+
+        if($$[$0-1]==null){
+            this.$ = null;
+        }else{
+            if($$[$0-1].tipoResultado==yy.BOOLEAN){
+                operacion = new Object();
+                operacion.tipoResultado = yy.BOOLEAN;
+                this.$ = operacion;
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-1].tipoResultado+" .",this._$.first_line,this._$.first_column);
+                this.$ = null;
+            }
+        }
+    
+break;
+case 49:
+
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.INT;
+                    this.$ = operacion;
+                
+break;
+case 50:
+
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.DOUBLE;
+                    this.$ = operacion;
+                
+break;
+case 51:
+
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.STRING;
+                    this.$ = operacion;
+                
+break;
+case 52:
+
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.BOOLEAN;
+                    this.$ = operacion;
+                
+break;
+case 53:
+
+                    operacion = new Object();
+                    let sim_id_a = validarVariable($$[$0],yy);
+                    if(sim_id_a==null){
+                        errorSemantico("No se encuentra el símbolo "+$$[$0]+" .",this._$.first_line,this._$.first_column);
+                        operacion.tipoResultado = yy.ID;
+                    }else{
+                        operacion.tipoResultado = sim_id_a.tipo;
+                    }
+                    this.$ = operacion;
+                
+break;
 }
 },
-table: [{3:1,4:2,6:3,7:$V0},{1:[3]},{5:[1,5]},{4:6,5:[2,2],6:3,7:$V0},{8:[1,7]},{1:[2,1]},{5:[2,3]},{9:[1,8]},{10:[1,9]},{11:[1,10]},{12:[1,11]},{13:12,15:13,16:$V1,17:$V2},{14:[1,16]},{13:17,14:[2,5],15:13,16:$V1,17:$V2},o($V3,[2,7]),o($V3,[2,8]),o([5,7],[2,4]),{14:[2,6]}],
-defaultActions: {5:[2,1],6:[2,3],17:[2,6]},
+table: [{3:1,4:2,6:3,7:$V0},{1:[3]},{5:[1,5]},{4:6,5:[2,2],6:3,7:$V0},{8:[1,7]},{1:[2,1]},{5:[2,3]},{9:[1,8]},{10:[1,9]},{11:[1,10]},{12:[1,11]},{8:$V1,13:12,15:13,16:$V2,17:$V3,18:16},{14:[1,18]},{8:$V1,13:19,14:[2,5],15:13,16:$V2,17:$V3,18:16},o($V4,[2,7]),o($V4,[2,8]),o($V4,[2,9]),{19:[1,20]},o([5,7],[2,4]),{14:[2,6]},{8:$V5,9:$V6,20:21,21:22,22:23,27:24,31:25,40:26,45:27,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($V4,[2,10]),o($V4,[2,11]),o($Vc,$Vd,{23:36,24:37,25:$Ve,26:$Vf}),o($Vg,$Vh,{28:40,29:41,30:$Vi}),o($Vj,$Vk,{32:43,33:44,34:$Vl,35:$Vm,36:$Vn,37:$Vo,38:$Vp,39:$Vq}),o($Vr,$Vs,{41:51,42:52,43:$Vt,44:$Vu}),o($Vv,$Vw,{46:55,47:56,48:$Vx,49:$Vy,50:$Vz}),o($VA,$VB,{52:60,53:61,54:$VC}),{8:$V5,9:$V6,21:63,22:23,27:24,31:25,40:26,45:27,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},{8:[1,64],9:[1,66],56:[1,65]},o($VD,[2,49]),o($VD,[2,50]),o($VD,[2,51]),o($VD,[2,52]),o($VD,[2,53]),o($Vc,[2,12]),{8:$V5,9:$V6,22:67,27:24,31:25,40:26,45:27,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($VE,[2,15]),o($VE,[2,16]),o($Vg,[2,17]),{8:$V5,9:$V6,27:68,31:25,40:26,45:27,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($VE,[2,20]),o($Vj,[2,21]),{8:$V5,9:$V6,31:69,40:26,45:27,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($VE,[2,24]),o($VE,[2,25]),o($VE,[2,26]),o($VE,[2,27]),o($VE,[2,28]),o($VE,[2,29]),o($Vr,[2,30]),{8:$V5,9:$V6,40:70,45:27,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($VE,[2,33]),o($VE,[2,34]),o($Vv,[2,35]),{8:$V5,9:$V6,45:71,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($VE,[2,38]),o($VE,[2,39]),o($VE,[2,40]),o($VA,[2,41]),{8:$V5,9:$V6,51:72,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($VE,[2,44]),{10:[1,73]},o($VD,[2,46]),o($VD,[2,47]),{8:$V5,9:$V6,21:74,22:23,27:24,31:25,40:26,45:27,51:28,55:$V7,56:$V8,57:$V9,58:$Va,59:$Vb},o($Vc,$Vd,{24:37,23:75,25:$Ve,26:$Vf}),o($Vg,$Vh,{29:41,28:76,30:$Vi}),o($Vj,$Vk,{33:44,32:77,34:$Vl,35:$Vm,36:$Vn,37:$Vo,38:$Vp,39:$Vq}),o($Vr,$Vs,{42:52,41:78,43:$Vt,44:$Vu}),o($Vv,$Vw,{47:56,46:79,48:$Vx,49:$Vy,50:$Vz}),o($VA,$VB,{53:61,52:80,54:$VC}),o($VD,[2,45]),{10:[1,81]},o($Vc,[2,13]),o($Vg,[2,18]),o($Vj,[2,22]),o($Vr,[2,31]),o($Vv,[2,36]),o($VA,[2,42]),o($VD,[2,48])],
+defaultActions: {5:[2,1],6:[2,3],19:[2,6]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -235,6 +381,13 @@ parse: function parse(input) {
 }};
  let indent = [0]; 
     let errores = [];
+    let tablaDeSimbolos = [];
+    let ambitoActual = [];
+    let ids = [];
+    let simbolosParametros = [];
+    let cadParametros = "";
+    let ambitoClase = true;
+    let tipoDatoSwtich = "";
 
     exports.getErrores = function (){
         return errores;
@@ -242,7 +395,71 @@ parse: function parse(input) {
 
     exports.reset = function(){
         errores.splice(0, errores.length);
+        tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
+        ambitoActual.splice(0, ambitoActual.length);
+        ids.splice(0, ids.length);
+        simbolosParametros.splice(0, simbolosParametros.length);
+        cadParametros = "";
+        ambitoClase = true;
+        tipoDatoSwtich = "";
         indent = [0];
+    }
+
+    function errorSemantico(descripcion,linea,columna){
+        ErrorLS = new Object();
+        ErrorLS.lexema = "";
+        ErrorLS.linea = linea;
+        ErrorLS.columna = columna;
+        ErrorLS.tipo = 'Semántico';
+        ErrorLS.descripcion = descripcion;
+        errores.push(ErrorLS);
+    }
+
+    function produccion(yy,$1,$2,linea,columna){
+        if($2!=null){
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }else{
+            return $1;
+        }
+    }
+
+    function produccionPrima(yy,$1,$2,$3,linea,columna){
+        if($3==null){
+            operacion = new Object();
+            operacion.tipoResultado = $2.tipoResultado;
+            operacion.operacionPendiente = $1;
+            return operacion;
+        }else{
+            //Analizar tipo de resultado
+            if($2!=null){
+                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+                    return operacion;
+                }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                    return null;
+                }
+            }else{
+                return null;
+            }
+        }
     }
 
 /* generated by jison-lex 0.3.4 */
@@ -592,15 +809,15 @@ case 1:
                                             if (tokens.length) return tokens;
                                         
 break;
-case 2:return 'DOUBLE'
+case 2:return 58
 break;
-case 3:return 'INT'
+case 3:return 57
 break;
-case 4:return 'BOOLEAN'
+case 4:return 56
 break;
-case 5: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 'STRING'; 
+case 5: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 59; 
 break;
-case 6: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 'CHAR'; 
+case 6: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 59; 
 break;
 case 7:return 7
 break;
@@ -610,17 +827,17 @@ case 9:return 17
 break;
 case 10:return 'PR_IF'
 break;
-case 11:return 'POTENCIA'
+case 11:return 54
 break;
-case 12:return 'SUMA'
+case 12:return 43
 break;
-case 13:return 'RESTA'
+case 13:return 44
 break;
-case 14:return 'MULTIPLICACION'
+case 14:return 48
 break;
-case 15:return 'DIVISION'
+case 15:return 49
 break;
-case 16:return 'MODULO'
+case 16:return 50
 break;
 case 17:return 'LLAVE_A'
 break;
@@ -634,23 +851,23 @@ case 21:return 9
 break;
 case 22:return 10
 break;
-case 23:return 'OR'
+case 23:return 25
 break;
-case 24:return 'AND'
+case 24:return 30
 break;
-case 25:return 'IGUAL'
+case 25:return 34
 break;
-case 26:return 'NO_IGUAL'
+case 26:return 35
 break;
-case 27:return 'MAYOR_IGUAL'
+case 27:return 38
 break;
-case 28:return 'MENOR_IGUAL'
+case 28:return 39
 break;
-case 29:return 'MAYOR'
+case 29:return 36
 break;
-case 30:return 'MENOR'
+case 30:return 37
 break;
-case 31:return 'NOT'
+case 31:return 55
 break;
 case 32:return 'PUNTO_Y_COMA'
 break;
@@ -658,7 +875,7 @@ case 33:return 11
 break;
 case 34:return 'COMA'
 break;
-case 35:return 'ASIGNACION'
+case 35:return 19
 break;
 case 36:return 8
 break;
@@ -677,7 +894,7 @@ case 38:/*Instertar codigo para recuperar el error lexico*/
 break;
 }
 },
-rules: [/^(?:[ \r\n]+)/,/^(?:[\t]+)/,/^(?:[0-9]+\.[0-9]+)/,/^(?:[0-9]+)/,/^(?:true|false\b)/,/^(?:"[^"]*")/,/^(?:'.')/,/^(?:def\b)/,/^(?:print\b)/,/^(?:println\b)/,/^(?:if\b)/,/^(?:\*\*)/,/^(?:[+])/,/^(?:[-])/,/^(?:[*])/,/^(?:[/])/,/^(?:[%])/,/^(?:\{)/,/^(?:\})/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:or\b)/,/^(?:and\b)/,/^(?:==)/,/^(?:!=)/,/^(?:>=)/,/^(?:<=)/,/^(?:>)/,/^(?:<)/,/^(?:not\b)/,/^(?:;)/,/^(?::)/,/^(?:,)/,/^(?:=)/,/^(?:[a-zA-Z]+[a-zA-Z0-9_]*)/,/^(?:$)/,/^(?:.)/],
+rules: [/^(?:[ \r\n]+)/,/^(?:[\t]+)/,/^(?:[0-9]+\.[0-9]+)/,/^(?:[0-9]+)/,/^(?:True|False\b)/,/^(?:"[^"]*")/,/^(?:'[^']*')/,/^(?:def\b)/,/^(?:print\b)/,/^(?:println\b)/,/^(?:if\b)/,/^(?:\*\*)/,/^(?:[+])/,/^(?:[-])/,/^(?:[*])/,/^(?:[/])/,/^(?:[%])/,/^(?:\{)/,/^(?:\})/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:or\b)/,/^(?:and\b)/,/^(?:==)/,/^(?:!=)/,/^(?:>=)/,/^(?:<=)/,/^(?:>)/,/^(?:<)/,/^(?:not\b)/,/^(?:;)/,/^(?::)/,/^(?:,)/,/^(?:=)/,/^(?:[a-zA-Z]+[a-zA-Z0-9_]*)/,/^(?:$)/,/^(?:.)/],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":true}}
 });
 return lexer;

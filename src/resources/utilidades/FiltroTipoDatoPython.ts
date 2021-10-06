@@ -3,14 +3,12 @@ export class FiltroTipoDatoPython{
     //tipos de datos
     public INT:string = "int";
     public DOUBLE:string = "double";
-    public CHAR:string = "char";
     public STRING:string = "String";
     public BOOLEAN:string = "boolean";
 
     //tipos de roles de simbolos
     public METODO:string = "metodo";
     public VARIABLE:string = "variable";
-    public CLASE:string = "clase";
     public PARAMETRO:string = "parametro";
 
     //tipos de operaciones

@@ -1,5 +1,5 @@
 import { ConstructorMensajeError } from 'src/resources/utilidades/ConstructorMensajeError';
-import { FiltroTipoDato } from 'src/resources/utilidades/FiltroTipoDato';
+import { FiltroTipoDatoJava } from 'src/resources/utilidades/FiltroTipoDatoJava';
 import * as AnalizadorJava from '../resources/analizador/java/Java';
 import * as AnalizadorPython from '../resources/analizador/python/Python';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
@@ -7,11 +7,11 @@ import * as AnalizadorPython from '../resources/analizador/python/Python';
 export class ControladorAnalisisGeneral{
 
     private constructorRespuesta:ConstructorMensajeError;
-    private filtroTipoDato:FiltroTipoDato;
+    private filtroTipoDatoJava:FiltroTipoDatoJava;
 
     public constructor(){
         this.constructorRespuesta = new ConstructorMensajeError();
-        this.filtroTipoDato = new FiltroTipoDato();
+        this.filtroTipoDatoJava = new FiltroTipoDatoJava();
         this.inicializarYY();
     }
 
@@ -47,39 +47,39 @@ export class ControladorAnalisisGeneral{
 
     private inicializarYY(){
         let yy = AnalizadorJava.parser.yy;
-        yy.INT = this.filtroTipoDato.INT;
-        yy.DOUBLE = this.filtroTipoDato.DOUBLE;
-        yy.CHAR = this.filtroTipoDato.CHAR;
-        yy.STRING = this.filtroTipoDato.STRING;
-        yy.BOOLEAN = this.filtroTipoDato.BOOLEAN;
+        yy.INT = this.filtroTipoDatoJava.INT;
+        yy.DOUBLE = this.filtroTipoDatoJava.DOUBLE;
+        yy.CHAR = this.filtroTipoDatoJava.CHAR;
+        yy.STRING = this.filtroTipoDatoJava.STRING;
+        yy.BOOLEAN = this.filtroTipoDatoJava.BOOLEAN;
 
-        yy.VOID = this.filtroTipoDato.VOID;
+        yy.VOID = this.filtroTipoDatoJava.VOID;
 
-        yy.METODO = this.filtroTipoDato.METODO;
-        yy.VARIABLE = this.filtroTipoDato.VARIABLE;
-        yy.CLASE = this.filtroTipoDato.CLASE;
-        yy.PARAMETRO = this.filtroTipoDato.PARAMETRO;
+        yy.METODO = this.filtroTipoDatoJava.METODO;
+        yy.VARIABLE = this.filtroTipoDatoJava.VARIABLE;
+        yy.CLASE = this.filtroTipoDatoJava.CLASE;
+        yy.PARAMETRO = this.filtroTipoDatoJava.PARAMETRO;
 
-        yy.POTENCIA = this.filtroTipoDato.POTENCIA;
-        yy.MODULO = this.filtroTipoDato.MODULO;
-        yy.DIVISION = this.filtroTipoDato.DIVISION;
-        yy.MULTIPLICACION = this.filtroTipoDato.MULTIPLICACION;
-        yy.SUMA = this.filtroTipoDato.SUMA;
-        yy.RESTA = this.filtroTipoDato.RESTA;
-        yy.IGUAL = this.filtroTipoDato.IGUAL;
-        yy.NO_IGUAL = this.filtroTipoDato.NO_IGUAL;
-        yy.MAYOR = this.filtroTipoDato.MAYOR;
-        yy.MENOR = this.filtroTipoDato.MENOR;
-        yy.MAYOR_IGUAL = this.filtroTipoDato.MAYOR_IGUAL;
-        yy.MENOR_IGUAL = this.filtroTipoDato.MENOR_IGUAL;
-        yy.AND = this.filtroTipoDato.AND;
-        yy.OR = this.filtroTipoDato.OR;
-        yy.XOR = this.filtroTipoDato.XOR;
-        yy.PUBLIC = this.filtroTipoDato.PUBLIC;
-        yy.PRIVATE = this.filtroTipoDato.PRIVATE;
-        yy.DEFAULT = this.filtroTipoDato.DEFAULT;
+        yy.POTENCIA = this.filtroTipoDatoJava.POTENCIA;
+        yy.MODULO = this.filtroTipoDatoJava.MODULO;
+        yy.DIVISION = this.filtroTipoDatoJava.DIVISION;
+        yy.MULTIPLICACION = this.filtroTipoDatoJava.MULTIPLICACION;
+        yy.SUMA = this.filtroTipoDatoJava.SUMA;
+        yy.RESTA = this.filtroTipoDatoJava.RESTA;
+        yy.IGUAL = this.filtroTipoDatoJava.IGUAL;
+        yy.NO_IGUAL = this.filtroTipoDatoJava.NO_IGUAL;
+        yy.MAYOR = this.filtroTipoDatoJava.MAYOR;
+        yy.MENOR = this.filtroTipoDatoJava.MENOR;
+        yy.MAYOR_IGUAL = this.filtroTipoDatoJava.MAYOR_IGUAL;
+        yy.MENOR_IGUAL = this.filtroTipoDatoJava.MENOR_IGUAL;
+        yy.AND = this.filtroTipoDatoJava.AND;
+        yy.OR = this.filtroTipoDatoJava.OR;
+        yy.XOR = this.filtroTipoDatoJava.XOR;
+        yy.PUBLIC = this.filtroTipoDatoJava.PUBLIC;
+        yy.PRIVATE = this.filtroTipoDatoJava.PRIVATE;
+        yy.DEFAULT = this.filtroTipoDatoJava.DEFAULT;
         
-        yy.filtrarOperacion = this.filtroTipoDato.filtrarOperacion;
+        yy.filtrarOperacion = this.filtroTipoDatoJava.filtrarOperacion;
     }
 
 }

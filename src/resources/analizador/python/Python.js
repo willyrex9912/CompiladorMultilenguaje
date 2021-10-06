@@ -72,12 +72,12 @@
   }
 */
 var Python = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,12];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[1,14],$V2=[1,15],$V3=[14,16,17];
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"inicio":3,"definicion_funcion":4,"EOF":5,"PR_DEF":6,"ID":7,"PARENT_A":8,"PARENT_C":9,"DOS_PUNTOS":10,"INDENT":11,"instrucciones":12,"DEDENT":13,"instruccion":14,"PR_PRINT":15,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",6:"PR_DEF",7:"ID",8:"PARENT_A",9:"PARENT_C",10:"DOS_PUNTOS",11:"INDENT",13:"DEDENT",15:"PR_PRINT"},
-productions_: [0,[3,2],[4,8],[12,1],[12,2],[14,1]],
+symbols_: {"error":2,"inicio":3,"a1":4,"EOF":5,"declaracion_funcion":6,"PR_DEF":7,"ID":8,"PARENT_A":9,"PARENT_C":10,"DOS_PUNTOS":11,"INDENT":12,"instrucciones_metodo":13,"DEDENT":14,"instruccion":15,"PR_PRINT":16,"PR_PRINTLN":17,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"PR_DEF",8:"ID",9:"PARENT_A",10:"PARENT_C",11:"DOS_PUNTOS",12:"INDENT",14:"DEDENT",16:"PR_PRINT",17:"PR_PRINTLN"},
+productions_: [0,[3,2],[4,1],[4,2],[6,8],[13,1],[13,2],[15,1],[15,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -85,8 +85,8 @@ var $0 = $$.length - 1;
 switch (yystate) {
 }
 },
-table: [{3:1,4:2,6:[1,3]},{1:[3]},{5:[1,4]},{7:[1,5]},{1:[2,1]},{8:[1,6]},{9:[1,7]},{10:[1,8]},{11:[1,9]},{12:10,14:11,15:$V0},{13:[1,13]},{12:14,13:[2,3],14:11,15:$V0},o([13,15],[2,5]),{5:[2,2]},{13:[2,4]}],
-defaultActions: {4:[2,1],13:[2,2],14:[2,4]},
+table: [{3:1,4:2,6:3,7:$V0},{1:[3]},{5:[1,5]},{4:6,5:[2,2],6:3,7:$V0},{8:[1,7]},{1:[2,1]},{5:[2,3]},{9:[1,8]},{10:[1,9]},{11:[1,10]},{12:[1,11]},{13:12,15:13,16:$V1,17:$V2},{14:[1,16]},{13:17,14:[2,5],15:13,16:$V1,17:$V2},o($V3,[2,7]),o($V3,[2,8]),o([5,7],[2,4]),{14:[2,6]}],
+defaultActions: {5:[2,1],6:[2,3],17:[2,6]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -573,21 +573,18 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0: /*ignorar por el momento*/
+case 0: /*ignorar por el momento*/ 
 break;
 case 1:
                                             let indentacion = yy_.yytext.length;
-                                            console.log(yy_.yytext.length);
                                             if (indentacion > indent[0]) {
                                                 indent.unshift(indentacion);
-                                                console.log("retorno INDENT");
                                                 return "INDENT";
                                             }
 
                                             var tokens = [];
 
                                             while (indentacion < indent[0]) {
-                                                console.log("retorno DEDENT");
                                                 tokens.push("DEDENT");
                                                 indent.shift();
                                             }
@@ -595,23 +592,79 @@ case 1:
                                             if (tokens.length) return tokens;
                                         
 break;
-case 2:return 6
+case 2:return 'DOUBLE'
 break;
-case 3:return 15
+case 3:return 'INT'
 break;
-case 4:return 'PR_PRINTLN'
+case 4:return 'BOOLEAN'
 break;
-case 5:return 8
+case 5: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 'STRING'; 
 break;
-case 6:return 9
+case 6: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 'CHAR'; 
 break;
-case 7:return 10
+case 7:return 7
 break;
-case 8:return 7
+case 8:return 16
 break;
-case 9:return 5
+case 9:return 17
 break;
-case 10:/*Instertar codigo para recuperar el error lexico*/
+case 10:return 'PR_IF'
+break;
+case 11:return 'POTENCIA'
+break;
+case 12:return 'SUMA'
+break;
+case 13:return 'RESTA'
+break;
+case 14:return 'MULTIPLICACION'
+break;
+case 15:return 'DIVISION'
+break;
+case 16:return 'MODULO'
+break;
+case 17:return 'LLAVE_A'
+break;
+case 18:return 'LLAVE_C'
+break;
+case 19:return 'CORCH_A'
+break;
+case 20:return 'CORCH_C'
+break;
+case 21:return 9
+break;
+case 22:return 10
+break;
+case 23:return 'OR'
+break;
+case 24:return 'AND'
+break;
+case 25:return 'IGUAL'
+break;
+case 26:return 'NO_IGUAL'
+break;
+case 27:return 'MAYOR_IGUAL'
+break;
+case 28:return 'MENOR_IGUAL'
+break;
+case 29:return 'MAYOR'
+break;
+case 30:return 'MENOR'
+break;
+case 31:return 'NOT'
+break;
+case 32:return 'PUNTO_Y_COMA'
+break;
+case 33:return 11
+break;
+case 34:return 'COMA'
+break;
+case 35:return 'ASIGNACION'
+break;
+case 36:return 8
+break;
+case 37:return 5
+break;
+case 38:/*Instertar codigo para recuperar el error lexico*/
             //error
             ErrorLS = new Object();
             ErrorLS.lexema = yy_.yytext;
@@ -624,8 +677,8 @@ case 10:/*Instertar codigo para recuperar el error lexico*/
 break;
 }
 },
-rules: [/^(?:[ \r\n]+)/,/^(?:[\t]+)/,/^(?:def\b)/,/^(?:print\b)/,/^(?:println\b)/,/^(?:\()/,/^(?:\))/,/^(?::)/,/^(?:[a-zA-Z]+[a-zA-Z0-9_]*)/,/^(?:$)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10],"inclusive":true}}
+rules: [/^(?:[ \r\n]+)/,/^(?:[\t]+)/,/^(?:[0-9]+\.[0-9]+)/,/^(?:[0-9]+)/,/^(?:true|false\b)/,/^(?:"[^"]*")/,/^(?:'.')/,/^(?:def\b)/,/^(?:print\b)/,/^(?:println\b)/,/^(?:if\b)/,/^(?:\*\*)/,/^(?:[+])/,/^(?:[-])/,/^(?:[*])/,/^(?:[/])/,/^(?:[%])/,/^(?:\{)/,/^(?:\})/,/^(?:\[)/,/^(?:\])/,/^(?:\()/,/^(?:\))/,/^(?:or\b)/,/^(?:and\b)/,/^(?:==)/,/^(?:!=)/,/^(?:>=)/,/^(?:<=)/,/^(?:>)/,/^(?:<)/,/^(?:not\b)/,/^(?:;)/,/^(?::)/,/^(?:,)/,/^(?:=)/,/^(?:[a-zA-Z]+[a-zA-Z0-9_]*)/,/^(?:$)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38],"inclusive":true}}
 });
 return lexer;
 })();

@@ -1,43 +1,43 @@
-export class FiltroTipoDato{
+export class FiltroTipoDatoJava{
 
     //tipos de datos
-    public INT:String = "int";
-    public DOUBLE:String = "double";
-    public CHAR:String = "char";
-    public STRING:String = "String";
-    public BOOLEAN:String = "boolean";
+    public INT:string = "int";
+    public DOUBLE:string = "double";
+    public CHAR:string = "char";
+    public STRING:string = "String";
+    public BOOLEAN:string = "boolean";
 
     //void para complemento de tipo de metodo
-    public VOID:String = "void";
+    public VOID:string = "void";
 
     //tipos de roles de simbolos
-    public METODO:String = "metodo";
-    public VARIABLE:String = "variable";
-    public CLASE:String = "clase";
-    public PARAMETRO:String = "parametro";
+    public METODO:string = "metodo";
+    public VARIABLE:string = "variable";
+    public CLASE:string = "clase";
+    public PARAMETRO:string = "parametro";
 
     //tipos de operaciones
-    public POTENCIA:String = "^";
-    public MODULO:String = "%";
-    public DIVISION:String = "/";
-    public MULTIPLICACION:String = "*";
-    public SUMA:String = "+";
-    public RESTA:String = "-";
-    public IGUAL:String = "==";
-    public NO_IGUAL:String = "!=";
-    public MAYOR:String = ">";
-    public MENOR:String = "<";
-    public MAYOR_IGUAL:String = ">=";
-    public MENOR_IGUAL:String = "<=";
-    public AND:String = "&&";
-    public OR:String = "|";
-    public XOR:String = "||";
+    public POTENCIA:string = "^";
+    public MODULO:string = "%";
+    public DIVISION:string = "/";
+    public MULTIPLICACION:string = "*";
+    public SUMA:string = "+";
+    public RESTA:string = "-";
+    public IGUAL:string = "==";
+    public NO_IGUAL:string = "!=";
+    public MAYOR:string = ">";
+    public MENOR:string = "<";
+    public MAYOR_IGUAL:string = ">=";
+    public MENOR_IGUAL:string = "<=";
+    public AND:string = "&&";
+    public OR:string = "|";
+    public XOR:string = "||";
 
-    public PUBLIC:String = "public";
-    public PRIVATE:String = "private";
-    public DEFAULT:String = "default";
+    public PUBLIC:string = "public";
+    public PRIVATE:string = "private";
+    public DEFAULT:string = "default";
 
-    public filtrarOperacion(tipo1:String, tipo2:String, tipoOperacion:String):String{
+    public filtrarOperacion(tipo1:String, tipo2:String, tipoOperacion:String):string{
         if(tipoOperacion==this.POTENCIA){
             if(tipo1 == this.INT){
                 if(tipo2 == this.INT){
@@ -48,8 +48,8 @@ export class FiltroTipoDato{
                     return null;
                 }
             }else if(tipo1 == this.DOUBLE){
-                if(tipo2 == this.DOUBLE){
-                    return this.INT;
+                if(tipo2 == this.INT){
+                    return this.DOUBLE;
                 }else if(tipo2 == this.DOUBLE){
                     return this.DOUBLE;
                 }else{
@@ -93,32 +93,8 @@ export class FiltroTipoDato{
                 return null;
             }
         }else if(tipoOperacion==this.DIVISION){
-            if(tipo1==this.INT){
-                if(tipo2==this.INT){
-                    return this.DOUBLE;
-                }else if(tipo2 == this.DOUBLE){
-                    return this.DOUBLE;
-                }else if(tipo2 == this.CHAR){
-                    return this.DOUBLE;
-                }else{
-                    return null;
-                }
-            }else if(tipo1==this.DOUBLE){
-                if(tipo2==this.INT){
-                    return this.DOUBLE;
-                }else if(tipo2 == this.DOUBLE){
-                    return this.DOUBLE;
-                }else if(tipo2 == this.CHAR){
-                    return this.DOUBLE;
-                }else{
-                    return null;
-                }
-            }else if(tipo1==this.CHAR){
-                if(tipo2==this.INT){
-                    return this.DOUBLE;
-                }else if(tipo2 == this.DOUBLE){
-                    return this.DOUBLE;
-                }else if(tipo2 == this.CHAR){
+            if(tipo1==this.INT || tipo1 == this.DOUBLE || tipo1 == this.CHAR){
+                if(tipo2==this.INT || tipo2 == this.DOUBLE || tipo2 == this.CHAR){
                     return this.DOUBLE;
                 }else{
                     return null;
@@ -131,7 +107,7 @@ export class FiltroTipoDato{
                 if(tipo2==this.INT){
                     return this.INT;
                 }else if(tipo2 == this.DOUBLE){
-                    return this.INT;
+                    return this.DOUBLE;
                 }else if(tipo2 == this.CHAR){
                     return this.INT;
                 }else{
@@ -139,11 +115,11 @@ export class FiltroTipoDato{
                 }
             }else if(tipo1==this.DOUBLE){
                 if(tipo2==this.INT){
-                    return this.INT;
+                    return this.DOUBLE;
                 }else if(tipo2 == this.DOUBLE){
-                    return this.INT;
+                    return this.DOUBLE;
                 }else if(tipo2 == this.CHAR){
-                    return this.INT;
+                    return this.DOUBLE;
                 }else{
                     return null;
                 }
@@ -151,7 +127,7 @@ export class FiltroTipoDato{
                 if(tipo2==this.INT){
                     return this.INT;
                 }else if(tipo2 == this.DOUBLE){
-                    return this.INT;
+                    return this.DOUBLE;
                 }else if(tipo2 == this.CHAR){
                     return this.INT;
                 }else{

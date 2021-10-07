@@ -1,12 +1,52 @@
 
-%{ let indent = [0]; %}
+%{ let indent = [0]; let dedent = 0; %}
 
 %lex
 
 %%
 
+/*
 [\n\r]+([ \t]+[\n\r]+)*                 return 'SALTO_DE_LINEA'
+*/
+
+(\r\n|\r|\n)+[ \t]*                     {
+                                            indent = indent || [0];
+                                            dedent = dedent || 0;
+
+                                            if (dedent) {
+                                                dedent--;
+                                                this.unput("");
+                                                console.log(":"+yytext+":");
+                                                return 'DEDENT';
+                                            }
+                                            
+                                            if(yytext!=""){
+                                                let indentacion = yytext.replace(/^(\r\n|\r|\n)+/, '').length;
+                                                console.log("indentacion->"+indentacion);
+                                                if (indentacion > indent[0]) {
+                                                indent.unshift(indentacion);
+                                                return 'INDENT';
+                                                }
+
+                                                let dedents = [];
+
+                                                while (indentacion < indent[0]) {
+                                                dedents.push('DEDENT');
+                                                indent.shift();
+                                                }
+
+                                                if (dedents.length) {
+                                                dedent = dedents.length - 1;
+                                                this.unput("");
+                                                return 'DEDENT';
+                                                }
+
+                                                return 'SALTO_DE_LINEA';
+                                            }
+                                        }
+
 [ ]+                                    { /*ignorar por el momento*/ }
+/*
 [\t]+                                   {
                                             let indentacion = yytext.length;
                                             if (indentacion > indent[0]) {
@@ -23,6 +63,7 @@
 
                                             if (tokens.length) return tokens;
                                         }
+*/
 
 [0-9]+"."[0-9]+                         return 'DOUBLE'
 [0-9]+                                  return 'INT'
@@ -41,36 +82,45 @@
 "else"                                  return 'PR_ELSE'
 
 //simbolos
-"**"                            return 'POTENCIA'
-[+]                             return 'SUMA'
-[-]                             return 'RESTA'
-[*]                             return 'MULTIPLICACION'
-[/]                             return 'DIVISION'
-[%]                             return 'MODULO'
-"{"                             return 'LLAVE_A'
-"}"                             return 'LLAVE_C'
-"["                             return 'CORCH_A'
-"]"                             return 'CORCH_C'
-"("                             return 'PARENT_A'
-")"                             return 'PARENT_C'
-"or"                            return 'OR'
-"and"                           return 'AND'
-"=="                            return 'IGUAL'
-"!="                            return 'NO_IGUAL'
-">="                            return 'MAYOR_IGUAL'
-"<="                            return 'MENOR_IGUAL'
-">"                             return 'MAYOR'
-"<"                             return 'MENOR'
-"not"                           return 'NOT'
-";"                             return 'PUNTO_Y_COMA'
-":"                             return 'DOS_PUNTOS'
-","                             return 'COMA'
-"="                             return 'ASIGNACION'
+"**"                                    return 'POTENCIA'
+[+]                                     return 'SUMA'
+[-]                                     return 'RESTA'
+[*]                                     return 'MULTIPLICACION'
+[/]                                     return 'DIVISION'
+[%]                                     return 'MODULO'
+"{"                                     return 'LLAVE_A'
+"}"                                     return 'LLAVE_C'
+"["                                     return 'CORCH_A'
+"]"                                     return 'CORCH_C'
+"("                                     return 'PARENT_A'
+")"                                     return 'PARENT_C'
+"or"                                    return 'OR'
+"and"                                   return 'AND'
+"=="                                    return 'IGUAL'
+"!="                                    return 'NO_IGUAL'
+">="                                    return 'MAYOR_IGUAL'
+"<="                                    return 'MENOR_IGUAL'
+">"                                     return 'MAYOR'
+"<"                                     return 'MENOR'
+"not"                                   return 'NOT'
+";"                                     return 'PUNTO_Y_COMA'
+":"                                     return 'DOS_PUNTOS'
+","                                     return 'COMA'
+"="                                     return 'ASIGNACION'
 
 
 [a-zA-Z]+[a-zA-Z0-9_]*                  return 'ID'
 
-<<EOF>>                                 return 'EOF'
+<<EOF>>                                 {
+                                            if(insEsAbierta){
+                                                let finalTokens = [];
+                                                finalTokens.push('DEDENT');
+                                                finalTokens.push('EOF');
+                                                if(finalTokens.length) return finalTokens;
+                                            }else{
+                                                return 'EOF';
+                                            }
+                                        }
 .                               {/*Instertar codigo para recuperar el error lexico*/
             //error
             ErrorLS = new Object();
@@ -96,6 +146,8 @@
     let ambitoClase = true;
     let tipoDatoSwtich = "";
 
+    let insEsAbierta = false;
+
     exports.getErrores = function (){
         return errores;
     }
@@ -110,6 +162,8 @@
         ambitoClase = true;
         tipoDatoSwtich = "";
         indent = [0];
+
+        insEsAbierta = false;
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -186,22 +240,28 @@ a1 : declaracion_funcion
     | declaracion_funcion a1
     ;
 
+
+
 // DEFINICION DE FUNCION -------------------------------------------------------------------
 
-declaracion_funcion : def ID PARENT_A PARENT_C DOS_PUNTOS SALTO_DE_LINEA declaracion_funcion_p
+declaracion_funcion : def ID PARENT_A PARENT_C DOS_PUNTOS declaracion_funcion_p
     ;
 
 def : PR_DEF { cerrarAmbitos(); };
 
-declaracion_funcion_p : INDENT instrucciones_metodo
+declaracion_funcion_p : INDENT instrucciones_metodo DEDENT
     | /*Lambda*/
     ;
 //-----------------------------------------------------------------------------------------
 
+
+
 // INSTRUCCIONES DENTRO DE METODO ----------------------------------------------------------
 
-instrucciones_metodo : instruccion SALTO_DE_LINEA
+instrucciones_metodo : instruccion
     | instruccion SALTO_DE_LINEA instrucciones_metodo
+    | instruccion_p
+    | instruccion_p instrucciones_metodo
     ;
 
 instruccion : PR_PRINT
@@ -209,7 +269,12 @@ instruccion : PR_PRINT
     | manejo_variable
     ;
 
+instruccion_p: condicional_if
+    ;
+
 //-----------------------------------------------------------------------------------------
+
+
 
 //MANEJO DE VARIABLES ---------------------------------------------------------------------
 
@@ -217,10 +282,35 @@ manejo_variable : ID ASIGNACION expresion_multiple;
 
 //-----------------------------------------------------------------------------------------
 
+
+
+
 // CONDICIONAL IF -------------------------------------------------------------------------
 
-condicional_if : PR_IF PARENT_A expresion_multiple PARENT_C DOS_PUNTOS  
+condicional_if : PR_IF condicional_if_p DOS_PUNTOS
+    INDENT instrucciones_metodo DEDENT {
+        insEsAbierta = false;
+    }
     ;
+
+condicional_if_p : PARENT_A expresion_multiple PARENT_C {
+        insEsAbierta = true;
+    }
+    ;
+
+condicional_elif : PR_ELIF PARENT_A expresion_multiple PARENT_C DOS_PUNTOS SALTO_DE_LINEA
+    INDENT instrucciones_metodo DEDENT
+    ;
+
+condicional_else : PR_ELSE DOS_PUNTOS SALTO_DE_LINEA INDENT instrucciones_metodo DEDENT
+    ;
+
+//-----------------------------------------------------------------------------------------
+
+
+
+
+
 
 // EXPRESION MULTIPLE ---------------------------------------------------------------------
 
@@ -332,8 +422,6 @@ f3bp : POTENCIA { $$ = yy.POTENCIA; }
 
 
 //---------------------G3---------------------
-
-//+++++++++++++++++++++++++=PARENTESIS Y NOT
 
 g3 : PARENT_A a3 PARENT_C { $$ = $2; }
     | NOT ID    {

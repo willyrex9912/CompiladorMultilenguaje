@@ -5,65 +5,43 @@
 
 %%
 
-/*
-[\n\r]+([ \t]+[\n\r]+)*                 return 'SALTO_DE_LINEA'
-*/
-
 (\r\n|\r|\n)+[ \t]*                     {
                                             indent = indent || [0];
                                             dedent = dedent || 0;
 
                                             if (dedent) {
                                                 dedent--;
-                                                this.unput("");
-                                                console.log(":"+yytext+":");
+                                                if(dedent){
+                                                    this.unput(yytext);
+                                                }
                                                 return 'DEDENT';
                                             }
                                             
-                                            if(yytext!=""){
-                                                let indentacion = yytext.replace(/^(\r\n|\r|\n)+/, '').length;
-                                                console.log("indentacion->"+indentacion);
-                                                if (indentacion > indent[0]) {
-                                                indent.unshift(indentacion);
-                                                return 'INDENT';
-                                                }
-
-                                                let dedents = [];
-
-                                                while (indentacion < indent[0]) {
-                                                dedents.push('DEDENT');
-                                                indent.shift();
-                                                }
-
-                                                if (dedents.length) {
-                                                dedent = dedents.length - 1;
-                                                this.unput("");
-                                                return 'DEDENT';
-                                                }
-
-                                                return 'SALTO_DE_LINEA';
-                                            }
-                                        }
-
-[ ]+                                    { /*ignorar por el momento*/ }
-/*
-[\t]+                                   {
-                                            let indentacion = yytext.length;
+                                            let indentacion = yytext.replace(/^(\r\n|\r|\n)+/, '').length;
                                             if (indentacion > indent[0]) {
                                                 indent.unshift(indentacion);
-                                                return "INDENT";
+                                                return 'INDENT';
                                             }
 
-                                            var tokens = [];
+                                            let dedents = [];
 
                                             while (indentacion < indent[0]) {
-                                                tokens.push("DEDENT");
+                                                dedents.push('DEDENT');
                                                 indent.shift();
                                             }
 
-                                            if (tokens.length) return tokens;
+                                            if (dedents.length) {
+                                                dedent = dedents.length - 1;
+                                                if(dedent){
+                                                    this.unput(yytext);
+                                                }
+                                                return 'DEDENT';
+                                            }
+                                            return 'SALTO_DE_LINEA';
                                         }
-*/
+
+[ \t]+                                  { /*ignorar por el momento*/ }
+
 
 [0-9]+"."[0-9]+                         return 'DOUBLE'
 [0-9]+                                  return 'INT'
@@ -111,16 +89,8 @@
 
 [a-zA-Z]+[a-zA-Z0-9_]*                  return 'ID'
 
-<<EOF>>                                 {
-                                            if(insEsAbierta){
-                                                let finalTokens = [];
-                                                finalTokens.push('DEDENT');
-                                                finalTokens.push('EOF');
-                                                if(finalTokens.length) return finalTokens;
-                                            }else{
-                                                return 'EOF';
-                                            }
-                                        }
+<<EOF>>                                 return 'EOF'
+
 .                               {/*Instertar codigo para recuperar el error lexico*/
             //error
             ErrorLS = new Object();
@@ -146,8 +116,6 @@
     let ambitoClase = true;
     let tipoDatoSwtich = "";
 
-    let insEsAbierta = false;
-
     exports.getErrores = function (){
         return errores;
     }
@@ -162,8 +130,7 @@
         ambitoClase = true;
         tipoDatoSwtich = "";
         indent = [0];
-
-        insEsAbierta = false;
+        dedent = 0;
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -223,9 +190,6 @@
         }
     }
 
-    function cerrarAmbitos(){
-        indent = [0];
-    }
 
 %}
 
@@ -244,13 +208,11 @@ a1 : declaracion_funcion
 
 // DEFINICION DE FUNCION -------------------------------------------------------------------
 
-declaracion_funcion : def ID PARENT_A PARENT_C DOS_PUNTOS declaracion_funcion_p
+declaracion_funcion : PR_DEF ID PARENT_A PARENT_C DOS_PUNTOS declaracion_funcion_p
     ;
 
-def : PR_DEF { cerrarAmbitos(); };
-
 declaracion_funcion_p : INDENT instrucciones_metodo DEDENT
-    | /*Lambda*/
+    | SALTO_DE_LINEA
     ;
 //-----------------------------------------------------------------------------------------
 
@@ -288,14 +250,10 @@ manejo_variable : ID ASIGNACION expresion_multiple;
 // CONDICIONAL IF -------------------------------------------------------------------------
 
 condicional_if : PR_IF condicional_if_p DOS_PUNTOS
-    INDENT instrucciones_metodo DEDENT {
-        insEsAbierta = false;
-    }
+    INDENT instrucciones_metodo DEDENT
     ;
 
-condicional_if_p : PARENT_A expresion_multiple PARENT_C {
-        insEsAbierta = true;
-    }
+condicional_if_p : PARENT_A expresion_multiple PARENT_C
     ;
 
 condicional_elif : PR_ELIF PARENT_A expresion_multiple PARENT_C DOS_PUNTOS SALTO_DE_LINEA

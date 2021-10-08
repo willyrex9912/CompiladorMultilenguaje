@@ -126,49 +126,57 @@
     }
 
     function produccion(yy,$1,$2,linea,columna){
-        if($2!=null){
-            //Analizar tipo de resultado
+        try{
             if($2!=null){
-                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
-                if(tipoResultado!=null){
-                    operacion = new Object();
-                    operacion.tipoResultado = tipoResultado;
-                    operacion.operacionPendiente = $1;
-                    return operacion;
+                //Analizar tipo de resultado
+                if($2!=null){
+                    let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                    if(tipoResultado!=null){
+                        operacion = new Object();
+                        operacion.tipoResultado = tipoResultado;
+                        operacion.operacionPendiente = $1;
+                        return operacion;
+                    }else{
+                        errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
+                        return null;
+                    }
                 }else{
-                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
                     return null;
                 }
             }else{
-                return null;
+                return $1;
             }
-        }else{
-            return $1;
+        }catch(error){
+            return null;
         }
     }
 
     function produccionPrima(yy,$1,$2,$3,linea,columna){
-        if($3==null){
-            operacion = new Object();
-            operacion.tipoResultado = $2.tipoResultado;
-            operacion.operacionPendiente = $1;
-            return operacion;
-        }else{
-            //Analizar tipo de resultado
-            if($2!=null){
-                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
-                if(tipoResultado!=null){
-                    operacion = new Object();
-                    operacion.tipoResultado = tipoResultado;
-                    operacion.operacionPendiente = $1;
-                    return operacion;
+        try{
+            if($3==null){
+                operacion = new Object();
+                operacion.tipoResultado = $2.tipoResultado;
+                operacion.operacionPendiente = $1;
+                return operacion;
+            }else{
+                //Analizar tipo de resultado
+                if($2!=null){
+                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                    if(tipoResultado!=null){
+                        operacion = new Object();
+                        operacion.tipoResultado = tipoResultado;
+                        operacion.operacionPendiente = $1;
+                        return operacion;
+                    }else{
+                        errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                        return null;
+                    }
                 }else{
-                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
                     return null;
                 }
-            }else{
-                return null;
             }
+        }catch(error){
+            return null;
         }
     }
 

@@ -144,49 +144,57 @@
     }
 
     function produccion(yy,$1,$2,linea,columna){
-        if($2!=null){
-            //Analizar tipo de resultado
+        try{
             if($2!=null){
-                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
-                if(tipoResultado!=null){
-                    operacion = new Object();
-                    operacion.tipoResultado = tipoResultado;
-                    operacion.operacionPendiente = $1;
-                    return operacion;
+                //Analizar tipo de resultado
+                if($2!=null){
+                    let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                    if(tipoResultado!=null){
+                        operacion = new Object();
+                        operacion.tipoResultado = tipoResultado;
+                        operacion.operacionPendiente = $1;
+                        return operacion;
+                    }else{
+                        errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
+                        return null;
+                    }
                 }else{
-                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
                     return null;
                 }
             }else{
-                return null;
+                return $1;
             }
-        }else{
-            return $1;
+        }catch(error){
+            return null;
         }
     }
 
     function produccionPrima(yy,$1,$2,$3,linea,columna){
-        if($3==null){
-            operacion = new Object();
-            operacion.tipoResultado = $2.tipoResultado;
-            operacion.operacionPendiente = $1;
-            return operacion;
-        }else{
-            //Analizar tipo de resultado
-            if($2!=null){
-                let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
-                if(tipoResultado!=null){
-                    operacion = new Object();
-                    operacion.tipoResultado = tipoResultado;
-                    operacion.operacionPendiente = $1;
-                    return operacion;
+        try{
+            if($3==null){
+                operacion = new Object();
+                operacion.tipoResultado = $2.tipoResultado;
+                operacion.operacionPendiente = $1;
+                return operacion;
+            }else{
+                //Analizar tipo de resultado
+                if($2!=null){
+                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                    if(tipoResultado!=null){
+                        operacion = new Object();
+                        operacion.tipoResultado = tipoResultado;
+                        operacion.operacionPendiente = $1;
+                        return operacion;
+                    }else{
+                        errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                        return null;
+                    }
                 }else{
-                    errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
                     return null;
                 }
-            }else{
-                return null;
             }
+        }catch(error){
+            return null;
         }
     }
 
@@ -231,7 +239,7 @@ instruccion : PR_PRINT
     | manejo_variable
     ;
 
-instruccion_p: condicional_if
+instruccion_p: instruccion_if
     ;
 
 //-----------------------------------------------------------------------------------------
@@ -247,20 +255,47 @@ manejo_variable : ID ASIGNACION expresion_multiple;
 
 
 
-// CONDICIONAL IF -------------------------------------------------------------------------
+// INSTRUCCION IF -------------------------------------------------------------------------
 
-condicional_if : PR_IF condicional_if_p DOS_PUNTOS
+instruccion_if : PR_IF instruccion_if_p DOS_PUNTOS
+    INDENT instrucciones_metodo DEDENT instruccion_if_b_p
+    ;
+
+instruccion_if_p : PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($2.tipoResultado!=yy.BOOLEAN){
+            errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$2.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(error){
+        }
+    }
+    ;
+
+instruccion_if_b_p : instrucciones_elif
+    | instrucciones_elif instruccion_else
+    | instruccion_else
+    | /*Lambda*/
+    ;
+
+instrucciones_elif : instruccion_elif
+    | instrucciones_elif instruccion_elif
+    ;
+
+instruccion_elif : PR_ELIF instruccion_elif_p DOS_PUNTOS
     INDENT instrucciones_metodo DEDENT
     ;
 
-condicional_if_p : PARENT_A expresion_multiple PARENT_C
+instruccion_elif_p : PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($2.tipoResultado!=yy.BOOLEAN){
+            errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$2.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(error){
+        }
+    }
     ;
 
-condicional_elif : PR_ELIF PARENT_A expresion_multiple PARENT_C DOS_PUNTOS SALTO_DE_LINEA
-    INDENT instrucciones_metodo DEDENT
-    ;
-
-condicional_else : PR_ELSE DOS_PUNTOS SALTO_DE_LINEA INDENT instrucciones_metodo DEDENT
+instruccion_else : PR_ELSE DOS_PUNTOS INDENT instrucciones_metodo DEDENT
     ;
 
 //-----------------------------------------------------------------------------------------

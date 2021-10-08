@@ -56,6 +56,15 @@ export class EditorComponent implements OnInit, AfterViewInit {
     });
   }
 
+  public procesarArchivo(archivos:FileList){
+    let reader:FileReader = new FileReader();
+    reader.readAsText(archivos.item(0));
+    reader.onload = (e) => {
+        const aceEditor = ace.edit(this.editor.nativeElement);
+        aceEditor.session.setValue(e.target.result.toString());
+    };
+  }
+
   public getLinea(){
     return this.linea;
   }

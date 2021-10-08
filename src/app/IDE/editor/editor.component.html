@@ -1,11 +1,22 @@
 <div class="row">
     <div class="col-3">
-        <div class="container">
-            <h3>
-                Proyecto
-            </h3>
-            <div class="mb-3">
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="25" readonly ></textarea>
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-11">
+                <div class="row" style="margin-top: 15px; margin-bottom: 30px;">
+                    <h5 for="files" class="form-label" style="margin-bottom: 15px;">Seleccione archivo</h5>
+                    <input class="form-control" type="file" id="files" (change)="procesarArchivo($event.target.files)">
+                </div>
+                <div class="row">
+                    <div class="container">
+                        <h3>
+                            Proyecto
+                        </h3>
+                        <div class="mb-3">
+                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="25" readonly ></textarea>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>    

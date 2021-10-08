@@ -58,6 +58,9 @@
 "if"                                    return 'PR_IF'
 "elif"                                  return 'PR_ELIF'
 "else"                                  return 'PR_ELSE'
+"for"                                   return 'PR_FOR'
+"in"                                    return 'PR_IN'
+"range"                                 return 'PR_RANGE'
 
 //simbolos
 "**"                                    return 'POTENCIA'
@@ -210,6 +213,21 @@ inicio : a1 EOF
 
 a1 : declaracion_funcion
     | declaracion_funcion a1
+    | err a1
+    | err
+    ;
+
+
+err : error {
+            //error
+            ErrorLS = new Object();
+            ErrorLS.lexema = yytext;
+            ErrorLS.linea = this._$.first_line;
+            ErrorLS.columna = this._$.first_column;
+            ErrorLS.tipo = 'Sintáctico';
+            ErrorLS.descripcion = '';
+            errores.push(ErrorLS);
+    }
     ;
 
 
@@ -232,6 +250,8 @@ instrucciones_metodo : instruccion
     | instruccion SALTO_DE_LINEA instrucciones_metodo
     | instruccion_p
     | instruccion_p instrucciones_metodo
+    | err instrucciones_metodo
+    | err
     ;
 
 instruccion : PR_PRINT
@@ -240,6 +260,7 @@ instruccion : PR_PRINT
     ;
 
 instruccion_p: instruccion_if
+    | ciclo_for
     ;
 
 //-----------------------------------------------------------------------------------------
@@ -252,6 +273,29 @@ manejo_variable : ID ASIGNACION expresion_multiple;
 
 //-----------------------------------------------------------------------------------------
 
+
+// CICLO FOR ------------------------------------------------------------------------------
+
+ciclo_for : PR_FOR ID PR_IN PR_RANGE PARENT_A range PARENT_C DOS_PUNTOS 
+    INDENT instrucciones_metodo DEDENT
+    ;
+
+range: numero COMA numero COMA numero
+    | numero COMA numero
+    | numero
+    ;
+
+numero : expresion_multiple {
+        try{
+            if($1.tipoResultado!=yy.INT && $1.tipoResultado!=yy.DOUBLE){
+                errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+$1.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(error){
+        }
+    }
+    ;
+
+//-----------------------------------------------------------------------------------------
 
 
 

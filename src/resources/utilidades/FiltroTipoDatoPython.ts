@@ -6,6 +6,10 @@ export class FiltroTipoDatoPython{
     public STRING:string = "String";
     public BOOLEAN:string = "boolean";
 
+    //private para variables
+    public PUBLIC:string = "public";
+    public PRIVATE:string = "private";
+
     //tipos de roles de simbolos
     public METODO:string = "metodo";
     public VARIABLE:string = "variable";

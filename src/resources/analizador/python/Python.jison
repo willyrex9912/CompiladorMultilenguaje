@@ -201,14 +201,74 @@
         }
     }
 
+    function agregarSimbolo(id,tipo,ambito,visibilidad,rol){
+        let simboloNuevo = new Object();
+        simboloNuevo.id = id;
+        simboloNuevo.tipo = tipo;
+        simboloNuevo.ambito = ambito;
+        simboloNuevo.visibilidad = visibilidad;
+        simboloNuevo.rol = rol;
+        tablaDeSimbolos.push(simboloNuevo);
+    }
+
+    function agregarSimboloParametro(id,tipo,visibilidad,rol){
+        let simboloNuevo = new Object();
+        simboloNuevo.id = id;
+        simboloNuevo.tipo = tipo;
+        simboloNuevo.ambito = "";
+        simboloNuevo.visibilidad = visibilidad;
+        simboloNuevo.rol = rol;
+        simbolosParametros.push(simboloNuevo);
+    }
+
+    function pushSimbolosParametros(){
+        while(simbolosParametros.length>0){
+            tablaDeSimbolos.push(simbolosParametros.pop());
+            tablaDeSimbolos.at(-1).ambito = ambitoActual.at(-1);
+        }
+    }
+
+    function validarVariable(id,yy){
+        let tabla = tablaDeSimbolos.slice();
+        while(tabla.length>0){
+            let sim = tabla.pop();
+            if((sim.rol==yy.VARIABLE || sim.rol==yy.PARAMETRO) && sim.id==id){
+                let ambitos = ambitoActual.slice();
+                while(ambitos.length>0){
+                    if(sim.ambito==ambitos.pop()){
+                        return sim;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
 %}
 
 %%
 
 /** gramatica **/
-inicio : a1 EOF
-    | SALTO_DE_LINEA a1 EOF
+inicio : a1 EOF             {
+                                for(const simbolo in tablaDeSimbolos){
+                                    console.log("-----------------");
+                                    console.log("Id: "+tablaDeSimbolos[simbolo].id);
+                                    console.log("Tipo: "+tablaDeSimbolos[simbolo].tipo);
+                                    console.log("Ambito: "+tablaDeSimbolos[simbolo].ambito);
+                                    console.log("Visibilidad: "+tablaDeSimbolos[simbolo].visibilidad);
+                                    console.log("Rol: "+tablaDeSimbolos[simbolo].rol);
+                                }
+                            }
+    | SALTO_DE_LINEA a1 EOF {
+                                for(const simbolo in tablaDeSimbolos){
+                                    console.log("-----------------");
+                                    console.log("Id: "+tablaDeSimbolos[simbolo].id);
+                                    console.log("Tipo: "+tablaDeSimbolos[simbolo].tipo);
+                                    console.log("Ambito: "+tablaDeSimbolos[simbolo].ambito);
+                                    console.log("Visibilidad: "+tablaDeSimbolos[simbolo].visibilidad);
+                                    console.log("Rol: "+tablaDeSimbolos[simbolo].rol);
+                                }
+                            }
     ;
 
 a1 : declaracion_funcion
@@ -234,12 +294,44 @@ err : error {
 
 // DEFINICION DE FUNCION -------------------------------------------------------------------
 
-declaracion_funcion : PR_DEF ID PARENT_A PARENT_C DOS_PUNTOS declaracion_funcion_p
+declaracion_funcion : declaracion_funcion_p DOS_PUNTOS declaracion_funcion_b_p {
+        ambitoActual.pop();
+    }
     ;
 
-declaracion_funcion_p : INDENT instrucciones_metodo DEDENT
+declaracion_funcion_p : PR_DEF ID PARENT_A parametros_b_p PARENT_C {
+        let funcion = $2+cadParametros;
+        ambitoActual.push(funcion);
+        agregarSimbolo(funcion,"","global",yy.PUBLIC,yy.METODO);
+        cadParametros = "";
+        pushSimbolosParametros();
+    }
+    ;
+
+declaracion_funcion_b_p : INDENT instrucciones_metodo DEDENT
     | SALTO_DE_LINEA
     ;
+
+
+
+parametros : parametros_p 
+    | parametros_p COMA parametros
+    ;
+
+parametros_p : ID { 
+        cadParametros+="_"+$1; 
+        if(simbolosParametros.some(w => w.id === $1)){
+            errorSemantico("La variable "+$1+" ya ha sido declarada como parámetro.",this._$.first_line,this._$.first_column);
+        }else{
+            agregarSimboloParametro($1,"object",yy.PRIVATE,yy.PARAMETRO);
+        }
+    }
+    ;
+
+parametros_b_p : parametros
+    | /*Lambda*/ 
+    ;
+
 //-----------------------------------------------------------------------------------------
 
 
@@ -269,7 +361,19 @@ instruccion_p: instruccion_if
 
 //MANEJO DE VARIABLES ---------------------------------------------------------------------
 
-manejo_variable : ID ASIGNACION expresion_multiple;
+manejo_variable : ID ASIGNACION expresion_multiple {
+        try{
+            let sim_id_a = validarVariable($1,yy);
+            if(sim_id_a==null){
+                //Declaracion y asignacion
+                agregarSimbolo($1,$3.tipoResultado,ambitoActual.at(-1),yy.PRIVATE,yy.VARIABLE);
+            }else{
+                //Asignacion
+            }
+        }catch(error){
+        }
+    }
+    ;
 
 //-----------------------------------------------------------------------------------------
 
@@ -288,7 +392,7 @@ range: numero COMA numero COMA numero
 numero : expresion_multiple {
         try{
             if($1.tipoResultado!=yy.INT && $1.tipoResultado!=yy.DOUBLE){
-                errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+$1.tipoResultado+" .",this._$.first_line,this._$.first_column);
+                errorSemantico("Tipo de dato requerido : "+yy.INT+" , "+yy.DOUBLE+" . Obtenido: "+$1.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
         }catch(error){
         }

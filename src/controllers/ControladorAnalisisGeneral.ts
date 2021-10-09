@@ -93,6 +93,9 @@ export class ControladorAnalisisGeneral{
         yy.STRING = this.filtroTipoDatoPython.STRING;
         yy.BOOLEAN = this.filtroTipoDatoPython.BOOLEAN;
 
+        yy.PUBLIC = this.filtroTipoDatoPython.PUBLIC;
+        yy.PRIVATE = this.filtroTipoDatoPython.PRIVATE;
+
         yy.METODO = this.filtroTipoDatoPython.METODO;
         yy.VARIABLE = this.filtroTipoDatoPython.VARIABLE;
         yy.PARAMETRO = this.filtroTipoDatoPython.PARAMETRO;

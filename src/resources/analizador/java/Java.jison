@@ -483,8 +483,8 @@ parametros : parametros_p
 
 parametros_p : tipo ID { 
         cadParametros+="_"+$1; 
-        if(existeVariableMetodo($1,ambitoActual.at(-1),yy.VARIABLE)){
-            errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+        if(simbolosParametros.some(w => w.id === $2)){
+            errorSemantico("La variable "+$2+" ya ha sido definida como parámetro.",this._$.first_line,this._$.first_column);
         }else{
             agregarSimboloParametro($2,$1,yy.PRIVATE,yy.PARAMETRO);
         }

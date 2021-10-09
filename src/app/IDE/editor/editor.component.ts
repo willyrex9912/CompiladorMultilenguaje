@@ -41,6 +41,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   
 
   public compilar(){
+    console.clear();
     const aceEditor = ace.edit(this.editor.nativeElement);
     this.txtConsola = this.analizador.analizar(aceEditor.getValue());
   }

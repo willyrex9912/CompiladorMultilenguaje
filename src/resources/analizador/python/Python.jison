@@ -118,6 +118,7 @@
     let cadParametros = "";
     let ambitoClase = true;
     let tipoDatoSwtich = "";
+    let vals = [];
 
     exports.getErrores = function (){
         return errores;
@@ -134,6 +135,7 @@
         tipoDatoSwtich = "";
         indent = [0];
         dedent = 0;
+        vals.splice(0, vals.length);
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -361,19 +363,45 @@ instruccion_p: instruccion_if
 
 //MANEJO DE VARIABLES ---------------------------------------------------------------------
 
-manejo_variable : ID ASIGNACION expresion_multiple {
-        try{
-            let sim_id_a = validarVariable($1,yy);
-            if(sim_id_a==null){
-                //Declaracion y asignacion
-                agregarSimbolo($1,$3.tipoResultado,ambitoActual.at(-1),yy.PRIVATE,yy.VARIABLE);
-            }else{
-                //Asignacion
+manejo_variable: ids ASIGNACION valores {
+        if(ids.length == vals.length){
+            while(ids.length){
+                try{
+                    id_a = ids.pop();
+                    let sim_id_a = validarVariable(id_a,yy);
+                    if(sim_id_a==null){
+                        //Declaracion y asignacion
+                        agregarSimbolo(id_a,vals.pop().tipoResultado,ambitoActual.at(-1),yy.PRIVATE,yy.VARIABLE);
+                    }else{
+                        //Asignacion
+                    }
+                }catch(error){
+                }
             }
-        }catch(error){
+        }else{
+            errorSemantico("Los valores para asignar no son iguales a las variables indicadas. Esperado: "+ids.length+" Obtenido: "+vals.length+" .",this._$.first_line,this._$.first_column);
         }
     }
     ;
+
+ids : ID {
+        ids.push($1);
+    } 
+    | ID COMA ids {
+        ids.push($1);  
+    }
+    ;
+
+valores : expresion_multiple {
+        vals.push($1);
+    }
+    | expresion_multiple COMA valores {
+        vals.push($1);
+    }
+    ;
+
+
+
 
 //-----------------------------------------------------------------------------------------
 

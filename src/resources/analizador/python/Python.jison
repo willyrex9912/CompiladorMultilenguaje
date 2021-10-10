@@ -349,8 +349,7 @@ instrucciones_metodo : instruccion
     | err
     ;
 
-instruccion : PR_PRINT
-    | PR_PRINTLN
+instruccion : instruccion_imprimir
     | manejo_variable
     ;
 
@@ -404,6 +403,22 @@ valores : expresion_multiple {
 
 
 
+
+//-----------------------------------------------------------------------------------------
+
+// FUNCIONES PRINT Y PRINTLN --------------------------------------------------------------
+
+instruccion_imprimir : instruccion_imprimir_p PARENT_A expresion_multiple PARENT_C {
+        try{
+            //asignar instruccion
+        }catch(error){
+        }
+    }
+    ;
+
+instruccion_imprimir_p : PR_PRINT { $$ = "print"; }
+    | PR_PRINTLN { $$ = "println"; }
+    ;
 
 //-----------------------------------------------------------------------------------------
 

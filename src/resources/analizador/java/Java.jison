@@ -31,6 +31,8 @@
 "for"                           return 'PR_FOR'
 "switch"                        return 'PR_SWITCH'
 "case"                          return 'PR_CASE'
+"do"                            return 'PR_DO'
+"while"                         return 'PR_WHILE'
 "default"                       return 'PR_DEFAULT'
 "break"                         return 'PR_BREAK'
 "println"                       return 'PR_PRINTLN'
@@ -335,6 +337,8 @@ instrucciones_metodo_p : declaracion_variable PUNTO_Y_COMA
     | asignacion_variable PUNTO_Y_COMA
     | instruccion_if
     | ciclo_for
+    | ciclo_while
+    | ciclo_do_while
     | instruccion_switch
     | instruccion_print
     | instruccion_println
@@ -555,6 +559,43 @@ instruccion_else : PR_ELSE LLAVE_A LLAVE_C
 //------------------------------------------------------------------------------------
 
 
+
+// CICLO DO WHILE --------------------------------------------------------------------
+
+ciclo_do_while : parte_do LLAVE_A LLAVE_C 
+    PR_WHILE PARENT_A expresion_multiple PARENT_C PUNTO_Y_COMA {
+        try{
+            if($6.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$6.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
+    ;
+
+parte_do : PR_DO {
+
+    }
+    ;
+
+//------------------------------------------------------------------------------------
+
+// CICLO WHILE --------------------------------------------------------------------
+
+ciclo_while : parte_while LLAVE_A LLAVE_C
+    ;
+
+parte_while : PR_WHILE PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($3.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
+    ;
+
+//------------------------------------------------------------------------------------
 
 //CICLO FOR --------------------------------------------------------------------------
 

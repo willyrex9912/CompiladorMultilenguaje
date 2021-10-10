@@ -61,6 +61,7 @@
 "for"                                   return 'PR_FOR'
 "in"                                    return 'PR_IN'
 "range"                                 return 'PR_RANGE'
+"while"                                 return 'PR_WHILE'
 
 //simbolos
 "**"                                    return 'POTENCIA'
@@ -355,6 +356,7 @@ instruccion : PR_PRINT
 
 instruccion_p: instruccion_if
     | ciclo_for
+    | ciclo_while
     ;
 
 //-----------------------------------------------------------------------------------------
@@ -405,6 +407,23 @@ valores : expresion_multiple {
 
 //-----------------------------------------------------------------------------------------
 
+// CICLO WHILE ----------------------------------------------------------------------------
+
+ciclo_while : PR_WHILE ciclo_while_p DOS_PUNTOS
+    INDENT instrucciones_metodo DEDENT
+    ;
+
+ciclo_while_p : PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($2.tipoResultado!=yy.BOOLEAN){
+            errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$2.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(error){
+        }
+    }
+    ; 
+
+//-----------------------------------------------------------------------------------------
 
 // CICLO FOR ------------------------------------------------------------------------------
 

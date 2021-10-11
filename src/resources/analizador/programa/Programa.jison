@@ -73,6 +73,7 @@
     let errores = [];
     let tablaDeSimbolos = [];
     let ambitoActual = [];
+    let ids = [];
 
     exports.getErrores = function (){
         return errores;
@@ -82,6 +83,17 @@
         errores.splice(0, errores.length);
         tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
         ambitoActual.splice(0, ambitoActual.length);
+        ids.splice(0, ids.length);
+    }
+
+    function errorSemantico(descripcion,linea,columna){
+        ErrorLS = new Object();
+        ErrorLS.lexema = "";
+        ErrorLS.linea = linea;
+        ErrorLS.columna = columna;
+        ErrorLS.tipo = 'Semántico';
+        ErrorLS.descripcion = descripcion;
+        errores.push(ErrorLS);
     }
 
     function produccion(yy,$1,$2,linea,columna){
@@ -138,11 +150,40 @@
             return null;
         }
     }
+
+    function existeVariableMetodo(id,ambito,rol){
+        for(let simbolo in tablaDeSimbolos){
+            if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function agregarSimbolo(id,tipo,ambito,visibilidad,rol){
+        let simboloNuevo = new Object();
+        simboloNuevo.id = id;
+        simboloNuevo.tipo = tipo;
+        simboloNuevo.ambito = ambito;
+        simboloNuevo.visibilidad = visibilidad;
+        simboloNuevo.rol = rol;
+        tablaDeSimbolos.push(simboloNuevo);
+    }
+
 %}
 
 %%
 
-inicial :  a1 EOF
+inicial :  a1 EOF   {
+                        for(const simbolo in tablaDeSimbolos){
+                            console.log("-----------------");
+                            console.log("Id: "+tablaDeSimbolos[simbolo].id);
+                            console.log("Tipo: "+tablaDeSimbolos[simbolo].tipo);
+                            console.log("Ambito: "+tablaDeSimbolos[simbolo].ambito);
+                            console.log("Visibilidad: "+tablaDeSimbolos[simbolo].visibilidad);
+                            console.log("Rol: "+tablaDeSimbolos[simbolo].rol);
+                        }
+                    }
     ;
 
 a1 : instrucciones_include declaraciones
@@ -161,6 +202,7 @@ instrucciones_include_p : include
 
 // DECLARACION DE VARIABLES --------------------------------------------------------
 
+
 declaraciones : declaraciones_p
     | /*Lambda*/
     ;
@@ -169,12 +211,53 @@ declaraciones_p : declaracion_variable
     | declaracion_variable declaraciones_p
     ;
 
+/*
 declaracion_variable : tipo ID ASIGNACION expresion_multiple PUNTO_Y_COMA;
 
 tipo : PR_INT { $$ = yy.INT; }
     | PR_FLOAT { $$ = yy.FLOAT; }
     | PR_CHAR { $$ = yy.CHAR; }
     ;
+*/
+
+
+declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
+            //declaracion y asignacion
+            if($3==null || $1 == $3.tipoResultado){
+                while(ids.length>0){
+                    //asignacion de tipo correcta
+                    let id = ids.pop();
+                    if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                        errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                    }else{
+                        if($3 != null){
+                            //simboloVariable.valor = $3.valor;
+                        }
+                        agregarSimbolo(id,$1,yy.GLOBAL,yy.DEFAULT,yy.VARIABLE);
+                    }
+                }
+            }else{
+                errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }
+    ;
+
+ids : ids_p
+    | ids_p COMA ids
+    ;
+
+ids_p : ID { ids.push($1); }
+    ;
+
+tipo : PR_INT { $$ = yy.INT; }
+    | PR_FLOAT { $$ = yy.FLOAT; }
+    | PR_CHAR { $$ = yy.CHAR; }
+    ;
+
+asignacion : /*Lambda*/ { $$ = null; }
+    | ASIGNACION expresion_multiple { $$ = $2; }
+    ;
+
 
 //----------------------------------------------------------------------------------
 
@@ -333,9 +416,9 @@ g3 : INT        {
                     operacion.tipoResultado = yy.INT;
                     $$ = operacion;
                 }
-    | DOUBLE    {
+    | FLOAT    {
                     operacion = new Object();
-                    operacion.tipoResultado = yy.DOUBLE;
+                    operacion.tipoResultado = yy.FLOAT;
                     $$ = operacion;
                 }
     | CHAR      {

@@ -140,6 +140,8 @@ export class ControladorAnalisisGeneral{
 
         yy.VOID = this.filtroTipoDatoPrograma.VOID;
 
+        yy.GLOBAL = this.filtroTipoDatoPrograma.GLOBAL;
+
         yy.METODO = this.filtroTipoDatoPrograma.METODO;
         yy.VARIABLE = this.filtroTipoDatoPrograma.VARIABLE;
         yy.CLASE = this.filtroTipoDatoPrograma.CLASE;

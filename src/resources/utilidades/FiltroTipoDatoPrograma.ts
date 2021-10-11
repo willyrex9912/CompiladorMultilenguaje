@@ -9,6 +9,9 @@ export class FiltroTipoDatoPrograma{
     //void para complemento de tipo de metodo
     public VOID:string = "void";
 
+    //ambito
+    public GLOBAL:string = "global";
+
     //tipos de roles de simbolos
     public METODO:string = "metodo";
     public VARIABLE:string = "variable";

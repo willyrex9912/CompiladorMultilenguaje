@@ -3,6 +3,7 @@ import { FiltroTipoDatoJava } from 'src/resources/utilidades/FiltroTipoDatoJava'
 import { FiltroTipoDatoPython } from 'src/resources/utilidades/FiltroTipoDatoPython';
 import * as AnalizadorJava from '../resources/analizador/java/Java';
 import * as AnalizadorPython from '../resources/analizador/python/Python';
+import * as AnalizadorPrograma from '../resources/analizador/programa/Programa';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
@@ -40,7 +41,15 @@ export class ControladorAnalisisGeneral{
                 respuesta += this.constructorRespuesta.construirMensaje(AnalizadorJava.getErrores(),separador.getInicioJava());
             }
         }
+
         //analizando codigo programa
+        if(this.existeCodigo(separador.getCodigoPrograma())){
+            AnalizadorPrograma.reset();
+            AnalizadorPrograma.parse(separador.getCodigoPrograma());
+            if(AnalizadorPrograma.getErrores().length>0){
+                respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPrograma.getErrores(),separador.getInicioPrograma());
+            }
+        }
 
         return respuesta;
     }

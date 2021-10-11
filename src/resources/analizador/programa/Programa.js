@@ -75,18 +75,166 @@ var Programa = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o};
 var parser = {trace: function trace () { },
 yy: {},
-symbols_: {"error":2,"inicial":3,"a1":4,"EOF":5,"include":6,"PR_INCLUDE":7,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"a1",5:"EOF",7:"PR_INCLUDE"},
-productions_: [0,[3,2],[6,1]],
+symbols_: {"error":2,"inicial":3,"a1":4,"EOF":5,"include":6,"PR_INCLUDE":7,"PAQUETE":8,"instrucciones_include":9,"instrucciones_include_p":10,"declaracion_variable":11,"tipo":12,"ID":13,"ASIGNACION":14,"expresion_multiple":15,"PUNTO_Y_COMA":16,"PR_INT":17,"PR_FLOAT":18,"PR_CHAR":19,"a3":20,"b3":21,"a3p":22,"a3bp":23,"OR":24,"XOR":25,"c3":26,"b3p":27,"b3bp":28,"AND":29,"d3":30,"c3p":31,"c3bp":32,"IGUAL":33,"NO_IGUAL":34,"MAYOR":35,"MENOR":36,"MAYOR_IGUAL":37,"MENOR_IGUAL":38,"e3":39,"d3p":40,"d3bp":41,"SUMA":42,"RESTA":43,"f3":44,"e3p":45,"e3bp":46,"MULTIPLICACION":47,"DIVISION":48,"MODULO":49,"g3":50,"f3p":51,"f3bp":52,"POTENCIA":53,"PARENT_A":54,"PARENT_C":55,"NOT":56,"BOOLEAN":57,"INT":58,"DOUBLE":59,"CHAR":60,"$accept":0,"$end":1},
+terminals_: {2:"error",5:"EOF",7:"PR_INCLUDE",8:"PAQUETE",13:"ID",14:"ASIGNACION",16:"PUNTO_Y_COMA",17:"PR_INT",18:"PR_FLOAT",19:"PR_CHAR",24:"OR",25:"XOR",29:"AND",33:"IGUAL",34:"NO_IGUAL",35:"MAYOR",36:"MENOR",37:"MAYOR_IGUAL",38:"MENOR_IGUAL",42:"SUMA",43:"RESTA",47:"MULTIPLICACION",48:"DIVISION",49:"MODULO",53:"POTENCIA",54:"PARENT_A",55:"PARENT_C",56:"NOT",57:"BOOLEAN",58:"INT",59:"DOUBLE",60:"CHAR"},
+productions_: [0,[3,2],[4,1],[6,2],[9,1],[9,0],[10,1],[10,2],[11,5],[12,1],[12,1],[12,1],[15,1],[20,2],[22,3],[22,0],[23,1],[23,1],[21,2],[27,3],[27,0],[28,1],[26,2],[31,3],[31,0],[32,1],[32,1],[32,1],[32,1],[32,1],[32,1],[30,2],[40,3],[40,0],[41,1],[41,1],[39,2],[45,3],[45,0],[46,1],[46,1],[46,1],[44,2],[51,3],[51,0],[52,1],[50,3],[50,2],[50,2],[50,4],[50,1],[50,1],[50,1],[50,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
+case 9:
+ this.$ = yy.INT; 
+break;
+case 10:
+ this.$ = yy.FLOAT; 
+break;
+case 11:
+ this.$ = yy.CHAR; 
+break;
+case 12:
+ this.$ = $$[$0]; 
+break;
+case 13: case 18: case 22: case 31: case 36: case 42:
+
+                this.$ = produccion(yy,$$[$0-1],$$[$0],this._$.first_line,this._$.first_column);
+            
+break;
+case 14: case 19: case 23: case 32: case 37: case 43:
+
+                        this.$ = produccionPrima(yy,$$[$0-2],$$[$0-1],$$[$0],this._$.first_line,this._$.first_column);
+                    
+break;
+case 15: case 20: case 24: case 33: case 38: case 44:
+ this.$ = null; 
+break;
+case 16:
+ this.$ = yy.OR; 
+break;
+case 17:
+ this.$ = yy.XOR; 
+break;
+case 21:
+ this.$ = yy.AND; 
+break;
+case 25:
+ this.$ = yy.IGUAL; 
+break;
+case 26:
+ this.$ = yy.NO_IGUAL; 
+break;
+case 27:
+ this.$ = yy.MAYOR; 
+break;
+case 28:
+ this.$ = yy.MENOR; 
+break;
+case 29:
+ this.$ = yy.MAYOR_IGUAL; 
+break;
+case 30:
+ this.$ = yy.MENOR_IGUAL; 
+break;
+case 34:
+ this.$ = yy.SUMA; 
+break;
+case 35:
+ this.$ = yy.RESTA; 
+break;
+case 39:
+ this.$ = yy.MULTIPLICACION; 
+break;
+case 40:
+ this.$ = yy.DIVISION; 
+break;
+case 41:
+ this.$ = yy.MODULO; 
+break;
+case 45:
+ this.$ = yy.POTENCIA; 
+break;
+case 46:
+ this.$ = $$[$0-1]; 
+break;
+case 47:
+
+        let simbolo = obtenerSimbolo($$[$0]);
+        if(simbolo==null){
+            errorSemantico("No se encuentra el símbolo "+$$[$0]+" .",this._$.first_line,this._$.first_column);
+            this.$ = null;
+        }else{
+            if(simbolo.tipo==yy.BOOLEAN){
+                operacion = new Object();
+                operacion.tipoResultado = yy.BOOLEAN;
+                this.$ = operacion;
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+simbolo.tipo+" .",this._$.first_line,this._$.first_column);
+                this.$ = null;
+            }
+        }
+    
+break;
+case 48:
+
+        operacion = new Object();
+        operacion.tipoResultado = yy.BOOLEAN;
+        this.$ = operacion;
+    
+break;
+case 49:
+
+        if($$[$0-1]==null){
+            this.$ = null;
+        }else{
+            if($$[$0-1].tipoResultado==yy.BOOLEAN){
+                operacion = new Object();
+                operacion.tipoResultado = yy.BOOLEAN;
+                this.$ = operacion;
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-1].tipoResultado+" .",this._$.first_line,this._$.first_column);
+                this.$ = null;
+            }
+        }
+    
+break;
+case 50:
+
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.INT;
+                    this.$ = operacion;
+                
+break;
+case 51:
+
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.DOUBLE;
+                    this.$ = operacion;
+                
+break;
+case 52:
+
+                    operacion = new Object();
+                    operacion.tipoResultado = yy.CHAR;
+                    this.$ = operacion;
+                
+break;
+case 53:
+
+                    operacion = new Object();
+                    let sim_id_a = validarVariable($$[$0],yy);
+                    if(sim_id_a==null){
+                        errorSemantico("No se encuentra el símbolo "+$$[$0]+" .",this._$.first_line,this._$.first_column);
+                        operacion.tipoResultado = yy.ID;
+                    }else{
+                        operacion.tipoResultado = sim_id_a.tipo;
+                    }
+                    this.$ = operacion;
+                
+break;
 }
 },
-table: [{3:1,4:[1,2]},{1:[3]},{5:[1,3]},{1:[2,1]}],
-defaultActions: {3:[2,1]},
+table: [{3:1,4:2,6:3,7:[1,4]},{1:[3]},{5:[1,5]},{5:[2,2]},{8:[1,6]},{1:[2,1]},{5:[2,3]}],
+defaultActions: {3:[2,2],5:[2,1],6:[2,3]},
 parseError: function parseError (str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -234,7 +382,19 @@ parse: function parse(input) {
     return true;
 }};
 
+    let errores = [];
+    let tablaDeSimbolos = [];
+    let ambitoActual = [];
+
+    exports.getErrores = function (){
+        return errores;
+    }
         
+    exports.reset = function(){
+        errores.splice(0, errores.length);
+        tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
+        ambitoActual.splice(0, ambitoActual.length);
+    }
 
 /* generated by jison-lex 0.3.4 */
 var lexer = (function(){
@@ -570,17 +730,33 @@ case 1: /*ignorar comentario de linea*/
 break;
 case 2: /*ignorar comentario de bloque*/
 break;
-case 3:return 'DOUBLE'
+case 3:return 'FLOAT'
 break;
-case 4:return 'INT'
+case 4:return 58
 break;
-case 5: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 'CHAR'; 
+case 5: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 60; 
 break;
-case 6:return 7
+case 6: yy_.yytext = yy_.yytext.substr(1,yy_.yyleng-2); return 8; 
 break;
-case 7:return 5
+case 7:return 17
 break;
-case 8:/*Instertar codigo para recuperar el error lexico*/
+case 8:return 18
+break;
+case 9:return 19
+break;
+case 10:return 7
+break;
+case 11:return 'PR_VOID'
+break;
+case 12:return 'PR_MAIN'
+break;
+case 13:return 16
+break;
+case 14:return 13
+break;
+case 15:return 5
+break;
+case 16:/*Instertar codigo para recuperar el error lexico*/
                 //error
                 ErrorLS = new Object();
                 ErrorLS.lexema = yy_.yytext;
@@ -593,8 +769,8 @@ case 8:/*Instertar codigo para recuperar el error lexico*/
 break;
 }
 },
-rules: [/^(?:[ \r\t\n]+)/,/^(?:[/][/].*)/,/^(?:[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/])/,/^(?:[0-9]+\.[0-9]+)/,/^(?:[0-9]+)/,/^(?:'.')/,/^(?:#include\b)/,/^(?:$)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8],"inclusive":true}}
+rules: [/^(?:[ \r\t\n]+)/,/^(?:[/][/].*)/,/^(?:[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/])/,/^(?:[0-9]+\.[0-9]+)/,/^(?:[0-9]+)/,/^(?:'.')/,/^(?:"[^"]*")/,/^(?:int\b)/,/^(?:float\b)/,/^(?:char\b)/,/^(?:#include\b)/,/^(?:void\b)/,/^(?:main\b)/,/^(?:;)/,/^(?:[a-zA-Z]+[a-zA-Z0-9_]*)/,/^(?:$)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],"inclusive":true}}
 });
 return lexer;
 })();
@@ -616,7 +792,7 @@ exports.main = function commonjsMain (args) {
         console.log('Usage: '+args[0]+' FILE');
         process.exit(1);
     }
-    var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
+    //var source = require('fs').readFileSync(require('path').normalize(args[1]), "utf8");
     return exports.parser.parse(source);
 };
 if (typeof module !== 'undefined' && require.main === module) {

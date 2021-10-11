@@ -136,7 +136,7 @@ case 24:
                 while(ids.length>0){
                     //asignacion de tipo correcta
                     let id = ids.pop();
-                    if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                    if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE)){
                         errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
                     }else{
                         if($$[$0] != null){
@@ -246,7 +246,7 @@ case 45:
 break;
 case 46:
 
-        if(existeVariableMetodo(ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros,ambitoActual.at(-1),yy.METODO)){
+        if(existeSimbolo(ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros,ambitoActual.at(-1),yy.METODO)){
             errorSemantico("El método "+$$[$0-3]+cadParametros+" ya ha sido declarado en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
         }
         agregarSimbolo(ambitoActual.at(-1)+"_"+$$[$0-3]+cadParametros,"",ambitoActual.at(-1),"",yy.METODO);
@@ -810,7 +810,7 @@ _handle_error:
         }
     }
 
-    function existeVariableMetodo(id,ambito,rol){
+    function existeSimbolo(id,ambito,rol){
         for(let simbolo in tablaDeSimbolos){
             if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
                 return true;

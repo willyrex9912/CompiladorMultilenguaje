@@ -182,7 +182,7 @@
         }
     }
 
-    function existeVariableMetodo(id,ambito,rol){
+    function existeSimbolo(id,ambito,rol){
         for(let simbolo in tablaDeSimbolos){
             if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
                 return true;
@@ -359,7 +359,7 @@ declaracion_variable : visibilidad tipo ids asignacion {
                 while(ids.length>0){
                     //asignacion de tipo correcta
                     let id = ids.pop();
-                    if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                    if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE)){
                         errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
                     }else{
                         if($4 != null){
@@ -469,7 +469,7 @@ declaracion_metodo_p : declaracion_metodo_p_a LLAVE_A instrucciones_metodo LLAVE
     ;
 
 declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
-        if(existeVariableMetodo(ambitoActual.at(-1)+"_"+$1+cadParametros,ambitoActual.at(-1),yy.METODO)){
+        if(existeSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,ambitoActual.at(-1),yy.METODO)){
             errorSemantico("El método "+$1+cadParametros+" ya ha sido declarado en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
         }
         agregarSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,"",ambitoActual.at(-1),"",yy.METODO);

@@ -16,6 +16,7 @@
 "int"                                   return 'PR_INT'
 "float"                                 return 'PR_FLOAT'
 "char"                                  return 'PR_CHAR'
+"const"                                 return 'PR_CONST'
 "#include"                              return 'PR_INCLUDE'
 "void"                                  return 'PR_VOID'
 "main"                                  return 'PR_MAIN'
@@ -79,10 +80,10 @@
         return errores;
     }
         
-    exports.reset = function(){
+    exports.reset = function(yy){
         errores.splice(0, errores.length);
         tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
-        ambitoActual.splice(0, ambitoActual.length);
+        ambitoActual = [yy.GLOBAL];
         ids.splice(0, ids.length);
     }
 
@@ -151,7 +152,7 @@
         }
     }
 
-    function existeVariableMetodo(id,ambito,rol){
+    function existeSimbolo(id,ambito,rol){
         for(let simbolo in tablaDeSimbolos){
             if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
                 return true;
@@ -168,6 +169,22 @@
         simboloNuevo.visibilidad = visibilidad;
         simboloNuevo.rol = rol;
         tablaDeSimbolos.push(simboloNuevo);
+    }
+
+    function validarVariable(id,yy){
+        let tabla = tablaDeSimbolos.slice();
+        while(tabla.length>0){
+            let sim = tabla.pop();
+            if((sim.rol==yy.VARIABLE || sim.rol==yy.PARAMETRO || sim.rol==yy.CONSTANTE) && sim.id==id){
+                let ambitos = ambitoActual.slice();
+                while(ambitos.length>0){
+                    if(sim.ambito==ambitos.pop()){
+                        return sim;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 %}
@@ -200,8 +217,11 @@ instrucciones_include_p : include
     | include instrucciones_include_p
     ;
 
-// DECLARACION DE VARIABLES --------------------------------------------------------
 
+
+
+
+// DECLARACION DE VARIABLES --------------------------------------------------------
 
 declaraciones : declaraciones_p
     | /*Lambda*/
@@ -211,35 +231,42 @@ declaraciones_p : declaracion_variable
     | declaracion_variable declaraciones_p
     ;
 
-/*
-declaracion_variable : tipo ID ASIGNACION expresion_multiple PUNTO_Y_COMA;
-
-tipo : PR_INT { $$ = yy.INT; }
-    | PR_FLOAT { $$ = yy.FLOAT; }
-    | PR_CHAR { $$ = yy.CHAR; }
-    ;
-*/
-
-
 declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
-            //declaracion y asignacion
-            if($3==null || $1 == $3.tipoResultado){
-                while(ids.length>0){
-                    //asignacion de tipo correcta
-                    let id = ids.pop();
-                    if(existeVariableMetodo(id,ambitoActual.at(-1),yy.VARIABLE)){
-                        errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
-                    }else{
-                        if($3 != null){
-                            //simboloVariable.valor = $3.valor;
-                        }
-                        agregarSimbolo(id,$1,yy.GLOBAL,yy.DEFAULT,yy.VARIABLE);
+        //declaracion y asignacion
+        if($3==null || $1 == $3.tipoResultado){
+            while(ids.length>0){
+                //asignacion de tipo correcta
+                let id = ids.pop();
+                if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE) || existeSimbolo(id,ambitoActual.at(-1),yy.CONSTANTE)){
+                    errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                }else{
+                    if($3 != null){
+                        //simboloVariable.valor = $3.valor;
                     }
+                    agregarSimbolo(id,$1,yy.GLOBAL,yy.DEFAULT,yy.VARIABLE);
                 }
-            }else{
-                errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+        }else{
+            errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
         }
+    }
+    | PR_CONST tipo ids ASIGNACION expresion_multiple PUNTO_Y_COMA {
+        //declaracion y asignacion
+        if($2 == $5.tipoResultado){
+            while(ids.length>0){
+                //asignacion de tipo correcta
+                let id = ids.pop();
+                if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE) || existeSimbolo(id,ambitoActual.at(-1),yy.CONSTANTE)){
+                    errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                }else{
+                    //simboloVariable.valor = $3.valor;
+                    agregarSimbolo(id,$2,yy.GLOBAL,yy.DEFAULT,yy.CONSTANTE);
+                }
+            }
+        }else{
+            errorSemantico("Tipo de dato requerido : "+$2+" . Obtenido: "+$5.tipoResultado+" .",this._$.first_line,this._$.first_column);
+        }
+    }
     ;
 
 ids : ids_p

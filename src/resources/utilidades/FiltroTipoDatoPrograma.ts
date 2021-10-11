@@ -17,6 +17,7 @@ export class FiltroTipoDatoPrograma{
     public VARIABLE:string = "variable";
     public CLASE:string = "clase";
     public PARAMETRO:string = "parametro";
+    public CONSTANTE:string = "constante";
 
     //tipos de operaciones
     public POTENCIA:string = "^";

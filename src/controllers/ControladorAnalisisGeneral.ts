@@ -48,7 +48,7 @@ export class ControladorAnalisisGeneral{
 
         //analizando codigo programa
         if(this.existeCodigo(separador.getCodigoPrograma())){
-            AnalizadorPrograma.reset();
+            AnalizadorPrograma.reset(AnalizadorPrograma.parser.yy);
             AnalizadorPrograma.parse(separador.getCodigoPrograma());
             if(AnalizadorPrograma.getErrores().length>0){
                 respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPrograma.getErrores(),separador.getInicioPrograma());
@@ -146,6 +146,7 @@ export class ControladorAnalisisGeneral{
         yy.VARIABLE = this.filtroTipoDatoPrograma.VARIABLE;
         yy.CLASE = this.filtroTipoDatoPrograma.CLASE;
         yy.PARAMETRO = this.filtroTipoDatoPrograma.PARAMETRO;
+        yy.CONSTANTE = this.filtroTipoDatoPrograma.CONSTANTE;
 
         yy.POTENCIA = this.filtroTipoDatoPrograma.POTENCIA;
         yy.MODULO = this.filtroTipoDatoPrograma.MODULO;

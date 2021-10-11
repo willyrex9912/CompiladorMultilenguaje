@@ -21,7 +21,34 @@
 "main"                                  return 'PR_MAIN'
 
 //simbolos
-";"                                     return 'PUNTO_Y_COMA'
+"++"                            return 'INCREMENTO'
+"--"                            return 'DECREMENTO'
+[+]                             return 'SUMA'
+[-]                             return 'RESTA'
+[*]                             return 'MULTIPLICACION'
+[/]                             return 'DIVISION'
+[%]                             return 'MODULO'
+"^"                             return 'POTENCIA'
+"{"                             return 'LLAVE_A'
+"}"                             return 'LLAVE_C'
+"["                             return 'CORCH_A'
+"]"                             return 'CORCH_C'
+"("                             return 'PARENT_A'
+")"                             return 'PARENT_C'
+"||"                            return 'XOR'
+"|"                             return 'OR'
+"&&"                            return 'AND'
+"=="                            return 'IGUAL'
+"!="                            return 'NO_IGUAL'
+">="                            return 'MAYOR_IGUAL'
+"<="                            return 'MENOR_IGUAL'
+">"                             return 'MAYOR'
+"<"                             return 'MENOR'
+"!"                             return 'NOT'
+";"                             return 'PUNTO_Y_COMA'
+":"                             return 'DOS_PUNTOS'
+","                             return 'COMA'
+"="                             return 'ASIGNACION'
 
 [a-zA-Z]+[a-zA-Z0-9_]*                  return 'ID'
 
@@ -57,6 +84,60 @@
         ambitoActual.splice(0, ambitoActual.length);
     }
 
+    function produccion(yy,$1,$2,linea,columna){
+        try{
+            if($2!=null){
+                //Analizar tipo de resultado
+                if($2!=null){
+                    let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                    if(tipoResultado!=null){
+                        operacion = new Object();
+                        operacion.tipoResultado = tipoResultado;
+                        operacion.operacionPendiente = $1;
+                        return operacion;
+                    }else{
+                        errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
+                        return null;
+                    }
+                }else{
+                    return null;
+                }
+            }else{
+                return $1;
+            }
+        }catch(error){
+            return null;
+        }
+    }
+
+    function produccionPrima(yy,$1,$2,$3,linea,columna){
+        try{
+            if($3==null){
+                operacion = new Object();
+                operacion.tipoResultado = $2.tipoResultado;
+                operacion.operacionPendiente = $1;
+                return operacion;
+            }else{
+                //Analizar tipo de resultado
+                if($2!=null){
+                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                    if(tipoResultado!=null){
+                        operacion = new Object();
+                        operacion.tipoResultado = tipoResultado;
+                        operacion.operacionPendiente = $1;
+                        return operacion;
+                    }else{
+                        errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                        return null;
+                    }
+                }else{
+                    return null;
+                }
+            }
+        }catch(error){
+            return null;
+        }
+    }
 %}
 
 %%
@@ -64,7 +145,7 @@
 inicial :  a1 EOF
     ;
 
-a1 : include
+a1 : instrucciones_include declaraciones
     ;
 
 include : PR_INCLUDE PAQUETE 
@@ -78,7 +159,15 @@ instrucciones_include_p : include
     | include instrucciones_include_p
     ;
 
+// DECLARACION DE VARIABLES --------------------------------------------------------
 
+declaraciones : declaraciones_p
+    | /*Lambda*/
+    ;
+
+declaraciones_p : declaracion_variable
+    | declaracion_variable declaraciones_p
+    ;
 
 declaracion_variable : tipo ID ASIGNACION expresion_multiple PUNTO_Y_COMA;
 
@@ -87,6 +176,7 @@ tipo : PR_INT { $$ = yy.INT; }
     | PR_CHAR { $$ = yy.CHAR; }
     ;
 
+//----------------------------------------------------------------------------------
 
 //EXPRESION MULTIPLE----------------------------------------------------------------
 expresion_multiple : a3 { $$ = $1; };

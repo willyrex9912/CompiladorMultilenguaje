@@ -4,6 +4,7 @@ import { FiltroTipoDatoPython } from 'src/resources/utilidades/FiltroTipoDatoPyt
 import * as AnalizadorJava from '../resources/analizador/java/Java';
 import * as AnalizadorPython from '../resources/analizador/python/Python';
 import * as AnalizadorPrograma from '../resources/analizador/programa/Programa';
+import { FiltroTipoDatoPrograma } from 'src/resources/utilidades/FiltroTipoDatoPrograma';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
@@ -11,13 +12,16 @@ export class ControladorAnalisisGeneral{
     private constructorRespuesta:ConstructorMensajeError;
     private filtroTipoDatoJava:FiltroTipoDatoJava;
     private filtroTipoDatoPython:FiltroTipoDatoPython;
+    private filtroTipoDatoPrograma:FiltroTipoDatoPrograma;
 
     public constructor(){
         this.constructorRespuesta = new ConstructorMensajeError();
         this.filtroTipoDatoJava = new FiltroTipoDatoJava();
         this.filtroTipoDatoPython = new FiltroTipoDatoPython();
+        this.filtroTipoDatoPrograma = new FiltroTipoDatoPrograma();
         this.inicializarYYJava();
         this.inicializarYYPython();
+        this.inicializarYYPrograma();
     }
 
     public analizar(separador):String{
@@ -125,6 +129,42 @@ export class ControladorAnalisisGeneral{
         yy.OR = this.filtroTipoDatoPython.OR;
         
         yy.filtrarOperacion = this.filtroTipoDatoPython.filtrarOperacion;
+    }
+
+    private inicializarYYPrograma(){
+        let yy = AnalizadorPrograma.parser.yy;
+        yy.INT = this.filtroTipoDatoPrograma.INT;
+        yy.FLOAT = this.filtroTipoDatoPrograma.FLOAT;
+        yy.CHAR = this.filtroTipoDatoPrograma.CHAR;
+        yy.BOOLEAN = this.filtroTipoDatoPrograma.BOOLEAN;
+
+        yy.VOID = this.filtroTipoDatoPrograma.VOID;
+
+        yy.METODO = this.filtroTipoDatoPrograma.METODO;
+        yy.VARIABLE = this.filtroTipoDatoPrograma.VARIABLE;
+        yy.CLASE = this.filtroTipoDatoPrograma.CLASE;
+        yy.PARAMETRO = this.filtroTipoDatoPrograma.PARAMETRO;
+
+        yy.POTENCIA = this.filtroTipoDatoPrograma.POTENCIA;
+        yy.MODULO = this.filtroTipoDatoPrograma.MODULO;
+        yy.DIVISION = this.filtroTipoDatoPrograma.DIVISION;
+        yy.MULTIPLICACION = this.filtroTipoDatoPrograma.MULTIPLICACION;
+        yy.SUMA = this.filtroTipoDatoPrograma.SUMA;
+        yy.RESTA = this.filtroTipoDatoPrograma.RESTA;
+        yy.IGUAL = this.filtroTipoDatoPrograma.IGUAL;
+        yy.NO_IGUAL = this.filtroTipoDatoPrograma.NO_IGUAL;
+        yy.MAYOR = this.filtroTipoDatoPrograma.MAYOR;
+        yy.MENOR = this.filtroTipoDatoPrograma.MENOR;
+        yy.MAYOR_IGUAL = this.filtroTipoDatoPrograma.MAYOR_IGUAL;
+        yy.MENOR_IGUAL = this.filtroTipoDatoPrograma.MENOR_IGUAL;
+        yy.AND = this.filtroTipoDatoPrograma.AND;
+        yy.OR = this.filtroTipoDatoPrograma.OR;
+        yy.XOR = this.filtroTipoDatoPrograma.XOR;
+        yy.PUBLIC = this.filtroTipoDatoPrograma.PUBLIC;
+        yy.PRIVATE = this.filtroTipoDatoPrograma.PRIVATE;
+        yy.DEFAULT = this.filtroTipoDatoPrograma.DEFAULT;
+        
+        yy.filtrarOperacion = this.filtroTipoDatoPrograma.filtrarOperacion;
     }
 
 }

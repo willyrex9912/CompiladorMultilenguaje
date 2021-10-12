@@ -203,7 +203,20 @@ inicial :  a1 EOF   {
                     }
     ;
 
-a1 : instrucciones_include declaraciones
+err : error {
+        //error
+        ErrorLS = new Object();
+        ErrorLS.lexema = yytext;
+        ErrorLS.linea = this._$.first_line;
+        ErrorLS.columna = this._$.first_column;
+        ErrorLS.tipo = 'Sintáctico';
+        ErrorLS.descripcion = '';
+        errores.push(ErrorLS);
+    }
+    ;
+
+a1 : instrucciones_include declaraciones metodo_principal
+    | /*++++++++++++POR EL MOMENTO+++++++++++++++++*/ err
     ;
 
 include : PR_INCLUDE PAQUETE 
@@ -219,6 +232,36 @@ instrucciones_include_p : include
 
 
 
+// INSTRUCCIONES DISPONIBLES EN METODO PRINCIPAL -----------------------------------
+
+instrucciones : instrucciones_p
+    | //Lammbda
+    ;
+
+instrucciones_p: instrucciones_b_p
+    | instrucciones_b_p instrucciones_p 
+    ;
+
+instrucciones_b_p : declaracion_variable
+    ;
+
+//----------------------------------------------------------------------------------
+
+
+
+// METODO PRINCIPAL ----------------------------------------------------------------
+
+metodo_principal : metodo_principal_p LLAVE_A instrucciones LLAVE_C {
+        ambitoActual.pop();
+    }
+    ;
+
+metodo_principal_p : PR_VOID PR_MAIN PARENT_A PARENT_C {
+        ambitoActual.push("main");
+    }
+    ;
+
+//----------------------------------------------------------------------------------
 
 
 // DECLARACION DE VARIABLES --------------------------------------------------------
@@ -243,7 +286,7 @@ declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
                     if($3 != null){
                         //simboloVariable.valor = $3.valor;
                     }
-                    agregarSimbolo(id,$1,yy.GLOBAL,yy.DEFAULT,yy.VARIABLE);
+                    agregarSimbolo(id,$1,ambitoActual.at(-1),yy.DEFAULT,yy.VARIABLE);
                 }
             }
         }else{
@@ -260,7 +303,7 @@ declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
                     errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
                 }else{
                     //simboloVariable.valor = $3.valor;
-                    agregarSimbolo(id,$2,yy.GLOBAL,yy.DEFAULT,yy.CONSTANTE);
+                    agregarSimbolo(id,$2,ambitoActual.at(-1),yy.DEFAULT,yy.CONSTANTE);
                 }
             }
         }else{

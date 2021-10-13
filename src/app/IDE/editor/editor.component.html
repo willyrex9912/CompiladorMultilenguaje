@@ -15,17 +15,21 @@
                         <div id="jstree">
                             
                             <ul>
-                                <li [id]="getProyecto().getNombre()">Proyecto1
+                                <li [id]="getProyecto().getNombre()">{{getProyecto().getNombre()}}
                                     <ul>
-                                        
-                                        <li class="jstree-wholerow" id="protyecto1.test1">Test1.txt</li>
-                                        <li id="protyecto1.test2">Test1.txt</li>
-                                        <li id="proyecto1.modelos">modelos
-                                            <ul>
-                                                <li id="proyecto1.modelos.modelo1">Modelo1.txt</li>
-                                                <li id="proyecto1.modelos.modelo2">Modelo2.txt</li>
-                                            </ul>
-                                        </li>
+                                        <ng-container
+                                            *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes()}"
+                                        ></ng-container>
+                                        <ng-template #Recursion let-paquetes="paquetes">
+                                            <li *ngFor="let paquete of paquetes" id="{{paquete.getNombre()}}">
+                                                {{paquete.getNombre()}}
+                                                <ul *ngIf="paquete.getPaquetes().length > 0">
+                                                    <ng-container
+                                                      *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes() }"
+                                                    ></ng-container>
+                                                  </ul>
+                                            </li>
+                                        </ng-template>
                                     </ul>
                                 </li>
                             </ul>

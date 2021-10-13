@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ViewChildren, ViewContainerRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import * as ace from "ace-builds";
 import { ServicioService } from 'src/app/Servicio/servicio.service';
 import { Analizador } from 'src/controllers/ControladorAnalisis';
 import { Cuadrupla } from 'src/model/Cuadrupla';
+
+import * as $ from 'jquery'; import 'jstree';
 
 @Component({
   selector: 'app-editor',
@@ -18,9 +20,27 @@ export class EditorComponent implements OnInit, AfterViewInit {
   private txtConsola:String = "";
   private analizador = new Analizador();
 
-  constructor(private servicio:ServicioService, private router:Router) { }
+
+  constructor(private servicio:ServicioService, private router:Router) {
+    //console.log(this.router.getCurrentNavigation().extras.state.nombre);
+    console.log();
+  }
 
   ngOnInit(): void {
+    $(function () {
+      // 6 create an instance when the DOM is ready
+      $('#jstree').jstree();
+      // 7 bind to events triggered on the tree
+      $('#jstree').on("changed.jstree", function (e, data) {
+        console.log(data.selected);
+      });
+      // 8 interact with the tree - either way is OK
+      $('button').on('click', function () {
+        $('#jstree').jstree(true).select_node('child_node_1');
+        $('#jstree').jstree('select_node', 'child_node_1');
+        $.jstree.reference('#jstree').select_node('child_node_1');
+      });
+    });
   }
 
   ngAfterViewInit(){

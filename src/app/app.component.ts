@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +10,9 @@ export class AppComponent {
   title = 'CompiladorMultilenguaje';
 
   constructor(private router:Router){}
-
+  
   MostrarEditor(){
-    this.router.navigate(["editor"]);
+    this.router.navigate(["editor",{ id: 'heroId', foo: 'foo' }]);
   }
 
   MostrarConsola(){

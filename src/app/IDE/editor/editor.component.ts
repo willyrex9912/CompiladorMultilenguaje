@@ -6,6 +6,8 @@ import { Analizador } from 'src/controllers/ControladorAnalisis';
 import { Cuadrupla } from 'src/model/Cuadrupla';
 
 import * as $ from 'jquery'; import 'jstree';
+import { Paquete } from 'src/model/Proyecto/Paquete';
+import { Proyecto } from 'src/model/Proyecto/Proyecto';
 
 @Component({
   selector: 'app-editor',
@@ -20,25 +22,22 @@ export class EditorComponent implements OnInit, AfterViewInit {
   private txtConsola:String = "";
   private analizador = new Analizador();
 
+  private proyecto:Proyecto;
 
   constructor(private servicio:ServicioService, private router:Router) {
     //console.log(this.router.getCurrentNavigation().extras.state.nombre);
-    console.log();
+    
+    //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
+    this.proyecto = new Proyecto('proyecto1');
+    this.simular();
   }
 
   ngOnInit(): void {
     $(function () {
-      // 6 create an instance when the DOM is ready
+      let data = ['test1','test2','test3'];
       $('#jstree').jstree();
-      // 7 bind to events triggered on the tree
       $('#jstree').on("changed.jstree", function (e, data) {
         console.log(data.selected);
-      });
-      // 8 interact with the tree - either way is OK
-      $('button').on('click', function () {
-        $('#jstree').jstree(true).select_node('child_node_1');
-        $('#jstree').jstree('select_node', 'child_node_1');
-        $.jstree.reference('#jstree').select_node('child_node_1');
       });
     });
   }
@@ -96,6 +95,30 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   public getTxtConsola(){
     return this.txtConsola;
+  }
+
+  public getProyecto(){
+    return this.proyecto;
+  }
+
+  //+++++++++++++++++METODO TEMPORAL DE SIMULACION++++++++++++++++++++++
+  public simular():void{
+    this.proyecto.agregarPaquete('backend.analizador');
+    this.proyecto.agregarPaquete('backend.controladores.mensaje');
+    this.proyecto.agregarPaquete('backend.controladores.alerta');
+    this.proyecto.agregarPaquete('backend.controladores.data');
+    this.proyecto.agregarPaquete('backend.error');
+    this.proyecto.agregarPaquete('frontend.vistas.principal');
+    this.proyecto.agregarPaquete('frontend.vistas.secundaria');
+    console.log('METODOS CREADOS');
+    console.log(this.proyecto)
+    let nombrePaquete = 'frontend.vistas';
+    let paquete = this.proyecto.buscarPaquete(nombrePaquete);
+    if(paquete==null){
+      console.log("No se ha encontrado el paquete "+nombrePaquete);
+    }else{
+      console.log("Paquete "+nombrePaquete+" cuenta con "+paquete.getPaquetes().length+" paquetes.");
+    }
   }
 
 }

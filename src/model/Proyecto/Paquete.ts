@@ -24,4 +24,12 @@ export class Paquete {
         return this.paquetes;
     }
 
+    public agregarArchivo(archivo:Archivo):void{
+        this.archivos.push(archivo);
+    }
+
+    public agregarPaquete(paquete:Paquete):void{
+        this.paquetes.push(paquete);
+    }
+
 }

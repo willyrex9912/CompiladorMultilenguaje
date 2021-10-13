@@ -13,29 +13,23 @@
                             Proyecto
                         </h5>
                         <div id="jstree">
-    
+                            
                             <ul>
-                                <li>Root node 1
+                                <li [id]="getProyecto().getNombre()">Proyecto1
                                     <ul>
-                                        <li id="child_node_1">Child node 1</li>
-                                        <li>Child node 2</li>
-                                    </ul>
-                                </li>
-                                <li>Root node 2
-                                    <ul>
-                                        <li>Root node 2
+                                        
+                                        <li class="jstree-wholerow" id="protyecto1.test1">Test1.txt</li>
+                                        <li id="protyecto1.test2">Test1.txt</li>
+                                        <li id="proyecto1.modelos">modelos
                                             <ul>
-                                                <li id="child_node_1">Child node 1</li>
-                                                <li>Child node 2</li>
+                                                <li id="proyecto1.modelos.modelo1">Modelo1.txt</li>
+                                                <li id="proyecto1.modelos.modelo2">Modelo2.txt</li>
                                             </ul>
                                         </li>
                                     </ul>
-                                    <ul>
-                                        <li id="child_node_1">Child node 1</li>
-                                        <li>Child node 2</li>
-                                    </ul>
                                 </li>
                             </ul>
+                            
                         </div>
                         <button>demo button</button>
                     </div>

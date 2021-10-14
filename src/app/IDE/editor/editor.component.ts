@@ -103,7 +103,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   //+++++++++++++++++METODO TEMPORAL DE SIMULACION++++++++++++++++++++++
   public simular():void{
-    this.proyecto.agregarPaquete('backend.analizador');
+    //this.proyecto.agregarPaquete('backend.analizador');
     this.proyecto.agregarPaquete('backend.controladores.mensaje');
     this.proyecto.agregarPaquete('backend.controladores.alerta');
     this.proyecto.agregarPaquete('backend.controladores.data');
@@ -112,6 +112,12 @@ export class EditorComponent implements OnInit, AfterViewInit {
     this.proyecto.agregarPaquete('frontend.vistas.principal');
     this.proyecto.agregarPaquete('frontend.vistas.secundaria');
     this.proyecto.agregarPaquete('frontend.controladores.password');
+    this.proyecto.crearArchivo('backend.analizador.lexer');
+    this.proyecto.crearArchivo('frontend.vistas.principal.modelos.modelo');
+    this.proyecto.crearArchivo('backend.recuperador.lexer');
+    this.proyecto.crearArchivo('backend.controller');
+    this.proyecto.crearArchivo('backend.controller2');
+    this.proyecto.crearArchivo('main');
     console.log('METODOS CREADOS');
     console.log(this.proyecto)
     let nombrePaquete = 'frontend.vistas';

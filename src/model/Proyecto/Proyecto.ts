@@ -21,16 +21,16 @@ export class Proyecto{
         return this.paquetePrincipal;
     }
 
-    public agregarPaquete(nombre:string):void{
-        this.gestionadorPaquete.crearPaquete(nombre,this);
+    public agregarPaquete(id:string):void{
+        this.gestionadorPaquete.crearPaquete(id,this);
     }
 
-    public agregarArchivo(nombre:string):void{
-
+    public crearArchivo(id:string):void{
+        this.gestionadorPaquete.nuevoArchivo(id,this,"");
     }
 
-    public buscarPaquete(nombre:string):Paquete{
-        return this.gestionadorPaquete.buscarPaquete(nombre,this);
+    public buscarPaquete(id:string):Paquete{
+        return this.gestionadorPaquete.buscarPaquete(id,this);
     }
 
 }

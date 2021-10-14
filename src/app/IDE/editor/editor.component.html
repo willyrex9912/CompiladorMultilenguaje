@@ -13,27 +13,28 @@
                             Proyecto
                         </h5>
                         <div id="jstree">
-                            
                             <ul>
-                                <li [id]="getProyecto().getNombre()">{{getProyecto().getNombre()}}
+                                <li [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>{{getProyecto().getNombre()}}
                                     <ul>
                                         <ng-container
-                                            *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes()}"
+                                            *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes(), archivos:getProyecto().getPaquetePrincipal().getArchivos()}"
                                         ></ng-container>
-                                        <ng-template #Recursion let-paquetes="paquetes">
-                                            <li *ngFor="let paquete of paquetes" id="{{paquete.getId()}}">
+                                        <ng-template #Recursion let-paquetes="paquetes" let-archivos="archivos">
+                                            <li *ngFor="let paquete of paquetes" id="{{paquete.getId()}}" data-jstree='{"icon":"assets/img/carpeta.png"}'>
                                                 {{paquete.getNombre()}}
-                                                <ul *ngIf="paquete.getPaquetes().length > 0">
+                                                <ul *ngIf="paquete.getPaquetes().length > 0 || paquete.getArchivos().length > 0">
                                                     <ng-container
-                                                      *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes() }"
+                                                      *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes(), archivos: paquete.getArchivos() }"
                                                     ></ng-container>
-                                                  </ul>
+                                                </ul>
+                                            </li>
+                                            <li *ngFor="let archivo of archivos" id="{{archivo.getId()}}" data-jstree='{"icon":"assets/img/archivo.png"}'>
+                                                {{archivo.getNombre()}}
                                             </li>
                                         </ng-template>
                                     </ul>
                                 </li>
                             </ul>
-                            
                         </div>
                     </div>
                 </div>

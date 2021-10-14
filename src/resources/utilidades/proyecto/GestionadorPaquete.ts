@@ -8,11 +8,11 @@ export class GestionadorPaquete{
         let nombres:Array<string> = id.split('.');
         let nombreArchivo = nombres.pop();
         let nombrePaquete = nombres.join('.');
-        if(nombres.length==1){
-            proyecto.getPaquetePrincipal().agregarArchivo(new Archivo(nombreArchivo,proyecto.getPaquetePrincipal().getNombre(),codigo));
+        if(nombres.length==0){
+            proyecto.getPaquetePrincipal().agregarArchivo(new Archivo(nombreArchivo,id,proyecto.getPaquetePrincipal().getNombre(),codigo));
         }else{
             let paquete = this.crearPaquete(nombrePaquete,proyecto);
-            paquete.agregarArchivo(new Archivo(nombreArchivo,paquete.getNombre(),codigo));
+            paquete.agregarArchivo(new Archivo(nombreArchivo,id,paquete.getNombre(),codigo));
         }
     }
 

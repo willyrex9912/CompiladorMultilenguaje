@@ -8,6 +8,7 @@ import { EditorComponent } from './IDE/editor/editor.component';
 import { FormsModule } from '@angular/forms';
 import { ServicioService } from './Servicio/servicio.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ModalModule } from './modal/modulo/modal/modal.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ModalModule
   ],
   providers: [ServicioService],
   bootstrap: [AppComponent]

@@ -94,3 +94,10 @@
         </div>
     </div>
 </div>
+
+<button (click)="abrirModal('modal-nuevo-archivo');">Abrir modal</button>
+
+<wj-modal id="modal-nuevo-archivo">
+    <h5>Este es mi primer modal!</h5>
+    <button (click)="cerrarModal('modal-nuevo-archivo');">Close</button>
+</wj-modal>

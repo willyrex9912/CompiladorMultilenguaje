@@ -8,6 +8,7 @@ import { Cuadrupla } from 'src/model/Cuadrupla';
 import * as $ from 'jquery'; import 'jstree';
 import { Paquete } from 'src/model/Proyecto/Paquete';
 import { Proyecto } from 'src/model/Proyecto/Proyecto';
+import { ModalService } from 'src/app/modal/servicio/modal.service';
 
 @Component({
   selector: 'app-editor',
@@ -24,7 +25,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   private proyecto:Proyecto;
 
-  constructor(private servicio:ServicioService, private router:Router) {
+  constructor(private servicio:ServicioService, private servicioModal:ModalService, private router:Router) {
     //console.log(this.router.getCurrentNavigation().extras.state.nombre);
     
     //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
@@ -101,6 +102,14 @@ export class EditorComponent implements OnInit, AfterViewInit {
     return this.proyecto;
   }
 
+  abrirModal(id:string):void{
+    this.servicioModal.abrir(id);
+  }
+
+  cerrarModal(id:string):void{
+    this.servicioModal.cerrar(id);
+  }
+  
   //+++++++++++++++++METODO TEMPORAL DE SIMULACION++++++++++++++++++++++
   public simular():void{
     //this.proyecto.agregarPaquete('backend.analizador');

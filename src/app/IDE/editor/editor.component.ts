@@ -107,9 +107,11 @@ export class EditorComponent implements OnInit, AfterViewInit {
     this.proyecto.agregarPaquete('backend.controladores.mensaje');
     this.proyecto.agregarPaquete('backend.controladores.alerta');
     this.proyecto.agregarPaquete('backend.controladores.data');
+    this.proyecto.agregarPaquete('backend.controladores.password');
     this.proyecto.agregarPaquete('backend.error');
     this.proyecto.agregarPaquete('frontend.vistas.principal');
     this.proyecto.agregarPaquete('frontend.vistas.secundaria');
+    this.proyecto.agregarPaquete('frontend.controladores.password');
     console.log('METODOS CREADOS');
     console.log(this.proyecto)
     let nombrePaquete = 'frontend.vistas';

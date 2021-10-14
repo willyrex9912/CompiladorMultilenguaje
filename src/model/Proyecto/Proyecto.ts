@@ -9,7 +9,7 @@ export class Proyecto{
 
     constructor(nombre:string){
         this.nombre = nombre;
-        this.paquetePrincipal = new Paquete(this.nombre);
+        this.paquetePrincipal = new Paquete(this.nombre,this.nombre);
         this.gestionadorPaquete = new GestionadorPaquete();
     }
 

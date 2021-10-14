@@ -21,7 +21,7 @@
                                             *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes()}"
                                         ></ng-container>
                                         <ng-template #Recursion let-paquetes="paquetes">
-                                            <li *ngFor="let paquete of paquetes" id="{{paquete.getNombre()}}">
+                                            <li *ngFor="let paquete of paquetes" id="{{paquete.getId()}}">
                                                 {{paquete.getNombre()}}
                                                 <ul *ngIf="paquete.getPaquetes().length > 0">
                                                     <ng-container
@@ -35,7 +35,6 @@
                             </ul>
                             
                         </div>
-                        <button>demo button</button>
                     </div>
                 </div>
             </div>

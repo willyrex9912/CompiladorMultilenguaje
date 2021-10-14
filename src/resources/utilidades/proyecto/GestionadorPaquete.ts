@@ -1,10 +1,44 @@
+import { Archivo } from "src/model/Proyecto/Archivo";
 import { Paquete } from "src/model/Proyecto/Paquete";
 import { Proyecto } from "src/model/Proyecto/Proyecto";
 
 export class GestionadorPaquete{
 
-    public buscarPaquete(nombrePaquete:string,proyecto:Proyecto):Paquete{
-        let nombres:Array<string> = nombrePaquete.split('.');
+    public nuevoArchivo(id:string,proyecto:Proyecto,codigo:string){
+        let nombres:Array<string> = id.split('.');
+        let nombreArchivo = nombres.pop();
+        let nombrePaquete = nombres.join('.');
+        if(nombres.length==1){
+            proyecto.getPaquetePrincipal().agregarArchivo(new Archivo(nombreArchivo,proyecto.getPaquetePrincipal().getNombre(),codigo));
+        }else{
+            let paquete = this.crearPaquete(nombrePaquete,proyecto);
+            paquete.agregarArchivo(new Archivo(nombreArchivo,paquete.getNombre(),codigo));
+        }
+    }
+
+    public guardarCambiosArchivo(nombre:string,proyecto:Proyecto,codigo:string){
+        let archivo = this.buscarArchivo(nombre,proyecto);
+    }
+
+    private buscarArchivo(id:string,proyecto:Proyecto){
+        let nombres:Array<string> = id.split('.');
+        let nombreArchivo = nombres.pop();
+        let nombrePaquete = nombres.join('.');
+        let paquete = this.buscarPaquete(nombrePaquete,proyecto);
+        if(paquete==null){
+            return null;
+        }else{
+            for (const i in paquete.getArchivos()) {
+                if(paquete.getArchivos()[i].getNombre()==nombreArchivo){
+                    return paquete.getArchivos()[i];
+                }
+            }
+            return null;
+        }
+    }
+
+    public buscarPaquete(id:string,proyecto:Proyecto):Paquete{
+        let nombres:Array<string> = id.split('.');
         let paquete:Paquete = proyecto.getPaquetePrincipal(); 
         while(nombres.length){
             let paqueteTemp = this.buscarPaqueteEnLista(nombres.shift(),paquete.getPaquetes());
@@ -23,10 +57,12 @@ export class GestionadorPaquete{
         }
     }
 
-    public crearPaquete(nombrePaquete:string,proyecto:Proyecto):void{
-        let nombres:Array<string> = nombrePaquete.split('.');
+    public crearPaquete(id:string,proyecto:Proyecto):Paquete{
+        let nombres:Array<string> = id.split('.');
         let paquete:Paquete = proyecto.getPaquetePrincipal(); 
         let nombre:string;
+        let nombreAcumulado:Array<string> = new Array();
+
         while(nombres.length){
             nombre = nombres.shift();
             let paqueteTemp = this.buscarPaqueteEnLista(nombre,paquete.getPaquetes());
@@ -34,6 +70,7 @@ export class GestionadorPaquete{
                 nombres.unshift(nombre);
                 break;
             }else{
+                nombreAcumulado.push(nombre);
                 paquete = paqueteTemp;
             }
         }
@@ -41,11 +78,15 @@ export class GestionadorPaquete{
         if(nombres.length){
             let nuevoPaquete:Paquete;
             while(nombres.length){
-                nuevoPaquete = new Paquete(nombres.shift());
+                nombreAcumulado.join('.')
+                let nombreshift:string = nombres.shift();
+                nombreAcumulado.push(nombreshift);
+                nuevoPaquete = new Paquete(nombreshift,nombreAcumulado.join('.'));
                 paquete.agregarPaquete(nuevoPaquete);
                 paquete = nuevoPaquete;
             }
         }
+        return paquete;
     }
 
     private buscarPaqueteEnLista(nombre:string,paquetes:Array<Paquete>):Paquete{

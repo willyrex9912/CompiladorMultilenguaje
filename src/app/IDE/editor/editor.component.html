@@ -14,29 +14,41 @@
                         <h5>
                             Proyecto
                         </h5>
-                        <div id="jstree">
-                            <ul>
-                                <li [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>{{getProyecto().getNombre()}}
+                        <div class="col-12">
+                            <div class="row" style="margin-bottom: 25px;">
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-archivo')" >Nuevo Archivo</button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-danger"  >Nuevo Proyecto</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="jstree">
                                     <ul>
-                                        <ng-container
-                                            *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes(), archivos:getProyecto().getPaquetePrincipal().getArchivos()}"
-                                        ></ng-container>
-                                        <ng-template #Recursion let-paquetes="paquetes" let-archivos="archivos">
-                                            <li *ngFor="let paquete of paquetes" id="{{paquete.getId()}}" data-jstree='{"icon":"assets/img/carpeta.png"}'>
-                                                {{paquete.getNombre()}}
-                                                <ul *ngIf="paquete.getPaquetes().length > 0 || paquete.getArchivos().length > 0">
-                                                    <ng-container
-                                                      *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes(), archivos: paquete.getArchivos() }"
-                                                    ></ng-container>
-                                                </ul>
-                                            </li>
-                                            <li *ngFor="let archivo of archivos" id="{{archivo.getId()}}" data-jstree='{"icon":"assets/img/archivo.png"}'>
-                                                {{archivo.getNombre()}}
-                                            </li>
-                                        </ng-template>
+                                        <li [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>{{getProyecto().getNombre()}}
+                                            <ul>
+                                                <ng-container
+                                                    *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes(), archivos:getProyecto().getPaquetePrincipal().getArchivos()}"
+                                                ></ng-container>
+                                                <ng-template #Recursion let-paquetes="paquetes" let-archivos="archivos">
+                                                    <li *ngFor="let paquete of paquetes" id="{{paquete.getId()}}" data-jstree='{"icon":"assets/img/carpeta.png"}'>
+                                                        {{paquete.getNombre()}}
+                                                        <ul *ngIf="paquete.getPaquetes().length > 0 || paquete.getArchivos().length > 0">
+                                                            <ng-container
+                                                              *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes(), archivos: paquete.getArchivos() }"
+                                                            ></ng-container>
+                                                        </ul>
+                                                    </li>
+                                                    <li *ngFor="let archivo of archivos" id="{{archivo.getId()}}" data-jstree='{"icon":"assets/img/archivo.png"}'>
+                                                        {{archivo.getNombre()}}
+                                                    </li>
+                                                </ng-template>
+                                            </ul>
+                                        </li>
                                     </ul>
-                                </li>
-                            </ul>
+                                </div>
+                            </div>       
                         </div>
                     </div>
                 </div>
@@ -97,21 +109,26 @@
     </div>
 </div>
 
-<button (click)="abrirModal('modal-nuevo-archivo');">Abrir modal</button>
+<!-- ----------------------- MODALES ---------------------- -->
 
 <wj-modal id="modal-nuevo-archivo">
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Modal title</h5>
+            <h5 class="modal-title">Nuevo archivo</h5>
             <button (click)="cerrarModal('modal-nuevo-archivo');" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <p>Modal body text goes here.</p>
+            
+            <h5>Modal body text goes here.</h5>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingInput" placeholder="paquete1.paquete2.nombreArchivo">
+                <label for="floatingInput">Ingrese el nombre del archivo:</label>
+            </div>
         </div>
         <div class="modal-footer">
             <button (click)="cerrarModal('modal-nuevo-archivo');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-danger">Save changes</button>
+            <button type="button" class="btn btn-danger">Crear</button>
         </div>
         </div>
     </div>

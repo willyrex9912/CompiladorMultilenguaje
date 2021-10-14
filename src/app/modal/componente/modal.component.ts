@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ModalService } from '../servicio/modal.service';
 
 @Component({
@@ -7,7 +7,7 @@ import { ModalService } from '../servicio/modal.service';
   styleUrls: ['./modal.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent implements OnInit,OnDestroy {
 
   @Input() id: string;
   private elemento: any;
@@ -51,8 +51,8 @@ export class ModalComponent implements OnInit {
 
   // close modal
   cerrar(): void {
-      this.elemento.style.display = 'none';
-      document.body.classList.remove('wj-modal-open');
+    this.elemento.style.display = 'none';
+    document.body.classList.remove('wj-modal-open');
   }
 
 }

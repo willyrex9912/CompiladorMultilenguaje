@@ -10,6 +10,7 @@ import { Paquete } from 'src/model/Proyecto/Paquete';
 import { Proyecto } from 'src/model/Proyecto/Proyecto';
 import { ModalService } from 'src/app/modal/servicio/modal.service';
 import { ProyectoService } from 'src/app/services/proyecto/proyecto.service';
+import { Confirmacion } from 'src/model/Confirmacion';
 
 @Component({
   selector: 'app-editor',
@@ -25,6 +26,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   private analizador = new Analizador();
   public idArchivo:string = "";
   public idPaquete:string = "";
+  public textoInfo:string = "";
 
   private proyecto:Proyecto;
 
@@ -33,7 +35,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     
     //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
     this.proyecto = new Proyecto('proyecto1');
-    this.simular();
+    //this.simular();
   }
 
   ngOnInit(): void {
@@ -173,9 +175,12 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   public guardarProyecto():void{
-    this.servicioProyecto.enviarProyecto(this.proyecto).subscribe(data=>{
-      console.log(data);
-    });
+    if(this.proyecto!=null){
+      this.servicioProyecto.enviarProyecto(this.proyecto).subscribe(data=>{
+        this.textoInfo = data.descripcion;
+        this.abrirModal("modal-info");
+      });
+    }
   }
 
 }

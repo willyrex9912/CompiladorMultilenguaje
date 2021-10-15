@@ -17,7 +17,7 @@ export class ProyectoService {
   }
 
   public enviarProyecto(proyecto:Proyecto){
-    return this.httpClient.post<Proyecto>(this.url,proyecto);
+    return this.httpClient.post<Confirmacion>(this.url,proyecto);
   }
 
 }

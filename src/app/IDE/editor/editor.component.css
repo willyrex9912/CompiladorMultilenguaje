@@ -1,3 +1,11 @@
 ul li ul{
     display: none;
 }
+
+li.carpeta {
+    list-style-image: url('/assets/img/carpeta.png');
+}
+
+li.archivo {
+    list-style-image: url('/assets/img/archivo.png');
+}

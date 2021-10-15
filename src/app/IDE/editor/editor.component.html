@@ -17,7 +17,7 @@
                             Proyecto
                         </h5>
                         <div class="col-12">
-                            <div class="row" style="margin-bottom: 25px;">
+                            <div class="row" style="margin: 5px;">
                                 <div class="col-6">
                                     <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-archivo')" >Nuevo Archivo</button>
                                 </div>
@@ -25,7 +25,12 @@
                                     <button type="button" class="btn btn-danger"  >Nuevo Proyecto</button>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" style="margin: 5px;" >
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-paquete')" >Nuevo Paquete</button>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 25px;">
                                 <div>
                                     <ul >
                                         <li class="carpeta" [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>
@@ -124,13 +129,35 @@
         </div>
         <div class="modal-body">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingInput" placeholder="paquete1.paquete2.nombreArchivo" [(ngModel)]="id" autocomplete="off">
+                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="idArchivo" autocomplete="off" pattern="[0-9]+">
                 <label for="floatingInput">Ingrese el nombre del archivo:</label>
             </div>
         </div>
         <div class="modal-footer">
             <button (click)="cerrarModal('modal-nuevo-archivo');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="button" class="btn btn-danger" (click)="crearArchivo(); cerrarModal('modal-nuevo-archivo');">Crear</button>
+        </div>
+        </div>
+    </div>
+</wj-modal>
+
+
+<wj-modal id="modal-nuevo-paquete">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Nuevo paquete</h5>
+            <button (click)="cerrarModal('modal-nuevo-paquete');" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="idPaquete" autocomplete="off">
+                <label for="floatingInput">Ingrese el nombre del paquete:</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button (click)="cerrarModal('modal-nuevo-archivo');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" (click)="crearPaquete(); cerrarModal('modal-nuevo-paquete');">Crear</button>
         </div>
         </div>
     </div>

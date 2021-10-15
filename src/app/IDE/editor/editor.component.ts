@@ -22,7 +22,8 @@ export class EditorComponent implements OnInit, AfterViewInit {
   @ViewChild('editor') private editor:ElementRef<HTMLElement>;
   private txtConsola:String = "";
   private analizador = new Analizador();
-  public id:string = "";
+  public idArchivo:string = "";
+  public idPaquete:string = "";
 
   private proyecto:Proyecto;
 
@@ -65,6 +66,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     aceEditor.setTheme('ace/theme/eclipse');
     aceEditor.session.setMode('ace/mode/java');
     aceEditor.session.setUseSoftTabs(false);
+
   }
   
 
@@ -148,8 +150,25 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   crearArchivo():void{
-    this.proyecto.crearArchivo(this.id);
-    this.id = "";
+    if(this.idValido(this.idArchivo)){
+      this.proyecto.crearArchivo(this.idArchivo);
+      this.idArchivo = "";
+    }else{
+      this.idArchivo = "";
+    }
+  }
+
+  crearPaquete():void{
+    if(this.idValido(this.idPaquete)){
+      this.proyecto.agregarPaquete(this.idPaquete);
+      this.idPaquete = "";
+    }else{
+      this.idPaquete = "";
+    }
+  }
+
+  private idValido(id:string):boolean{
+    return /^([a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*)$/.test(id);
   }
 
 }

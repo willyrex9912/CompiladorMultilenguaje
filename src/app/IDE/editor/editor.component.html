@@ -1,5 +1,5 @@
 <app-barra></app-barra>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <div class="row">
     <div class="col-3">
         <div class="row">
@@ -24,28 +24,30 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div id="jstree">
-                                    <ul>
-                                        <li [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>{{getProyecto().getNombre()}}
+                                <div>
+                                    <ul >
+                                        <li [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>
+                                            <a class="expand">{{getProyecto().getNombre()}}</a>
                                             <ul>
                                                 <ng-container
                                                     *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes(), archivos:getProyecto().getPaquetePrincipal().getArchivos()}"
                                                 ></ng-container>
                                                 <ng-template #Recursion let-paquetes="paquetes" let-archivos="archivos">
-                                                    <li *ngFor="let paquete of paquetes" id="{{paquete.getId()}}" data-jstree='{"icon":"assets/img/carpeta.png"}'>
-                                                        {{paquete.getNombre()}}
+                                                    <li *ngFor="let paquete of paquetes" id="{{paquete.getId()}}" >
+                                                        <a class="expand" >{{paquete.getNombre()}}</a>
                                                         <ul *ngIf="paquete.getPaquetes().length > 0 || paquete.getArchivos().length > 0">
                                                             <ng-container
                                                               *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes(), archivos: paquete.getArchivos() }"
                                                             ></ng-container>
                                                         </ul>
                                                     </li>
-                                                    <li *ngFor="let archivo of archivos" id="{{archivo.getId()}}" data-jstree='{"icon":"assets/img/archivo.png"}'>
-                                                        {{archivo.getNombre()}}
+                                                    <li *ngFor="let archivo of archivos" id="{{archivo.getId()}}" >
+                                                        <a class="expand">{{archivo.getNombre()}}</a>
                                                     </li>
                                                 </ng-template>
                                             </ul>
                                         </li>
+                                        {{expandir()}}
                                     </ul>
                                 </div>
                             </div>       
@@ -119,16 +121,14 @@
             <button (click)="cerrarModal('modal-nuevo-archivo');" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            
-            <h5>Modal body text goes here.</h5>
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingInput" placeholder="paquete1.paquete2.nombreArchivo">
+                <input type="text" class="form-control" id="floatingInput" placeholder="paquete1.paquete2.nombreArchivo" [(ngModel)]="id" autocomplete="off">
                 <label for="floatingInput">Ingrese el nombre del archivo:</label>
             </div>
         </div>
         <div class="modal-footer">
             <button (click)="cerrarModal('modal-nuevo-archivo');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-danger">Crear</button>
+            <button type="button" class="btn btn-danger" (click)="crearArchivo(); cerrarModal('modal-nuevo-archivo');">Crear</button>
         </div>
         </div>
     </div>

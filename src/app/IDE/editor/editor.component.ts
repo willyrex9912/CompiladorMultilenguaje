@@ -22,6 +22,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   @ViewChild('editor') private editor:ElementRef<HTMLElement>;
   private txtConsola:String = "";
   private analizador = new Analizador();
+  public id:string = "";
 
   private proyecto:Proyecto;
 
@@ -40,6 +41,13 @@ export class EditorComponent implements OnInit, AfterViewInit {
       $('#jstree').on("changed.jstree", function (e, data) {
         console.log(data.selected);
       });
+    });
+    this.expandir();
+  }
+
+  expandir():void{
+    $('.expand').click(function() {
+      $('ul', $(this).parent()).eq(0).toggle();
     });
   }
 
@@ -110,6 +118,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     this.servicioModal.cerrar(id);
   }
   
+  
   //+++++++++++++++++METODO TEMPORAL DE SIMULACION++++++++++++++++++++++
   public simular():void{
     //this.proyecto.agregarPaquete('backend.analizador');
@@ -136,6 +145,11 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }else{
       console.log("Paquete "+nombrePaquete+" cuenta con "+paquete.getPaquetes().length+" paquetes.");
     }
+  }
+
+  crearArchivo():void{
+    this.proyecto.crearArchivo(this.id);
+    this.id = "";
   }
 
 }

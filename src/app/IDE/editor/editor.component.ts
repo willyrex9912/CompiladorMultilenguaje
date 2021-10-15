@@ -26,7 +26,9 @@ export class EditorComponent implements OnInit, AfterViewInit {
   private analizador = new Analizador();
   public idArchivo:string = "";
   public idPaquete:string = "";
+  public nombreProyecto:string = "";
   public textoInfo:string = "";
+  private banderaExpandir = true;
 
   private proyecto:Proyecto;
 
@@ -34,7 +36,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     //console.log(this.router.getCurrentNavigation().extras.state.nombre);
     
     //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
-    this.proyecto = new Proyecto('proyecto1');
+    //this.proyecto = new Proyecto('proyecto1');
     //this.simular();
   }
 
@@ -159,6 +161,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }else{
       this.idArchivo = "";
     }
+    this.reexpandir();
   }
 
   public crearPaquete():void{
@@ -167,6 +170,14 @@ export class EditorComponent implements OnInit, AfterViewInit {
       this.idPaquete = "";
     }else{
       this.idPaquete = "";
+    }
+    this.reexpandir();
+  }
+
+  reexpandir():void{
+    if(this.banderaExpandir){
+      this.expandir();
+      this.banderaExpandir = false;
     }
   }
 
@@ -181,6 +192,11 @@ export class EditorComponent implements OnInit, AfterViewInit {
         this.abrirModal("modal-info");
       });
     }
+  }
+
+  public crearProyecto():void{
+    this.proyecto = new Proyecto(this.nombreProyecto);
+    this.nombreProyecto = "";
   }
 
 }

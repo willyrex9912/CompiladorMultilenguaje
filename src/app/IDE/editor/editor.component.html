@@ -17,6 +17,14 @@
                             Proyecto
                         </h5>
                         <div class="col-12">
+                            <div class="row" style="margin: 5px;" >
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-proyecto')" >Nuevo Proyecto</button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-danger" (click)="guardarProyecto()" >Guardar Proyecto</button>
+                                </div>
+                            </div>
                             <div class="row" style="margin: 5px;">
                                 <div class="col-6">
                                     <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-archivo')" >Nuevo Archivo</button>
@@ -29,14 +37,11 @@
                                 <div class="col-6">
                                     <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-paquete')" >Nuevo Paquete</button>
                                 </div>
-                                <div class="col-6">
-                                    <button type="button" class="btn btn-danger" (click)="guardarProyecto()" >Guardar Proyecto</button>
-                                </div>
                             </div>
                             <div class="row" style="margin-top: 25px;">
                                 <div>
                                     <ul >
-                                        <li class="carpeta" [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>
+                                        <li *ngIf="getProyecto()!=null" class="carpeta" [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>
                                             <a class="expand link-secondary">{{getProyecto().getNombre()}}</a>
                                             <ul>
                                                 <ng-container
@@ -161,6 +166,27 @@
         <div class="modal-footer">
             <button (click)="cerrarModal('modal-nuevo-archivo');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             <button type="button" class="btn btn-danger" (click)="crearPaquete(); cerrarModal('modal-nuevo-paquete');">Crear</button>
+        </div>
+        </div>
+    </div>
+</wj-modal>
+
+<wj-modal id="modal-nuevo-proyecto">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Nuevo proyecto</h5>
+            <button (click)="cerrarModal('modal-nuevo-proyecto');" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="nombreProyecto" autocomplete="off">
+                <label for="floatingInput">Ingrese el nombre del proyecto:</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button (click)="cerrarModal('modal-nuevo-proyecto');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger" (click)="crearProyecto(); cerrarModal('modal-nuevo-proyecto');">Crear</button>
         </div>
         </div>
     </div>

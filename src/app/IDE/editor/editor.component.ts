@@ -9,6 +9,7 @@ import * as $ from 'jquery'; import 'jstree';
 import { Paquete } from 'src/model/Proyecto/Paquete';
 import { Proyecto } from 'src/model/Proyecto/Proyecto';
 import { ModalService } from 'src/app/modal/servicio/modal.service';
+import { ProyectoService } from 'src/app/services/proyecto/proyecto.service';
 
 @Component({
   selector: 'app-editor',
@@ -27,7 +28,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   private proyecto:Proyecto;
 
-  constructor(private servicio:ServicioService, private servicioModal:ModalService, private router:Router) {
+  constructor(private servicio:ServicioService, private servicioProyecto:ProyectoService, private servicioModal:ModalService, private router:Router) {
     //console.log(this.router.getCurrentNavigation().extras.state.nombre);
     
     //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
@@ -112,11 +113,11 @@ export class EditorComponent implements OnInit, AfterViewInit {
     return this.proyecto;
   }
 
-  abrirModal(id:string):void{
+  public abrirModal(id:string):void{
     this.servicioModal.abrir(id);
   }
 
-  cerrarModal(id:string):void{
+  public cerrarModal(id:string):void{
     this.servicioModal.cerrar(id);
   }
   
@@ -149,7 +150,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  crearArchivo():void{
+  public crearArchivo():void{
     if(this.idValido(this.idArchivo)){
       this.proyecto.crearArchivo(this.idArchivo);
       this.idArchivo = "";
@@ -158,7 +159,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  crearPaquete():void{
+  public crearPaquete():void{
     if(this.idValido(this.idPaquete)){
       this.proyecto.agregarPaquete(this.idPaquete);
       this.idPaquete = "";
@@ -169,6 +170,12 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   private idValido(id:string):boolean{
     return /^([a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*)$/.test(id);
+  }
+
+  public guardarProyecto():void{
+    this.servicioProyecto.enviarProyecto(this.proyecto).subscribe(data=>{
+      console.log(data);
+    });
   }
 
 }

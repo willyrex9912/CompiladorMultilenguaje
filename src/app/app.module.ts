@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ModalModule } from './modal/modulo/modal/modal.module';
 import { BarraComponent } from './barra/barra.component';
 import { InicioComponent } from './inicio/inicio.component';
+import { ProyectoService } from './services/proyecto/proyecto.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { InicioComponent } from './inicio/inicio.component';
     HttpClientModule,
     ModalModule
   ],
-  providers: [ServicioService],
+  providers: [ServicioService,ProyectoService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

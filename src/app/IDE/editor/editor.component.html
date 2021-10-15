@@ -29,19 +29,22 @@
                                 <div class="col-6">
                                     <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-paquete')" >Nuevo Paquete</button>
                                 </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-danger" (click)="guardarProyecto()" >Guardar Proyecto</button>
+                                </div>
                             </div>
                             <div class="row" style="margin-top: 25px;">
                                 <div>
                                     <ul >
                                         <li class="carpeta" [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>
-                                            <a class="expand">{{getProyecto().getNombre()}}</a>
+                                            <a class="expand link-secondary">{{getProyecto().getNombre()}}</a>
                                             <ul>
                                                 <ng-container
                                                     *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes(), archivos:getProyecto().getPaquetePrincipal().getArchivos()}"
                                                 ></ng-container>
                                                 <ng-template #Recursion let-paquetes="paquetes" let-archivos="archivos">
                                                     <li class="carpeta" *ngFor="let paquete of paquetes" id="{{paquete.getId()}}" >
-                                                        <a class="expand" >{{paquete.getNombre()}}</a>
+                                                        <a class="expand link-secondary" >{{paquete.getNombre()}}</a>
                                                         <ul *ngIf="paquete.getPaquetes().length > 0 || paquete.getArchivos().length > 0">
                                                             <ng-container
                                                               *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes(), archivos: paquete.getArchivos() }"
@@ -49,7 +52,7 @@
                                                         </ul>
                                                     </li>
                                                     <li class="archivo" *ngFor="let archivo of archivos" id="{{archivo.getId()}}" >
-                                                        <a class="expand">{{archivo.getNombre()}}</a>
+                                                        <a class="expand link-secondary">{{archivo.getNombre()}}</a>
                                                     </li>
                                                 </ng-template>
                                             </ul>

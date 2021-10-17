@@ -36,8 +36,8 @@ export class EditorComponent implements OnInit, AfterViewInit {
     //console.log(this.router.getCurrentNavigation().extras.state.nombre);
     
     //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
-    //this.proyecto = new Proyecto('proyecto1');
-    //this.simular();
+    this.proyecto = new Proyecto('proyecto1');
+    this.simular();
   }
 
   ngOnInit(): void {

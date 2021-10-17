@@ -8,16 +8,17 @@ import { Proyecto } from 'src/model/Proyecto/Proyecto';
 })
 export class ProyectoService {
 
-  private url:string = "http://localhost:8080/compimult/GuardarProyecto";
+  private urlGuardarProyecto:string = "http://localhost:8080/compimult/GuardarProyecto";
+  private urlProyectos:string = "http://localhost:8080/compimult/GetProyectos";
 
   constructor(private httpClient:HttpClient) { }
 
-  public getInstrucciones(){
-    return this.httpClient.get<Confirmacion>(this.url);
+  public getProyectos(){
+    return this.httpClient.get<Array<Proyecto>>(this.urlProyectos);
   }
 
   public enviarProyecto(proyecto:Proyecto){
-    return this.httpClient.post<Confirmacion>(this.url,proyecto);
+    return this.httpClient.post<Confirmacion>(this.urlGuardarProyecto,proyecto);
   }
 
 }

@@ -12,6 +12,7 @@ import { ModalModule } from './modal/modulo/modal/modal.module';
 import { BarraComponent } from './barra/barra.component';
 import { InicioComponent } from './inicio/inicio.component';
 import { ProyectoService } from './services/proyecto/proyecto.service';
+import { ProyectosComponent } from './proyectos/proyectos.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ProyectoService } from './services/proyecto/proyecto.service';
     EditorComponent,
     MostrarCodigo3dComponent,
     BarraComponent,
-    InicioComponent
+    InicioComponent,
+    ProyectosComponent
   ],
   imports: [
     BrowserModule,

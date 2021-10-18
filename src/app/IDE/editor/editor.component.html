@@ -57,13 +57,12 @@
                                                         </ul>
                                                     </li>
                                                     <li class="archivo" *ngFor="let archivo of archivos" id="{{archivo.id}}" >
-                                                        <a (click)="expandir()" class="expand link-secondary">{{archivo.nombre}}</a>
+                                                        <a (click)="actualizarCodigoEditor(archivo.id)" class="expand link-secondary">{{archivo.nombre}}</a>
                                                     </li>
                                                 </ng-template>
                                             </ul>
                                             {{expandir()}}
                                         </li>
-                                        
                                     </ul>
                                 </div>
                             </div>       
@@ -95,7 +94,7 @@
             <div class="row" style="margin-top: 10px;">
                 <div class="col-1"></div>
                 <div class="col-10">
-                    <div class="app-ace-editor" #editor style="width: 100%;height:470px;"></div>
+                    <div class="app-ace-editor" #editor style="width: 100%;height:470px;" >{{codigoPrincipal}}</div>
                 </div>
                 <div class="col-1"></div>
             </div>

@@ -1,17 +1,16 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ViewChildren, ViewContainerRef } from '@angular/core';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import * as ace from "ace-builds";
 import { ServicioService } from 'src/app/Servicio/servicio.service';
 import { Analizador } from 'src/controllers/ControladorAnalisis';
 import { Cuadrupla } from 'src/model/Cuadrupla';
 
 import * as $ from 'jquery'; import 'jstree';
-import { Paquete } from 'src/model/Proyecto/Paquete';
 import { Proyecto } from 'src/model/Proyecto/Proyecto';
 import { ModalService } from 'src/app/modal/servicio/modal.service';
 import { ProyectoService } from 'src/app/services/proyecto/proyecto.service';
-import { Confirmacion } from 'src/model/Confirmacion';
 import { GestionadorPaquete } from 'src/resources/utilidades/proyecto/GestionadorPaquete';
+import { Archivo } from 'src/model/Proyecto/Archivo';
 
 @Component({
   selector: 'app-editor',
@@ -29,8 +28,10 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public idPaquete:string = "";
   public nombreProyecto:string = "";
   public textoInfo:string = "";
-  private banderaExpandir = true;
+  //private banderaExpandir = true;
   public gestionadorPaquete:GestionadorPaquete;
+  public codigoPrincipal = "";
+  private archivoActual;
 
   public proyecto:Proyecto;
 
@@ -52,7 +53,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     $(function () {
-      let data = ['test1','test2','test3'];
       $('#jstree').jstree();
       $('#jstree').on("changed.jstree", function (e, data) {
         console.log(data.selected);
@@ -168,7 +168,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }else{
       this.idArchivo = "";
     }
-    this.reexpandir();
+    //this.reexpandir();
     console.log(this.proyecto);
   }
 
@@ -179,15 +179,17 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }else{
       this.idPaquete = "";
     }
-    this.reexpandir();
+    //this.reexpandir();
   }
 
+  /*
   reexpandir():void{
     if(this.banderaExpandir){
       this.expandir();
       this.banderaExpandir = false;
     }
   }
+  */
 
   private idValido(id:string):boolean{
     return /^([a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*)$/.test(id);
@@ -207,9 +209,19 @@ export class EditorComponent implements OnInit, AfterViewInit {
     this.nombreProyecto = "";
   }
 
-  public mostrarProyecto():void{
+  public actualizarCodigoEditor(id:string):void{
+    let archivo:Archivo = this.gestionadorPaquete.buscarArchivo(id,this.proyecto);
+    if(archivo!=null){
+      const aceEditor = ace.edit(this.editor.nativeElement);
+      aceEditor.session.setValue(archivo.codigo);
+      this.archivoActual = archivo;
+      //++++++++++++++++++++++++++CONECTAR CODIGO CON ARCHIVO ACTUAL
+    }
+  }
+
+  public mostrarProyecto(){
     console.log(this.proyecto);
-    this.expandir();
+    console.log(this.codigoPrincipal);
   }
 
 }

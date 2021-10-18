@@ -20,7 +20,7 @@ export class GestionadorPaquete{
         let archivo = this.buscarArchivo(nombre,proyecto);
     }
 
-    private buscarArchivo(id:string,proyecto:Proyecto){
+    public buscarArchivo(id:string,proyecto:Proyecto){
         let nombres:Array<string> = id.split('.');
         let nombreArchivo = nombres.pop();
         let nombrePaquete = nombres.join('.');

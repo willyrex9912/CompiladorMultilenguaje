@@ -10,11 +10,16 @@ export class ProyectoService {
 
   private urlGuardarProyecto:string = "http://localhost:8080/compimult/GuardarProyecto";
   private urlProyectos:string = "http://localhost:8080/compimult/GetProyectos";
+  private urlProyecto:string = "http://localhost:8080/compimult/GetProyecto";
 
   constructor(private httpClient:HttpClient) { }
 
   public getProyectos(){
     return this.httpClient.get<Array<Proyecto>>(this.urlProyectos);
+  }
+
+  public getProyecto(nombre:string){
+    return this.httpClient.post<Proyecto>(this.urlProyecto,nombre);
   }
 
   public enviarProyecto(proyecto:Proyecto){

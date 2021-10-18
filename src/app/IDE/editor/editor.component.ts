@@ -11,6 +11,7 @@ import { Proyecto } from 'src/model/Proyecto/Proyecto';
 import { ModalService } from 'src/app/modal/servicio/modal.service';
 import { ProyectoService } from 'src/app/services/proyecto/proyecto.service';
 import { Confirmacion } from 'src/model/Confirmacion';
+import { GestionadorPaquete } from 'src/resources/utilidades/proyecto/GestionadorPaquete';
 
 @Component({
   selector: 'app-editor',
@@ -29,15 +30,24 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public nombreProyecto:string = "";
   public textoInfo:string = "";
   private banderaExpandir = true;
+  public gestionadorPaquete:GestionadorPaquete;
 
-  private proyecto:Proyecto;
+  public proyecto:Proyecto;
 
   constructor(private servicio:ServicioService, private servicioProyecto:ProyectoService, private servicioModal:ModalService, private router:Router) {
+    this.gestionadorPaquete = new GestionadorPaquete();
+    if(localStorage.getItem('proyecto')!=null){
+      servicioProyecto.getProyecto(localStorage.getItem('proyecto')).subscribe(data=>{
+        this.proyecto = data;
+      });
+      localStorage.setItem('proyecto',null);
+    }
+    
     //console.log(this.router.getCurrentNavigation().extras.state.nombre);
     
     //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
-    this.proyecto = new Proyecto('proyecto1');
-    this.simular();
+    //this.proyecto = new Proyecto('proyecto1');
+    //this.simular();
   }
 
   ngOnInit(): void {
@@ -113,10 +123,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
     return this.txtConsola;
   }
 
-  public getProyecto(){
-    return this.proyecto;
-  }
-
   public abrirModal(id:string):void{
     this.servicioModal.abrir(id);
   }
@@ -129,44 +135,46 @@ export class EditorComponent implements OnInit, AfterViewInit {
   //+++++++++++++++++METODO TEMPORAL DE SIMULACION++++++++++++++++++++++
   public simular():void{
     //this.proyecto.agregarPaquete('backend.analizador');
-    this.proyecto.agregarPaquete('backend.controladores.mensaje');
-    this.proyecto.agregarPaquete('backend.controladores.alerta');
-    this.proyecto.agregarPaquete('backend.controladores.data');
-    this.proyecto.agregarPaquete('backend.controladores.password');
-    this.proyecto.agregarPaquete('backend.error');
-    this.proyecto.agregarPaquete('frontend.vistas.principal');
-    this.proyecto.agregarPaquete('frontend.vistas.secundaria');
-    this.proyecto.agregarPaquete('frontend.controladores.password');
-    this.proyecto.crearArchivo('backend.analizador.lexer');
-    this.proyecto.crearArchivo('frontend.vistas.principal.modelos.modelo');
-    this.proyecto.crearArchivo('backend.recuperador.lexer');
-    this.proyecto.crearArchivo('backend.controller');
-    this.proyecto.crearArchivo('backend.controller2');
-    this.proyecto.crearArchivo('main');
+    this.gestionadorPaquete.crearPaquete('backend.controladores.mensaje',this.proyecto);
+    this.gestionadorPaquete.crearPaquete('backend.controladores.alerta',this.proyecto);
+    this.gestionadorPaquete.crearPaquete('backend.controladores.data',this.proyecto);
+    this.gestionadorPaquete.crearPaquete('backend.controladores.password',this.proyecto);
+    this.gestionadorPaquete.crearPaquete('backend.error',this.proyecto);
+    this.gestionadorPaquete.crearPaquete('frontend.vistas.principal',this.proyecto);
+    this.gestionadorPaquete.crearPaquete('frontend.vistas.secundaria',this.proyecto);
+    this.gestionadorPaquete.crearPaquete('frontend.controladores.password',this.proyecto);
+    this.gestionadorPaquete.nuevoArchivo('backend.analizador.lexer',this.proyecto,"");
+    this.gestionadorPaquete.nuevoArchivo('frontend.vistas.principal.modelos.modelo',this.proyecto,"");
+    this.gestionadorPaquete.nuevoArchivo('backend.recuperador.lexer',this.proyecto,"");
+    this.gestionadorPaquete.nuevoArchivo('backend.controller',this.proyecto,"");
+    this.gestionadorPaquete.nuevoArchivo('backend.controller2',this.proyecto,"");
+    this.gestionadorPaquete.nuevoArchivo('main',this.proyecto,"");
     console.log('METODOS CREADOS');
     console.log(this.proyecto)
     let nombrePaquete = 'frontend.vistas';
-    let paquete = this.proyecto.buscarPaquete(nombrePaquete);
+    let paquete = this.gestionadorPaquete.buscarPaquete(nombrePaquete,this.proyecto);
     if(paquete==null){
       console.log("No se ha encontrado el paquete "+nombrePaquete);
     }else{
-      console.log("Paquete "+nombrePaquete+" cuenta con "+paquete.getPaquetes().length+" paquetes.");
+      console.log("Paquete "+nombrePaquete+" cuenta con "+paquete.paquetes.length+" paquetes.");
     }
   }
 
   public crearArchivo():void{
     if(this.idValido(this.idArchivo)){
-      this.proyecto.crearArchivo(this.idArchivo);
+      //this.proyecto.crearArchivo(this.idArchivo);
+      this.gestionadorPaquete.nuevoArchivo(this.idArchivo,this.proyecto,"");
       this.idArchivo = "";
     }else{
       this.idArchivo = "";
     }
     this.reexpandir();
+    console.log(this.proyecto);
   }
 
   public crearPaquete():void{
     if(this.idValido(this.idPaquete)){
-      this.proyecto.agregarPaquete(this.idPaquete);
+      this.gestionadorPaquete.crearPaquete(this.idPaquete,this.proyecto);
       this.idPaquete = "";
     }else{
       this.idPaquete = "";
@@ -197,6 +205,11 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public crearProyecto():void{
     this.proyecto = new Proyecto(this.nombreProyecto);
     this.nombreProyecto = "";
+  }
+
+  public mostrarProyecto():void{
+    console.log(this.proyecto);
+    this.expandir();
   }
 
 }

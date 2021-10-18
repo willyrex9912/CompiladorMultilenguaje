@@ -30,7 +30,7 @@
                                     <button type="button" class="btn btn-danger" (click)="abrirModal('modal-nuevo-archivo')" >Nuevo Archivo</button>
                                 </div>
                                 <div class="col-6">
-                                    <button type="button" class="btn btn-danger"  >Nuevo Proyecto</button>
+                                    <button type="button" class="btn btn-danger" (click)="mostrarProyecto()" >Mostrar Proyecto en consola</button>
                                 </div>
                             </div>
                             <div class="row" style="margin: 5px;" >
@@ -41,28 +41,29 @@
                             <div class="row" style="margin-top: 25px;">
                                 <div>
                                     <ul >
-                                        <li *ngIf="getProyecto()!=null" class="carpeta" [id]="getProyecto().getNombre()" data-jstree='{"icon":"assets/img/carpeta.png"}'>
-                                            <a class="expand link-secondary">{{getProyecto().getNombre()}}</a>
+                                        <li *ngIf="proyecto!=null" class="carpeta" [id]="proyecto.nombre" data-jstree='{"icon":"assets/img/carpeta.png"}'>
+                                            <a (click)="expandir()" class="expand link-secondary">{{proyecto.nombre}}</a>
                                             <ul>
                                                 <ng-container
-                                                    *ngTemplateOutlet="Recursion; context:{ paquetes: getProyecto().getPaquetePrincipal().getPaquetes(), archivos:getProyecto().getPaquetePrincipal().getArchivos()}"
+                                                    *ngTemplateOutlet="Recursion; context:{ paquetes: proyecto.paquetePrincipal.paquetes, archivos:proyecto.paquetePrincipal.archivos}"
                                                 ></ng-container>
                                                 <ng-template #Recursion let-paquetes="paquetes" let-archivos="archivos">
-                                                    <li class="carpeta" *ngFor="let paquete of paquetes" id="{{paquete.getId()}}" >
-                                                        <a class="expand link-secondary" >{{paquete.getNombre()}}</a>
-                                                        <ul *ngIf="paquete.getPaquetes().length > 0 || paquete.getArchivos().length > 0">
+                                                    <li class="carpeta" *ngFor="let paquete of paquetes" id="{{paquete.id}}" >
+                                                        <a (click)="expandir()" class="expand link-secondary" >{{paquete.nombre}}</a>
+                                                        <ul *ngIf="paquete.paquetes.length > 0 || paquete.archivos.length > 0">
                                                             <ng-container
-                                                              *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.getPaquetes(), archivos: paquete.getArchivos() }"
+                                                              *ngTemplateOutlet="Recursion; context:{ paquetes: paquete.paquetes, archivos: paquete.archivos }"
                                                             ></ng-container>
                                                         </ul>
                                                     </li>
-                                                    <li class="archivo" *ngFor="let archivo of archivos" id="{{archivo.getId()}}" >
-                                                        <a class="expand link-secondary">{{archivo.getNombre()}}</a>
+                                                    <li class="archivo" *ngFor="let archivo of archivos" id="{{archivo.id}}" >
+                                                        <a (click)="expandir()" class="expand link-secondary">{{archivo.nombre}}</a>
                                                     </li>
                                                 </ng-template>
                                             </ul>
+                                            {{expandir()}}
                                         </li>
-                                        {{expandir()}}
+                                        
                                     </ul>
                                 </div>
                             </div>       
@@ -137,7 +138,7 @@
         </div>
         <div class="modal-body">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="idArchivo" autocomplete="off" pattern="[0-9]+">
+                <input type="text" class="form-control" [(ngModel)]="idArchivo" autocomplete="off" pattern="[0-9]+">
                 <label for="floatingInput">Ingrese el nombre del archivo:</label>
             </div>
         </div>
@@ -159,7 +160,7 @@
         </div>
         <div class="modal-body">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="idPaquete" autocomplete="off">
+                <input type="text" class="form-control" [(ngModel)]="idPaquete" autocomplete="off">
                 <label for="floatingInput">Ingrese el nombre del paquete:</label>
             </div>
         </div>
@@ -180,7 +181,7 @@
         </div>
         <div class="modal-body">
             <div class="form-floating mb-3">
-                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="nombreProyecto" autocomplete="off">
+                <input type="text" class="form-control" [(ngModel)]="nombreProyecto" autocomplete="off">
                 <label for="floatingInput">Ingrese el nombre del proyecto:</label>
             </div>
         </div>

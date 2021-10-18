@@ -6,11 +6,11 @@ import { InicioComponent } from './inicio/inicio.component';
 import { ProyectosComponent } from './proyectos/proyectos.component';
 
 const routes: Routes = [
-  {path:'', redirectTo: 'inicio', pathMatch:'full'},
   {path:'editor', component:EditorComponent},
   {path:'codigo3d', component:MostrarCodigo3dComponent},
   {path:'inicio',component:InicioComponent},
-  {path:'proyectos',component:ProyectosComponent}
+  {path:'proyectos',component:ProyectosComponent},
+  {path:'', redirectTo: 'inicio', pathMatch:'full'}
 ];
 
 @NgModule({

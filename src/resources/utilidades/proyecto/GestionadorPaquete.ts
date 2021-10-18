@@ -9,10 +9,10 @@ export class GestionadorPaquete{
         let nombreArchivo = nombres.pop();
         let nombrePaquete = nombres.join('.');
         if(nombres.length==0){
-            proyecto.getPaquetePrincipal().agregarArchivo(new Archivo(nombreArchivo,id,proyecto.getPaquetePrincipal().getNombre(),codigo));
+            proyecto.paquetePrincipal.archivos.push(new Archivo(nombreArchivo,id,proyecto.paquetePrincipal.nombre,codigo));
         }else{
             let paquete = this.crearPaquete(nombrePaquete,proyecto);
-            paquete.agregarArchivo(new Archivo(nombreArchivo,id,paquete.getNombre(),codigo));
+            paquete.archivos.push(new Archivo(nombreArchivo,id,paquete.nombre,codigo));
         }
     }
 
@@ -28,9 +28,9 @@ export class GestionadorPaquete{
         if(paquete==null){
             return null;
         }else{
-            for (const i in paquete.getArchivos()) {
-                if(paquete.getArchivos()[i].getNombre()==nombreArchivo){
-                    return paquete.getArchivos()[i];
+            for (const i in paquete.archivos) {
+                if(paquete.archivos[i].nombre==nombreArchivo){
+                    return paquete.archivos[i];
                 }
             }
             return null;
@@ -39,9 +39,9 @@ export class GestionadorPaquete{
 
     public buscarPaquete(id:string,proyecto:Proyecto):Paquete{
         let nombres:Array<string> = id.split('.');
-        let paquete:Paquete = proyecto.getPaquetePrincipal(); 
+        let paquete:Paquete = proyecto.paquetePrincipal; 
         while(nombres.length){
-            let paqueteTemp = this.buscarPaqueteEnLista(nombres.shift(),paquete.getPaquetes());
+            let paqueteTemp = this.buscarPaqueteEnLista(nombres.shift(),paquete.paquetes);
             if(paqueteTemp==null){
                 nombres.unshift('WJAJ');
                 break;
@@ -59,13 +59,13 @@ export class GestionadorPaquete{
 
     public crearPaquete(id:string,proyecto:Proyecto):Paquete{
         let nombres:Array<string> = id.split('.');
-        let paquete:Paquete = proyecto.getPaquetePrincipal(); 
+        let paquete:Paquete = proyecto.paquetePrincipal; 
         let nombre:string;
         let nombreAcumulado:Array<string> = new Array();
 
         while(nombres.length){
             nombre = nombres.shift();
-            let paqueteTemp = this.buscarPaqueteEnLista(nombre,paquete.getPaquetes());
+            let paqueteTemp = this.buscarPaqueteEnLista(nombre,paquete.paquetes);
             if(paqueteTemp==null){
                 nombres.unshift(nombre);
                 break;
@@ -82,7 +82,7 @@ export class GestionadorPaquete{
                 let nombreshift:string = nombres.shift();
                 nombreAcumulado.push(nombreshift);
                 nuevoPaquete = new Paquete(nombreshift,nombreAcumulado.join('.'));
-                paquete.agregarPaquete(nuevoPaquete);
+                paquete.paquetes.push(nuevoPaquete);
                 paquete = nuevoPaquete;
             }
         }
@@ -91,7 +91,7 @@ export class GestionadorPaquete{
 
     private buscarPaqueteEnLista(nombre:string,paquetes:Array<Paquete>):Paquete{
         for (const i in paquetes) {
-            if(paquetes[i].getNombre()==nombre){
+            if(paquetes[i].nombre==nombre){
                 return paquetes[i];
             }
         }

@@ -9,6 +9,7 @@ export class GestionadorPaquete{
         let nombreArchivo = nombres.pop();
         let nombrePaquete = nombres.join('.');
         if(nombres.length==0){
+            console.log(proyecto.paquetePrincipal.nombre);
             proyecto.paquetePrincipal.archivos.push(new Archivo(nombreArchivo,id,proyecto.paquetePrincipal.nombre,codigo));
         }else{
             let paquete = this.crearPaquete(nombrePaquete,proyecto);
@@ -24,7 +25,12 @@ export class GestionadorPaquete{
         let nombres:Array<string> = id.split('.');
         let nombreArchivo = nombres.pop();
         let nombrePaquete = nombres.join('.');
-        let paquete = this.buscarPaquete(nombrePaquete,proyecto);
+        let paquete:Paquete
+        if(nombrePaquete==""){
+            paquete = proyecto.paquetePrincipal;
+        }else{
+            paquete = this.buscarPaquete(nombrePaquete,proyecto);
+        }
         if(paquete==null){
             return null;
         }else{

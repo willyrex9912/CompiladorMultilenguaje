@@ -31,7 +31,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   //private banderaExpandir = true;
   public gestionadorPaquete:GestionadorPaquete;
   public codigoPrincipal = "";
-  private archivoActual;
+  public archivoActual:Archivo;
 
   public proyecto:Proyecto;
 
@@ -169,7 +169,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
       this.idArchivo = "";
     }
     //this.reexpandir();
-    console.log(this.proyecto);
   }
 
   public crearPaquete():void{
@@ -196,6 +195,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   public guardarProyecto():void{
+    this.guardarCambios();
     if(this.proyecto!=null){
       this.servicioProyecto.enviarProyecto(this.proyecto).subscribe(data=>{
         this.textoInfo = data.descripcion;
@@ -210,18 +210,25 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   public actualizarCodigoEditor(id:string):void{
+    this.guardarCambios();
     let archivo:Archivo = this.gestionadorPaquete.buscarArchivo(id,this.proyecto);
     if(archivo!=null){
       const aceEditor = ace.edit(this.editor.nativeElement);
       aceEditor.session.setValue(archivo.codigo);
       this.archivoActual = archivo;
-      //++++++++++++++++++++++++++CONECTAR CODIGO CON ARCHIVO ACTUAL
     }
   }
 
   public mostrarProyecto(){
     console.log(this.proyecto);
     console.log(this.codigoPrincipal);
+  }
+
+  public guardarCambios():void{
+    if(this.archivoActual!= null){
+      const aceEditor = ace.edit(this.editor.nativeElement);
+      this.archivoActual.codigo = aceEditor.getValue();
+    }
   }
 
 }

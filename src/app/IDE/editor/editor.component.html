@@ -77,8 +77,8 @@
             <div class="row" style="margin-top: 15px;">
                 <div class="col-1"></div>
                 <div class="col-2">
-                    <h5>
-                        Ingrese su c&oacute;digo
+                    <h5 *ngIf="archivoActual!=null">
+                        {{archivoActual.nombre}}
                     </h5>
                 </div>
                 <div class="col-3"></div>

@@ -410,7 +410,7 @@ declaracion_variable : visibilidad tipo ids asignacion {
                     let id = ids.pop();
                     //-w-if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE)){
                     if(existeSimbolo(id,yy.VARIABLE)){
-                        errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                        errorSemantico("La variable "+id+" ya ha sido declarada.",this._$.first_line,this._$.first_column);
                     }else{
                         if($4 != null){
                             //simboloVariable.valor = $4.valor;
@@ -629,54 +629,62 @@ fin_else : { cerrarAmbito(); };
 
 // CICLO DO WHILE --------------------------------------------------------------------
 
-ciclo_do_while : parte_do LLAVE_A LLAVE_C 
+ciclo_do_while : PR_DO inicio_do LLAVE_A instrucciones_metodo LLAVE_C fin_do
     PR_WHILE PARENT_A expresion_multiple PARENT_C PUNTO_Y_COMA {
         try{
-            if($6.tipoResultado!=yy.BOOLEAN){
-                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$6.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            if($9.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$9.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
         }catch(exception){
         }
     }
     ;
 
-parte_do : PR_DO {
+inicio_do : { nuevoAmbito(); };
 
-    }
-    ;
+fin_do : { cerrarAmbito(); };
 
 //------------------------------------------------------------------------------------
 
 // CICLO WHILE --------------------------------------------------------------------
 
-ciclo_while : parte_while LLAVE_A LLAVE_C
+ciclo_while : parte_while LLAVE_A instrucciones_metodo LLAVE_C fin_while
     ;
 
-parte_while : PR_WHILE PARENT_A expresion_multiple PARENT_C {
+parte_while : PR_WHILE inicio_while PARENT_A expresion_multiple PARENT_C {
         try{
-            if($3.tipoResultado!=yy.BOOLEAN){
-                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            if($4.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
         }catch(exception){
         }
     }
     ;
 
+inicio_while : { nuevoAmbito(); };
+
+fin_while : { cerrarAmbito(); };
+
 //------------------------------------------------------------------------------------
 
 //CICLO FOR --------------------------------------------------------------------------
 
-ciclo_for : ciclo_for_b_p PARENT_A ciclo_for_p PARENT_C LLAVE_A LLAVE_C {
-        ambitoActual.pop();
+ciclo_for : PR_FOR inicio_for PARENT_A ciclo_for_p PARENT_C LLAVE_A instrucciones_metodo LLAVE_C fin_for {
+        //-w-ambitoActual.pop();
     }
     ;
 
+inicio_for : { nuevoAmbito(); };
+
+fin_for : { cerrarAmbito(); };  
+
+/* -w-
 ciclo_for_b_p : PR_FOR {
-        ambitoActual.push(ambitoActual.at(-1)+"_for");
+        //-w-ambitoActual.push(ambitoActual.at(-1)+"_for");
     }
-    ;
+    ;*/
 
-ciclo_for_p : declaracion_variable PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior {
+ciclo_for_p : primera_exp PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior {
         try{
             if($3.tipoResultado!=yy.BOOLEAN){
             errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column); 
@@ -684,6 +692,10 @@ ciclo_for_p : declaracion_variable PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA 
         }catch(e){
         }
     }
+    ;
+
+primera_exp : declaracion_variable
+    | asignacion_variable
     ;
 
 accion_posterior : asignacion_variable
@@ -714,15 +726,23 @@ instruccion_switch_t_p : instruccion_switch_b_p
     | instruccion_switch_b_p instruccion_switch_t_p
     ;
 
-instruccion_switch_b_p : PR_CASE expresion_multiple DOS_PUNTOS /*INSTRUCCIONES*/ instruccion_break {
-        if($2.tipoResultado != tipoDatoSwtich){
-            errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$2.tipoResultado+" .",this._$.first_line,this._$.first_column);
+instruccion_switch_b_p : PR_CASE inicio_cas_sw expresion_multiple DOS_PUNTOS instrucciones_metodo instruccion_break fin_cas_sw {
+        if($3.tipoResultado != tipoDatoSwtich){
+            errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
         }
     }
     ;
 
-instruccion_switch_default : PR_DEFAULT DOS_PUNTOS /*INSTRUCCIONES*/
+inicio_cas_sw : { nuevoAmbito(); };
+
+fin_cas_sw : { cerrarAmbito(); }; 
+
+instruccion_switch_default : PR_DEFAULT inicio_def_sw DOS_PUNTOS instrucciones_metodo fin_def_sw
     ;
+
+inicio_def_sw : { nuevoAmbito(); };
+
+fin_def_sw : { cerrarAmbito(); };  
 
 //------------------------------------------------------------------------------------
 

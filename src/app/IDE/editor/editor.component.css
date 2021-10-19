@@ -9,3 +9,7 @@ li.carpeta {
 li.archivo {
     list-style-image: url('/assets/img/archivo.png');
 }
+
+.btnw {
+    width: 95%;
+}

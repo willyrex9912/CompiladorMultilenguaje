@@ -21,6 +21,19 @@
 "void"                                  return 'PR_VOID'
 "main"                                  return 'PR_MAIN'
 
+//  instrucciones y ciclos
+"if"                            return 'PR_IF'
+"else"                          return 'PR_ELSE'
+"for"                           return 'PR_FOR'
+"switch"                        return 'PR_SWITCH'
+"case"                          return 'PR_CASE'
+"do"                            return 'PR_DO'
+"while"                         return 'PR_WHILE'
+"default"                       return 'PR_DEFAULT'
+"break"                         return 'PR_BREAK'
+"println"                       return 'PR_PRINTLN'
+"print"                         return 'PR_PRINT'
+
 //simbolos
 "++"                            return 'INCREMENTO'
 "--"                            return 'DECREMENTO'
@@ -328,6 +341,51 @@ asignacion : /*Lambda*/ { $$ = null; }
     | ASIGNACION expresion_multiple { $$ = $2; }
     ;
 
+
+//----------------------------------------------------------------------------------
+
+
+// INSTRUCCION IF ------------------------------------------------------------------
+
+
+instruccion_if : instruccion_if_b_p LLAVE_A LLAVE_C instruccion_if_p
+    ;
+
+instruccion_if_b_p : PR_IF PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($3.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
+    ;
+
+instruccion_if_p : instrucciones_else_if
+    | instrucciones_else_if instruccion_else
+    | instruccion_else
+    | /*Lambda*/
+    ;
+
+instrucciones_else_if : instruccion_else_if
+    | instrucciones_else_if instruccion_else_if
+    ;
+
+instruccion_else_if : instruccion_else_if_b_p  LLAVE_A LLAVE_C
+    ;
+
+instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($4.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
+    ;
+
+instruccion_else : PR_ELSE LLAVE_A LLAVE_C 
+    ;
 
 //----------------------------------------------------------------------------------
 

@@ -94,8 +94,9 @@
 
 %{
     let errores = [];
-    let tablaDeSimbolos = [];
-    let ambitoActual = [];
+    //-w-let tablaDeSimbolos = [];
+    let tablasDeSimbolos = [];
+    //-w-let ambitoActual = [];
     let ids = [];
     let simbolosParametros = [];
     let cadParametros = "";
@@ -108,13 +109,32 @@
 
     exports.reset = function(){
         errores.splice(0, errores.length);
-        tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
-        ambitoActual.splice(0, ambitoActual.length);
+        //-w-tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
+        tablasDeSimbolos.splice(0, tablasDeSimbolos.length);
+        let tablaGlobal = [];
+        tablasDeSimbolos.push(tablaGlobal);
+        //-w-ambitoActual.splice(0, ambitoActual.length);
         ids.splice(0, ids.length);
         simbolosParametros.splice(0, simbolosParametros.length);
         cadParametros = "";
         ambitoClase = true;
         tipoDatoSwtich = "";
+    }
+
+    function nuevoAmbito(){
+        let nuevaTabla = [];
+        if(tablasDeSimbolos.length){
+            nuevaTabla = tablasDeSimbolos.at(-1).slice();
+        }
+        tablasDeSimbolos.push(nuevaTabla);
+    }
+
+    function getAmbitoActual(){
+        return tablasDeSimbolos.at(-1);
+    }
+
+    function cerrarAmbito(){
+        tablasDeSimbolos.pop();
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -182,9 +202,12 @@
         }
     }
 
-    function existeSimbolo(id,ambito,rol){
-        for(let simbolo in tablaDeSimbolos){
-            if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
+    //-w-function existeSimbolo(id,ambito,rol){
+    function existeSimbolo(id,rol){
+        //-w-for(let simbolo in tablaDeSimbolos){
+        for(let simbolo in getAmbitoActual()){
+            //-w-if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
+            if(getAmbitoActual()[simbolo].rol==rol && getAmbitoActual()[simbolo].id==id){
                 return true;
             }
         }
@@ -192,8 +215,10 @@
     }
 
     function existeClase(id,yy){
-        for(let simbolo in tablaDeSimbolos){
-            if(tablaDeSimbolos[simbolo].rol==yy.CLASE && tablaDeSimbolos[simbolo].id==id){
+        //-w-for(let simbolo in tablaDeSimbolos){
+        for(let simbolo in getAmbitoActual()){
+            //-w-if(tablaDeSimbolos[simbolo].rol==yy.CLASE && tablaDeSimbolos[simbolo].id==id){
+            if(getAmbitoActual()[simbolo].rol==yy.CLASE && getAmbitoActual()[simbolo].id==id){
                 return true;
             }
         }
@@ -201,18 +226,28 @@
     }
 
     function obtenerSimbolo(id){
-        for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
-            if(id==tablaDeSimbolos[i].id){
-                return tablaDeSimbolos[i];
+        //-w-for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
+        //-w-for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
+            //-w-if(id==tablaDeSimbolos[i].id){
+                //-w-return tablaDeSimbolos[i];
+        for (let i=getAmbitoActual().length - 1; i >= 0; i--) {
+            if(id==getAmbitoActual()[i].id){
+                return getAmbitoActual()[i];
             }
         }
         return null;
     }
 
     function obtenerUltimoMetodo(yy){
-        for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
+        /*-w-for (let i=tablaDeSimbolos.length - 1; i >= 0; i--) {
             if(tablaDeSimbolos[i].rol == yy.METODO){
                 return tablaDeSimbolos[i];
+            }
+        }*/
+        console.log(tablasDeSimbolos);
+        for (let i=getAmbitoActual().length - 1; i >= 0; i--) {
+            if(getAmbitoActual()[i].rol == yy.METODO){
+                return getAmbitoActual()[i];
             }
         }
         return null;
@@ -225,7 +260,8 @@
         simboloNuevo.ambito = ambito;
         simboloNuevo.visibilidad = visibilidad;
         simboloNuevo.rol = rol;
-        tablaDeSimbolos.push(simboloNuevo);
+        //-w-tablaDeSimbolos.push(simboloNuevo);
+        getAmbitoActual().push(simboloNuevo);
     }
 
     function agregarSimboloParametro(id,tipo,visibilidad,rol){
@@ -240,22 +276,25 @@
 
     function pushSimbolosParametros(){
         while(simbolosParametros.length>0){
-            tablaDeSimbolos.push(simbolosParametros.pop());
-            tablaDeSimbolos.at(-1).ambito = ambitoActual.at(-1);
+            //-w-tablaDeSimbolos.push(simbolosParametros.pop());
+            getAmbitoActual().push(simbolosParametros.pop());
+            //-w-tablaDeSimbolos.at(-1).ambito = ambitoActual.at(-1);
         }
     }
 
     function validarVariable(id,yy){
-        let tabla = tablaDeSimbolos.slice();
+        //-w-let tabla = tablaDeSimbolos.slice();
+        let tabla = getAmbitoActual().slice();
         while(tabla.length>0){
             let sim = tabla.pop();
             if((sim.rol==yy.VARIABLE || sim.rol==yy.PARAMETRO) && sim.id==id){
-                let ambitos = ambitoActual.slice();
+                /*-w-let ambitos = ambitoActual.slice();
                 while(ambitos.length>0){
                     if(sim.ambito==ambitos.pop()){
                         return sim;
                     }
-                }
+                }*/
+                return sim;
             }
         }
         return null;
@@ -265,13 +304,18 @@
 %%
 
 inicial :  a1 EOF   {
-                        for(const simbolo in tablaDeSimbolos){
+                        for(const simbolo in getAmbitoActual()){
                             console.log("-----------------");
-                            console.log("Id: "+tablaDeSimbolos[simbolo].id);
+                            /*-w-console.log("Id: "+tablaDeSimbolos[simbolo].id);
                             console.log("Tipo: "+tablaDeSimbolos[simbolo].tipo);
                             console.log("Ambito: "+tablaDeSimbolos[simbolo].ambito);
                             console.log("Visibilidad: "+tablaDeSimbolos[simbolo].visibilidad);
-                            console.log("Rol: "+tablaDeSimbolos[simbolo].rol);
+                            console.log("Rol: "+tablaDeSimbolos[simbolo].rol);*/
+                            console.log("Id: "+getAmbitoActual()[simbolo].id);
+                            console.log("Tipo: "+getAmbitoActual()[simbolo].tipo);
+                            console.log("Ambito: "+getAmbitoActual()[simbolo].ambito);
+                            console.log("Visibilidad: "+getAmbitoActual()[simbolo].visibilidad);
+                            console.log("Rol: "+getAmbitoActual()[simbolo].rol);
                         }
                     }
     ;
@@ -297,9 +341,13 @@ a1 : declaracion_clase
 //DECLARACION DE CLASE ---------------------------------------------------------------
 
 declaracion_clase : declaracion_clase_p LLAVE_A instrucciones_clase LLAVE_C {
-        ambitoActual.pop();
+        //-w-ambitoActual.pop();
+        cerrarAmbito();
     }
-    | declaracion_clase_p LLAVE_A LLAVE_C { ambitoActual.pop(); }
+    | declaracion_clase_p LLAVE_A LLAVE_C { 
+        //-w-ambitoActual.pop(); 
+        cerrarAmbito();
+    }
     | err
     ;
 
@@ -308,7 +356,8 @@ declaracion_clase_p : PR_PUBLIC PR_CLASS ID {
                 errorSemantico("La clase "+$3+" ya ha sido declarada.",this._$.first_line,this._$.first_column);
             }
             agregarSimbolo($3,"","",yy.PUBLIC,yy.CLASE);
-            ambitoActual.push("class "+$3);
+            //-w-ambitoActual.push("class "+$3);
+            nuevoAmbito();
         }
     ;
 
@@ -359,13 +408,15 @@ declaracion_variable : visibilidad tipo ids asignacion {
                 while(ids.length>0){
                     //asignacion de tipo correcta
                     let id = ids.pop();
-                    if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                    //-w-if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE)){
+                    if(existeSimbolo(id,yy.VARIABLE)){
                         errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
                     }else{
                         if($4 != null){
                             //simboloVariable.valor = $4.valor;
                         }
-                        agregarSimbolo(id,$2,ambitoActual.at(-1),$1,yy.VARIABLE);
+                        //-w-agregarSimbolo(id,$2,ambitoActual.at(-1),$1,yy.VARIABLE);
+                        agregarSimbolo(id,$2,"",$1,yy.VARIABLE);
                     }
                 }
             }else{
@@ -459,22 +510,28 @@ declaracion_metodo : visibilidad tipo declaracion_metodo_p {
     ;
 
 declaracion_metodo_p : declaracion_metodo_p_a LLAVE_A instrucciones_metodo LLAVE_C { 
-        ambitoActual.pop(); 
+        //-w-ambitoActual.pop(); 
+        cerrarAmbito();
         ambitoClase = true;
     }
     | declaracion_metodo_p_a LLAVE_A LLAVE_C { 
-        ambitoActual.pop();
+        //-w-ambitoActual.pop();
+        cerrarAmbito();
         ambitoClase = true; 
     }
     ;
 
 declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
-        if(existeSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,ambitoActual.at(-1),yy.METODO)){
-            errorSemantico("El método "+$1+cadParametros+" ya ha sido declarado en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+        //-w-if(existeSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,ambitoActual.at(-1),yy.METODO)){
+        if(existeSimbolo($1+cadParametros,yy.METODO)){
+            //-w-errorSemantico("El método "+$1+cadParametros+" ya ha sido declarado en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+            errorSemantico("El método "+$1+cadParametros+" ya ha sido declarado.",this._$.first_line,this._$.first_column);
         }
-        agregarSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,"",ambitoActual.at(-1),"",yy.METODO);
+        //-w-agregarSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,"",ambitoActual.at(-1),"",yy.METODO);
+        agregarSimbolo($1+cadParametros,"","","",yy.METODO);
+        nuevoAmbito();
         
-        ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
+        //-w-ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
         ambitoClase = false;
         cadParametros = "";
         pushSimbolosParametros();
@@ -517,10 +574,13 @@ instruccion_println : PR_PRINTLN PARENT_A expresion_multiple PARENT_C PUNTO_Y_CO
 
 //CONDICIONAL IF ELSE-IF ELSE --------------------------------------------------------
 
-instruccion_if : instruccion_if_b_p LLAVE_A LLAVE_C instruccion_if_p
+instruccion_if : instruccion_if_b_p LLAVE_A instrucciones_metodo LLAVE_C fin_if instruccion_if_p
     ;
 
+fin_if : { cerrarAmbito(); };
+
 instruccion_if_b_p : PR_IF PARENT_A expresion_multiple PARENT_C {
+        nuevoAmbito();
         try{
             if($3.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
@@ -540,10 +600,13 @@ instrucciones_else_if : instruccion_else_if
     | instrucciones_else_if instruccion_else_if
     ;
 
-instruccion_else_if : instruccion_else_if_b_p  LLAVE_A LLAVE_C
+instruccion_else_if : instruccion_else_if_b_p  LLAVE_A instrucciones_metodo LLAVE_C fin_else_if
     ;
 
+fin_else_if : { cerrarAmbito(); };
+
 instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
+        nuevoAmbito();
         try{
             if($4.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
@@ -553,8 +616,12 @@ instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
     }
     ;
 
-instruccion_else : PR_ELSE LLAVE_A LLAVE_C 
+instruccion_else : PR_ELSE inicio_else LLAVE_A instrucciones_metodo LLAVE_C fin_else
     ;
+
+inicio_else : { nuevoAmbito(); };
+
+fin_else : { cerrarAmbito(); };
 
 //------------------------------------------------------------------------------------
 

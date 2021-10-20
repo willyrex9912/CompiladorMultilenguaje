@@ -22,4 +22,8 @@ export class Analizador{
 
     }
 
+    public getInstrucciones():Array<any>{
+        return this.analizadorGeneral.getInstrucciones();
+    }
+
 }

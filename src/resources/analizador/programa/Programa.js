@@ -383,6 +383,11 @@ case 126:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
+                    let ins2 = new Instruccion(null,null,yy.INT,312);
+                    operacion.instruccion = ins2;
+                    let ins = new Instruccion(ins2,ins2,yy.INT,Number($$[$0]));
+                    operacion.instruccion = ins;
+                    instrucciones.push(ins);
                     this.$ = operacion;
                 
 break;
@@ -670,6 +675,27 @@ _handle_error:
     let ambitoActual = [];
     let ids = [];
     let tipoDatoSwtich = "";
+    let instrucciones = [];
+
+    exports.getInstrucciones = function(){
+        return instrucciones;
+    }
+
+    function nuevaInstruccion(opr1,opr2,ins1,ins2,opr){
+        Instruccion = new Object();
+        Instruccion.opr1 = opr1;
+        Instruccion.opr2 = opr2;
+        Instruccion.ins1 = ins1;
+        Instruccion.ins2 = ins2;
+        Instruccion.opr = opr;
+    }
+
+    function Instruccion(opr1,opr2,opr,resultado){
+        this.opr1 = opr1;
+        this.opr2 = opr2;
+        this.opr = opr;
+        this.resultado = resultado;
+    }
 
     exports.getErrores = function (){
         return errores;

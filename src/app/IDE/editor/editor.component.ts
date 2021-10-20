@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ViewChildren, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import * as ace from "ace-builds";
-import { ServicioService } from 'src/app/Servicio/servicio.service';
 import { Analizador } from 'src/controllers/ControladorAnalisis';
 import { Cuadrupla } from 'src/model/Cuadrupla';
 
@@ -11,6 +10,7 @@ import { ModalService } from 'src/app/modal/servicio/modal.service';
 import { ProyectoService } from 'src/app/services/proyecto/proyecto.service';
 import { GestionadorPaquete } from 'src/resources/utilidades/proyecto/GestionadorPaquete';
 import { Archivo } from 'src/model/Proyecto/Archivo';
+import { Codigo3dService } from 'src/app/services/codigo3d/codigo3d.service';
 
 @Component({
   selector: 'app-editor',
@@ -35,7 +35,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   public proyecto:Proyecto;
 
-  constructor(private servicio:ServicioService, private servicioProyecto:ProyectoService, private servicioModal:ModalService, private router:Router) {
+  constructor(private servicioProyecto:ProyectoService, private servicioCodigo3d:Codigo3dService, private servicioModal:ModalService, private router:Router) {
     this.gestionadorPaquete = new GestionadorPaquete();
     if(localStorage.getItem('proyecto')!=null){
       servicioProyecto.getProyecto(localStorage.getItem('proyecto')).subscribe(data=>{
@@ -92,12 +92,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   public generarCodigo3d(){
-    let cuadruplas:Array<Cuadrupla> = new Array();
-    cuadruplas.push(new Cuadrupla("+","t3","t1","t2"));
-    cuadruplas.push(new Cuadrupla("-","t13","t11","t12"));
-    cuadruplas.push(new Cuadrupla("*","t23","t21","t22"));
-    cuadruplas.push(new Cuadrupla("/","t33","t31","t32"));
-    this.servicio.enviarCuadruplas(cuadruplas).subscribe(data=>{
+    this.servicioCodigo3d.enviarInstrucciones(this.analizador.getInstrucciones()).subscribe(data=>{
       console.log(data);
     });
   }

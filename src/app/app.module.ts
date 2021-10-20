@@ -3,22 +3,20 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MostrarCodigo3dComponent } from './Codigo3d/mostrar-codigo3d/mostrar-codigo3d.component';
 import { EditorComponent } from './IDE/editor/editor.component';
 import { FormsModule } from '@angular/forms';
-import { ServicioService } from './Servicio/servicio.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ModalModule } from './modal/modulo/modal/modal.module';
 import { BarraComponent } from './barra/barra.component';
 import { InicioComponent } from './inicio/inicio.component';
 import { ProyectoService } from './services/proyecto/proyecto.service';
 import { ProyectosComponent } from './proyectos/proyectos.component';
+import { Codigo3dService } from './services/codigo3d/codigo3d.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     EditorComponent,
-    MostrarCodigo3dComponent,
     BarraComponent,
     InicioComponent,
     ProyectosComponent
@@ -30,7 +28,7 @@ import { ProyectosComponent } from './proyectos/proyectos.component';
     HttpClientModule,
     ModalModule
   ],
-  providers: [ServicioService,ProyectoService],
+  providers: [ProyectoService,Codigo3dService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

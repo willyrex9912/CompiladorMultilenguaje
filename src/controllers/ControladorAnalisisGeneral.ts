@@ -170,4 +170,8 @@ export class ControladorAnalisisGeneral{
         yy.filtrarOperacion = this.filtroTipoDatoPrograma.filtrarOperacion;
     }
 
+    public getInstrucciones():Array<any>{
+        return AnalizadorPrograma.getInstrucciones();
+    }
+
 }

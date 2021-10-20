@@ -185,14 +185,14 @@
             }else{
                 //Analizar tipo de resultado
                 if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$3.operacionPendiente);
                     if(tipoResultado!=null){
                         operacion = new Object();
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
                         return operacion;
                     }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                        errorSemantico("Operandos incorrectos para el operador "+$3.operacionPendiente+" .",linea,columna);
                         return null;
                     }
                 }else{

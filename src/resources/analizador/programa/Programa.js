@@ -391,7 +391,6 @@ case 126:
                     operacion.tipoResultado = yy.INT;
                     let ins = new Instruccion(null,null,yy.INT,Number($$[$0]));
                     operacion.instruccion = ins;
-                    //instrucciones.push(ins);
                     this.$ = operacion;
                 
 break;
@@ -419,6 +418,8 @@ case 129:
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
+                    let insId = new Instruccion(null,null,yy.ID,$$[$0].toString());
+                    operacion.instruccion = insId;
                     this.$ = operacion;
                 
 break;
@@ -781,13 +782,13 @@ _handle_error:
             }else{
                 //Analizar tipo de resultado
                 if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$3.operacionPendiente);
                     if(tipoResultado!=null){
                         operacion = new Object();
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
 
-                        let ins = new Instruccion($2.instruccion,$3.instruccion,$1,null);
+                        let ins = new Instruccion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
                         operacion.instruccion = ins;
 
                         return operacion;

@@ -191,18 +191,18 @@
             }else{
                 //Analizar tipo de resultado
                 if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$3.operacionPendiente);
                     if(tipoResultado!=null){
                         operacion = new Object();
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
 
-                        let ins = new Instruccion($2.instruccion,$3.instruccion,$1,null);
+                        let ins = new Instruccion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
                         operacion.instruccion = ins;
 
                         return operacion;
                     }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                        errorSemantico("Operandos incorrectos para el operador "+$3.operacionPendiente+" .",linea,columna);
                         return null;
                     }
                 }else{
@@ -798,7 +798,6 @@ g3 : INT        {
                     operacion.tipoResultado = yy.INT;
                     let ins = new Instruccion(null,null,yy.INT,Number($1));
                     operacion.instruccion = ins;
-                    //instrucciones.push(ins);
                     $$ = operacion;
                 }
     | FLOAT    {
@@ -820,6 +819,8 @@ g3 : INT        {
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
+                    let insId = new Instruccion(null,null,yy.ID,$1.toString());
+                    operacion.instruccion = insId;
                     $$ = operacion;
                 }
     ;

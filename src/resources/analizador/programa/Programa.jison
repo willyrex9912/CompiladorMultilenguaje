@@ -88,6 +88,7 @@
     let tablasDeSimbolos = [];
     let ambitoActual = [];
     let ids = [];
+    let tipoDatoSwtich = "";
 
     exports.getErrores = function (){
         return errores;
@@ -100,6 +101,7 @@
         tablasDeSimbolos.push(tablaGlobal);
         ambitoActual = [yy.GLOBAL];
         ids.splice(0, ids.length);
+        tipoDatoSwtich = "";
     }
 
     function nuevoAmbito(){
@@ -270,6 +272,7 @@ instrucciones_p: instrucciones_b_p
 
 instrucciones_b_p : declaracion_variable
     | instruccion_if
+    | instruccion_switch
     ;
 
 //----------------------------------------------------------------------------------
@@ -417,6 +420,63 @@ fin_else : { cerrarAmbito(); }
     ;
 
 //----------------------------------------------------------------------------------
+
+
+
+
+// INSTRUCCION SWITCH --------------------------------------------------------------
+
+
+instruccion_switch : inicio_switch instruccion_switch_c_p 
+    ;
+
+inicio_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C {
+        if($3.tipoResultado == yy.FLOAT || $3.tipoResultado == yy.BOOLEAN){
+            errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.CHAR+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+        }
+        tipoDatoSwtich = $3.tipoResultado;
+    }
+    ;
+
+instruccion_switch_c_p : LLAVE_A LLAVE_C
+    | LLAVE_A instruccion_switch_t_p LLAVE_C
+    | LLAVE_A instruccion_switch_default LLAVE_C
+    | LLAVE_A instruccion_switch_t_p instruccion_switch_default LLAVE_C
+    ;
+
+instruccion_switch_t_p : instruccion_switch_b_p
+    | instruccion_switch_b_p instruccion_switch_t_p
+    ;
+
+instruccion_switch_b_p : PR_CASE inicio_cas_sw expresion_multiple DOS_PUNTOS instrucciones instruccion_break fin_cas_sw {
+        if($3.tipoResultado != tipoDatoSwtich){
+            errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+        }
+    }
+    ;
+
+inicio_cas_sw : { nuevoAmbito(); };
+
+fin_cas_sw : { cerrarAmbito(); }; 
+
+instruccion_switch_default : PR_DEFAULT inicio_def_sw DOS_PUNTOS instrucciones fin_def_sw
+    ;
+
+inicio_def_sw : { nuevoAmbito(); };
+
+fin_def_sw : { cerrarAmbito(); };  
+
+//------------------------------------------------------------------------------------
+
+// INSTRUCCION BREAK ----------------------------------------------------------------
+
+instruccion_break : PR_BREAK PUNTO_Y_COMA
+    | /*Lambda*/
+    ;
+
+//-----------------------------------------------------------------------------------
+
+
 
 //EXPRESION MULTIPLE----------------------------------------------------------------
 expresion_multiple : a3 { $$ = $1; };

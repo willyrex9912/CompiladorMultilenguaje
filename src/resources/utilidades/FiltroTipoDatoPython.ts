@@ -6,6 +6,8 @@ export class FiltroTipoDatoPython{
     public STRING:string = "String";
     public BOOLEAN:string = "boolean";
 
+    public ID:string = "id";
+
     //private para variables
     public PUBLIC:string = "public";
     public PRIVATE:string = "private";

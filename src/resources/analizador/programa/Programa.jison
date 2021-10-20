@@ -123,6 +123,7 @@
         ambitoActual = [yy.GLOBAL];
         ids.splice(0, ids.length);
         tipoDatoSwtich = "";
+        instrucciones.splice(0, instrucciones.length);
     }
 
     function nuevoAmbito(){
@@ -155,18 +156,18 @@
         try{
             if($2!=null){
                 //Analizar tipo de resultado
-                if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
-                    if(tipoResultado!=null){
-                        operacion = new Object();
-                        operacion.tipoResultado = tipoResultado;
-                        operacion.operacionPendiente = $1;
-                        return operacion;
-                    }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
-                        return null;
-                    }
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+
+                    let ins = new Instruccion($1.instruccion,$2.instruccion,$2.operacionPendiente,null);
+                    operacion.instruccion = ins;
+
+                    return operacion;
                 }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
                     return null;
                 }
             }else{
@@ -183,6 +184,9 @@
                 operacion = new Object();
                 operacion.tipoResultado = $2.tipoResultado;
                 operacion.operacionPendiente = $1;
+
+                operacion.instruccion = $2.instruccion;
+
                 return operacion;
             }else{
                 //Analizar tipo de resultado
@@ -192,6 +196,10 @@
                         operacion = new Object();
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
+
+                        let ins = new Instruccion($2.instruccion,$3.instruccion,$1,null);
+                        operacion.instruccion = ins;
+
                         return operacion;
                     }else{
                         errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
@@ -404,6 +412,9 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                    //TEMP+++++++++++++++++++++++++++++++++++
+                    let ins = new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,"asign",null);
+                    instrucciones.push(ins);     
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -420,6 +431,9 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //TEMP+++++++++++++++++++++++++++++++++++
+                let ins = new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,"asign",null);
+                instrucciones.push(ins); 
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }
@@ -782,11 +796,9 @@ g3 : PARENT_A a3 PARENT_C { $$ = $2; }
 g3 : INT        {
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
-                    let ins2 = new Instruccion(null,null,yy.INT,312);
-                    operacion.instruccion = ins2;
-                    let ins = new Instruccion(ins2,ins2,yy.INT,Number($1));
+                    let ins = new Instruccion(null,null,yy.INT,Number($1));
                     operacion.instruccion = ins;
-                    instrucciones.push(ins);
+                    //instrucciones.push(ins);
                     $$ = operacion;
                 }
     | FLOAT    {

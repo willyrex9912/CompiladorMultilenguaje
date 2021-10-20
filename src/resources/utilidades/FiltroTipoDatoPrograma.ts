@@ -6,6 +6,8 @@ export class FiltroTipoDatoPrograma{
     public CHAR:string = "char";
     public BOOLEAN:string = "boolean";
 
+    public ID:string = "id";
+
     //void para complemento de tipo de metodo
     public VOID:string = "void";
 

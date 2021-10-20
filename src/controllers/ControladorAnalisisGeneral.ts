@@ -70,6 +70,8 @@ export class ControladorAnalisisGeneral{
         yy.STRING = this.filtroTipoDatoJava.STRING;
         yy.BOOLEAN = this.filtroTipoDatoJava.BOOLEAN;
 
+        yy.ID = this.filtroTipoDatoJava.ID;
+
         yy.VOID = this.filtroTipoDatoJava.VOID;
 
         yy.METODO = this.filtroTipoDatoJava.METODO;
@@ -105,6 +107,8 @@ export class ControladorAnalisisGeneral{
         yy.DOUBLE = this.filtroTipoDatoPython.DOUBLE;
         yy.STRING = this.filtroTipoDatoPython.STRING;
         yy.BOOLEAN = this.filtroTipoDatoPython.BOOLEAN;
+        
+        yy.ID = this.filtroTipoDatoPython.ID;
 
         yy.PUBLIC = this.filtroTipoDatoPython.PUBLIC;
         yy.PRIVATE = this.filtroTipoDatoPython.PRIVATE;
@@ -137,6 +141,8 @@ export class ControladorAnalisisGeneral{
         yy.FLOAT = this.filtroTipoDatoPrograma.FLOAT;
         yy.CHAR = this.filtroTipoDatoPrograma.CHAR;
         yy.BOOLEAN = this.filtroTipoDatoPrograma.BOOLEAN;
+
+        yy.ID = this.filtroTipoDatoPrograma.ID;
 
         yy.VOID = this.filtroTipoDatoPrograma.VOID;
 

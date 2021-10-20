@@ -85,7 +85,7 @@
 
 %{
     let errores = [];
-    let tablaDeSimbolos = [];
+    let tablasDeSimbolos = [];
     let ambitoActual = [];
     let ids = [];
 
@@ -95,9 +95,27 @@
         
     exports.reset = function(yy){
         errores.splice(0, errores.length);
-        tablaDeSimbolos.splice(0, tablaDeSimbolos.length);
+        tablasDeSimbolos.splice(0, tablasDeSimbolos.length);
+        let tablaGlobal = [];
+        tablasDeSimbolos.push(tablaGlobal);
         ambitoActual = [yy.GLOBAL];
         ids.splice(0, ids.length);
+    }
+
+    function nuevoAmbito(){
+        let nuevaTabla = [];
+        if(tablasDeSimbolos.length){
+            nuevaTabla = tablasDeSimbolos.at(-1).slice();
+        }
+        tablasDeSimbolos.push(nuevaTabla);
+    }
+
+    function getAmbitoActual(){
+        return tablasDeSimbolos.at(-1);
+    }
+
+    function cerrarAmbito(){
+        tablasDeSimbolos.pop();
     }
 
     function errorSemantico(descripcion,linea,columna){
@@ -165,9 +183,9 @@
         }
     }
 
-    function existeSimbolo(id,ambito,rol){
-        for(let simbolo in tablaDeSimbolos){
-            if(tablaDeSimbolos[simbolo].rol==rol && tablaDeSimbolos[simbolo].id==id && ambito==tablaDeSimbolos[simbolo].ambito){
+    function existeSimbolo(id,rol){
+        for(let simbolo in getAmbitoActual()){
+            if(getAmbitoActual()[simbolo].rol==rol && getAmbitoActual()[simbolo].id==id){
                 return true;
             }
         }
@@ -181,20 +199,15 @@
         simboloNuevo.ambito = ambito;
         simboloNuevo.visibilidad = visibilidad;
         simboloNuevo.rol = rol;
-        tablaDeSimbolos.push(simboloNuevo);
+        getAmbitoActual().push(simboloNuevo);
     }
 
     function validarVariable(id,yy){
-        let tabla = tablaDeSimbolos.slice();
+        let tabla = getAmbitoActual().slice();
         while(tabla.length>0){
             let sim = tabla.pop();
             if((sim.rol==yy.VARIABLE || sim.rol==yy.PARAMETRO || sim.rol==yy.CONSTANTE) && sim.id==id){
-                let ambitos = ambitoActual.slice();
-                while(ambitos.length>0){
-                    if(sim.ambito==ambitos.pop()){
-                        return sim;
-                    }
-                }
+                return sim;
             }
         }
         return null;
@@ -205,13 +218,13 @@
 %%
 
 inicial :  a1 EOF   {
-                        for(const simbolo in tablaDeSimbolos){
+                        for(const simbolo in getAmbitoActual()){
                             console.log("-----------------");
-                            console.log("Id: "+tablaDeSimbolos[simbolo].id);
-                            console.log("Tipo: "+tablaDeSimbolos[simbolo].tipo);
-                            console.log("Ambito: "+tablaDeSimbolos[simbolo].ambito);
-                            console.log("Visibilidad: "+tablaDeSimbolos[simbolo].visibilidad);
-                            console.log("Rol: "+tablaDeSimbolos[simbolo].rol);
+                            console.log("Id: "+getAmbitoActual()[simbolo].id);
+                            console.log("Tipo: "+getAmbitoActual()[simbolo].tipo);
+                            console.log("Ambito: "+getAmbitoActual()[simbolo].ambito);
+                            console.log("Visibilidad: "+getAmbitoActual()[simbolo].visibilidad);
+                            console.log("Rol: "+getAmbitoActual()[simbolo].rol);
                         }
                     }
     ;
@@ -256,6 +269,7 @@ instrucciones_p: instrucciones_b_p
     ;
 
 instrucciones_b_p : declaracion_variable
+    | instruccion_if
     ;
 
 //----------------------------------------------------------------------------------
@@ -265,12 +279,12 @@ instrucciones_b_p : declaracion_variable
 // METODO PRINCIPAL ----------------------------------------------------------------
 
 metodo_principal : metodo_principal_p LLAVE_A instrucciones LLAVE_C {
-        ambitoActual.pop();
+        cerrarAmbito();
     }
     ;
 
 metodo_principal_p : PR_VOID PR_MAIN PARENT_A PARENT_C {
-        ambitoActual.push("main");
+        nuevoAmbito();
     }
     ;
 
@@ -293,13 +307,13 @@ declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
             while(ids.length>0){
                 //asignacion de tipo correcta
                 let id = ids.pop();
-                if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE) || existeSimbolo(id,ambitoActual.at(-1),yy.CONSTANTE)){
-                    errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                if(existeSimbolo(id,yy.VARIABLE) || existeSimbolo(id,yy.CONSTANTE)){
+                    errorSemantico("La variable "+id+" ya ha sido declarada.",this._$.first_line,this._$.first_column);
                 }else{
                     if($3 != null){
                         //simboloVariable.valor = $3.valor;
                     }
-                    agregarSimbolo(id,$1,ambitoActual.at(-1),yy.DEFAULT,yy.VARIABLE);
+                    agregarSimbolo(id,$1,"",yy.DEFAULT,yy.VARIABLE);
                 }
             }
         }else{
@@ -312,11 +326,11 @@ declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
             while(ids.length>0){
                 //asignacion de tipo correcta
                 let id = ids.pop();
-                if(existeSimbolo(id,ambitoActual.at(-1),yy.VARIABLE) || existeSimbolo(id,ambitoActual.at(-1),yy.CONSTANTE)){
-                    errorSemantico("La variable "+id+" ya ha sido declarada en "+ambitoActual.at(-1)+".",this._$.first_line,this._$.first_column);
+                if(existeSimbolo(id,yy.VARIABLE) || existeSimbolo(id,yy.CONSTANTE)){
+                    errorSemantico("La variable "+id+" ya ha sido declarada.",this._$.first_line,this._$.first_column);
                 }else{
                     //simboloVariable.valor = $3.valor;
-                    agregarSimbolo(id,$2,ambitoActual.at(-1),yy.DEFAULT,yy.CONSTANTE);
+                    agregarSimbolo(id,$2,"",yy.DEFAULT,yy.CONSTANTE);
                 }
             }
         }else{
@@ -348,17 +362,23 @@ asignacion : /*Lambda*/ { $$ = null; }
 // INSTRUCCION IF ------------------------------------------------------------------
 
 
-instruccion_if : instruccion_if_b_p LLAVE_A LLAVE_C instruccion_if_p
+instruccion_if : instruccion_if_b_p LLAVE_A instrucciones LLAVE_C fin_if instruccion_if_p
     ;
 
-instruccion_if_b_p : PR_IF PARENT_A expresion_multiple PARENT_C {
+instruccion_if_b_p : PR_IF inicio_if PARENT_A expresion_multiple PARENT_C {
         try{
-            if($3.tipoResultado!=yy.BOOLEAN){
-                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            if($4.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
         }catch(exception){
         }
     }
+    ;
+
+inicio_if : { nuevoAmbito(); }
+    ;
+
+fin_if : { cerrarAmbito(); }
     ;
 
 instruccion_if_p : instrucciones_else_if
@@ -371,10 +391,11 @@ instrucciones_else_if : instruccion_else_if
     | instrucciones_else_if instruccion_else_if
     ;
 
-instruccion_else_if : instruccion_else_if_b_p  LLAVE_A LLAVE_C
+instruccion_else_if : instruccion_else_if_b_p  LLAVE_A instrucciones LLAVE_C fin_else_if
     ;
 
 instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
+        nuevoAmbito();
         try{
             if($4.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
@@ -384,7 +405,15 @@ instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
     }
     ;
 
-instruccion_else : PR_ELSE LLAVE_A LLAVE_C 
+fin_else_if : { cerrarAmbito(); };
+
+instruccion_else : PR_ELSE inicio_else LLAVE_A instrucciones LLAVE_C fin_else
+    ;
+
+inicio_else : { nuevoAmbito(); }
+    ;
+
+fin_else : { cerrarAmbito(); }
     ;
 
 //----------------------------------------------------------------------------------

@@ -220,14 +220,14 @@
 %%
 
 inicial :  a1 EOF   {
-                        for(const simbolo in getAmbitoActual()){
+                        /*for(const simbolo in getAmbitoActual()){
                             console.log("-----------------");
                             console.log("Id: "+getAmbitoActual()[simbolo].id);
                             console.log("Tipo: "+getAmbitoActual()[simbolo].tipo);
                             console.log("Ambito: "+getAmbitoActual()[simbolo].ambito);
                             console.log("Visibilidad: "+getAmbitoActual()[simbolo].visibilidad);
                             console.log("Rol: "+getAmbitoActual()[simbolo].rol);
-                        }
+                        }*/
                     }
     ;
 
@@ -270,9 +270,11 @@ instrucciones_p: instrucciones_b_p
     | instrucciones_b_p instrucciones_p 
     ;
 
-instrucciones_b_p : declaracion_variable
+instrucciones_b_p : declaracion_variable PUNTO_Y_COMA
+    | asignacion_variable PUNTO_Y_COMA
     | instruccion_if
     | instruccion_switch
+    | ciclo_for
     ;
 
 //----------------------------------------------------------------------------------
@@ -300,11 +302,11 @@ declaraciones : declaraciones_p
     | /*Lambda*/
     ;
 
-declaraciones_p : declaracion_variable
-    | declaracion_variable declaraciones_p
+declaraciones_p : declaracion_variable PUNTO_Y_COMA
+    | declaracion_variable PUNTO_Y_COMA declaraciones_p
     ;
 
-declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
+declaracion_variable : tipo ids asignacion  {
         //declaracion y asignacion
         if($3==null || $1 == $3.tipoResultado){
             while(ids.length>0){
@@ -323,7 +325,7 @@ declaracion_variable : tipo ids asignacion PUNTO_Y_COMA {
             errorSemantico("Tipo de dato requerido : "+$1+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
         }
     }
-    | PR_CONST tipo ids ASIGNACION expresion_multiple PUNTO_Y_COMA {
+    | PR_CONST tipo ids ASIGNACION expresion_multiple {
         //declaracion y asignacion
         if($2 == $5.tipoResultado){
             while(ids.length>0){
@@ -360,6 +362,49 @@ asignacion : /*Lambda*/ { $$ = null; }
 
 
 //----------------------------------------------------------------------------------
+
+
+
+//ASIGNACION DE VARIABLES ------------------------------------------------------------
+
+asignacion_variable : ID ASIGNACION expresion_multiple {
+        //validando id
+        let simId = validarVariable($1,yy);
+        if(simId==null){
+            errorSemantico("No se encuentra el símbolo "+$1+" .",this._$.first_line,this._$.first_column);
+        }else{
+            if(simId.tipo == $3.tipoResultado){
+                //asignacion exitosa;
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+            }else{
+                errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }
+    }
+    | ID inc_dec {
+        let simId_a = validarVariable($1,yy);
+        if(simId_a==null){
+            errorSemantico("No se encuentra el símbolo "+$1+" .",this._$.first_line,this._$.first_column);
+        }else{
+            if(simId_a.tipo == yy.INT || simId_a.tipo == yy.DOUBLE){
+                //asignacion exitosa;
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
+            }
+        }
+    }
+    ;
+
+inc_dec : INCREMENTO
+    | DECREMENTO
+    ;
+
+//------------------------------------------------------------------------------------
 
 
 // INSTRUCCION IF ------------------------------------------------------------------
@@ -468,6 +513,7 @@ fin_def_sw : { cerrarAmbito(); };
 
 //------------------------------------------------------------------------------------
 
+
 // INSTRUCCION BREAK ----------------------------------------------------------------
 
 instruccion_break : PR_BREAK PUNTO_Y_COMA
@@ -475,6 +521,39 @@ instruccion_break : PR_BREAK PUNTO_Y_COMA
     ;
 
 //-----------------------------------------------------------------------------------
+
+
+
+//CICLO FOR --------------------------------------------------------------------------
+
+ciclo_for : PR_FOR inicio_for PARENT_A ciclo_for_p PARENT_C LLAVE_A instrucciones LLAVE_C fin_for {
+    }
+    ;
+
+inicio_for : { nuevoAmbito(); };
+
+fin_for : { cerrarAmbito(); };  
+
+ciclo_for_p : primera_exp PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior {
+        try{
+            if($3.tipoResultado!=yy.BOOLEAN){
+            errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column); 
+            }
+        }catch(e){
+        }
+    }
+    ;
+
+primera_exp : declaracion_variable
+    | asignacion_variable
+    ;
+
+accion_posterior : asignacion_variable
+    | /*Lambda*/
+    ;
+
+//------------------------------------------------------------------------------------
+
 
 
 

@@ -275,6 +275,8 @@ instrucciones_b_p : declaracion_variable PUNTO_Y_COMA
     | instruccion_if
     | instruccion_switch
     | ciclo_for
+    | ciclo_while
+    | ciclo_do_while
     ;
 
 //----------------------------------------------------------------------------------
@@ -521,6 +523,51 @@ instruccion_break : PR_BREAK PUNTO_Y_COMA
     ;
 
 //-----------------------------------------------------------------------------------
+
+
+
+
+
+// CICLO DO WHILE --------------------------------------------------------------------
+
+ciclo_do_while : PR_DO inicio_do LLAVE_A instrucciones LLAVE_C fin_do
+    PR_WHILE PARENT_A expresion_multiple PARENT_C PUNTO_Y_COMA {
+        try{
+            if($9.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$9.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
+    ;
+
+inicio_do : { nuevoAmbito(); };
+
+fin_do : { cerrarAmbito(); };
+
+//------------------------------------------------------------------------------------
+
+// CICLO WHILE --------------------------------------------------------------------
+
+ciclo_while : parte_while LLAVE_A instrucciones LLAVE_C fin_while
+    ;
+
+parte_while : PR_WHILE inicio_while PARENT_A expresion_multiple PARENT_C {
+        try{
+            if($4.tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    }
+    ;
+
+inicio_while : { nuevoAmbito(); };
+
+fin_while : { cerrarAmbito(); };
+
+//------------------------------------------------------------------------------------
+
 
 
 

@@ -182,13 +182,17 @@ case 37:
         if(simId==null){
             errorSemantico("No se encuentra el símbolo "+$$[$0-2]+" .",this._$.first_line,this._$.first_column);
         }else{
-            if(simId.tipo == $$[$0].tipoResultado){
-                //asignacion exitosa;
-                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
-                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
-                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+            if(simId.rol==yy.CONSTANTE){
+                errorSemantico("No se puede reasignar un valor a una constante.",this._$.first_line,this._$.first_column);
             }else{
-                errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
+                if(simId.tipo == $$[$0].tipoResultado){
+                    //asignacion exitosa;
+                    //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                    //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                    //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                }else{
+                    errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
+                }
             }
         }
     

@@ -375,13 +375,17 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
         if(simId==null){
             errorSemantico("No se encuentra el símbolo "+$1+" .",this._$.first_line,this._$.first_column);
         }else{
-            if(simId.tipo == $3.tipoResultado){
-                //asignacion exitosa;
-                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
-                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
-                //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+            if(simId.rol==yy.CONSTANTE){
+                errorSemantico("No se puede reasignar un valor a una constante.",this._$.first_line,this._$.first_column);
             }else{
-                errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+                if(simId.tipo == $3.tipoResultado){
+                    //asignacion exitosa;
+                    //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                    //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                    //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                }else{
+                    errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+                }
             }
         }
     }

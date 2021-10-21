@@ -45,6 +45,10 @@ export class FiltroTipoDatoPrograma{
     public PRIVATE:string = "private";
     public DEFAULT:string = "default";
 
+    public mostrarMensaje(valor:any){
+        console.log(valor);
+    }
+
     public filtrarOperacion(tipo1:String, tipo2:String, tipoOperacion:String):string{
         if(tipoOperacion==this.POTENCIA){
             if(tipo1 == this.INT){

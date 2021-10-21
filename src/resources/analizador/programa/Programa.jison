@@ -96,12 +96,18 @@
         return instrucciones;
     }
 
-    function Instruccion(opr1,opr2,opr,resultado){
+    function Instruccion(opr1,opr2,opr,resultado,data){
         this.opr1 = opr1;
         this.opr2 = opr2;
         this.opr = opr;
         this.resultado = resultado;
         this.instrucciones = [];
+        this.data = data;
+    }
+
+    function DataInstruccion(nombreMetodo,condicion){
+        this.nombreMetodo = nombreMetodo;
+        this.condicion = condicion;
     }
 
     function agregarInstruccion(ins){
@@ -126,7 +132,6 @@
         tipoDatoSwtich = "";
         instrucciones.splice(0, instrucciones.length);
         pilaInstrucciones.splice(0, pilaInstrucciones.length);
-        let instruccionesGlobales = new Instruccion(null,null,yy.METODO,null);
     }
 
     function nuevoAmbito(){
@@ -165,7 +170,7 @@
                     operacion.tipoResultado = tipoResultado;
                     operacion.operacionPendiente = $1;
 
-                    let ins = new Instruccion($1.instruccion,$2.instruccion,$2.operacionPendiente,null);
+                    let ins = new Instruccion($1.instruccion,$2.instruccion,$2.operacionPendiente,null,null);
                     operacion.instruccion = ins;
 
                     return operacion;
@@ -200,7 +205,7 @@
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
 
-                        let ins = new Instruccion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
+                        let ins = new Instruccion($2.instruccion,$3.instruccion,$3.operacionPendiente,null,null);
                         operacion.instruccion = ins;
 
                         return operacion;
@@ -324,6 +329,8 @@ metodo_principal : metodo_principal_p LLAVE_A instrucciones LLAVE_C {
 
 metodo_principal_p : PR_VOID PR_MAIN PARENT_A PARENT_C {
         nuevoAmbito();
+        //let insM = new Instruccion(null,null,yy.METODO,null,new DataInstruccion($2.toString(),null));
+        //agregarInstruccion();
     }
     ;
 
@@ -352,7 +359,7 @@ declaracion_variable : tipo ids asignacion  {
                     if($3 != null){
                         //simboloVariable.valor = $3.valor;
 
-                        agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$3.instruccion,yy.ASIGNACION,null)); 
+                        agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id,null),$3.instruccion,yy.ASIGNACION,null,null)); 
                     }
                     agregarSimbolo(id,$1,"",yy.DEFAULT,yy.VARIABLE);
                 }
@@ -373,7 +380,7 @@ declaracion_variable : tipo ids asignacion  {
                     //simboloVariable.valor = $3.valor;
                     agregarSimbolo(id,$2,"",yy.DEFAULT,yy.CONSTANTE);
 
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$5.instruccion,yy.ASIGNACION,null)); 
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id,null),$5.instruccion,yy.ASIGNACION,null,null)); 
                 }
             }
         }else{
@@ -420,7 +427,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //TEMP+++++++++++++++++++++++++++++++++++
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,yy.ASIGNACION,null)); 
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString(),null),$3.instruccion,yy.ASIGNACION,null,null)); 
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -438,7 +445,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //TEMP+++++++++++++++++++++++++++++++++++
-                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,yy.ASIGNACION,null));
+                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString(),null),$3.instruccion,yy.ASIGNACION,null,null));
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }
@@ -801,19 +808,19 @@ g3 : PARENT_A a3 PARENT_C { $$ = $2; }
 g3 : INT        {
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
-                    operacion.instruccion = new Instruccion(null,null,yy.INT,Number($1));
+                    operacion.instruccion = new Instruccion(null,null,yy.INT,Number($1),null);
                     $$ = operacion;
                 }
     | FLOAT    {
                     operacion = new Object();
                     operacion.tipoResultado = yy.FLOAT;
-                    operacion.instruccion = new Instruccion(null,null,yy.FLOAT,$1.toString());
+                    operacion.instruccion = new Instruccion(null,null,yy.FLOAT,$1.toString(),null);
                     $$ = operacion;
                 }
     | CHAR      {
                     operacion = new Object();
                     operacion.tipoResultado = yy.CHAR;
-                    operacion.instruccion = new Instruccion(null,null,yy.CHAR,$1.toString());
+                    operacion.instruccion = new Instruccion(null,null,yy.CHAR,$1.toString(),null);
                     $$ = operacion;
                 }
     | ID        {
@@ -825,7 +832,7 @@ g3 : INT        {
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
-                    operacion.instruccion = new Instruccion(null,null,yy.ID,$1.toString());
+                    operacion.instruccion = new Instruccion(null,null,yy.ID,$1.toString(),null);
                     $$ = operacion;
                 }
     ;

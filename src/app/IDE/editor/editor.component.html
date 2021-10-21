@@ -19,7 +19,7 @@
                         <div class="col-12">
                             <div class="row" style="margin: 5px;" >
                                 <div class="col-6">
-                                    <button type="button" class="btn btn-danger btnw" (click)="abrirModal('modal-nuevo-proyecto')" >Nuevo Proyecto</button>
+                                    <button type="button" class="btn btn-danger btnw" data-bs-toggle="modal" data-bs-target="#modal-nuevo-proyecto" >Nuevo Proyecto</button>
                                 </div>
                                 <div class="col-6">
                                     <button type="button" class="btn btn-danger btnw" (click)="guardarProyecto()" >Guardar Proyecto</button>
@@ -27,7 +27,10 @@
                             </div>
                             <div class="row" style="margin: 5px;">
                                 <div class="col-6">
+                                    <!--
                                     <button type="button" class="btn btn-danger btnw" (click)="abrirModal('modal-nuevo-archivo')" >Nuevo Archivo</button>
+                                    -->
+                                    <button type="button" class="btn btn-danger btnw" data-bs-toggle="modal" data-bs-target="#modal-nuevo-archivo">Nuevo Archivo</button>
                                 </div>
                                 <div class="col-6">
                                     <button type="button" class="btn btn-danger btnw" (click)="mostrarProyecto()" >Uso consola</button>
@@ -35,7 +38,7 @@
                             </div>
                             <div class="row" style="margin: 5px;" >
                                 <div class="col-6">
-                                    <button type="button" class="btn btn-danger btnw" (click)="abrirModal('modal-nuevo-paquete')" >Nuevo Paquete</button>
+                                    <button type="button" class="btn btn-danger btnw" data-bs-toggle="modal" data-bs-target="#modal-nuevo-paquete" >Nuevo Paquete</button>
                                 </div>
                             </div>
                             <div class="row" style="margin-top: 25px;">
@@ -128,6 +131,7 @@
 
 <!-- ----------------------- MODALES ---------------------- -->
 
+<!--
 <wj-modal id="modal-nuevo-archivo">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -148,14 +152,35 @@
         </div>
     </div>
 </wj-modal>
+-->
 
+<div class="modal" id="modal-nuevo-archivo">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Nuevo archivo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" [(ngModel)]="idArchivo" autocomplete="off" pattern="[0-9]+">
+                <label for="floatingInput">Ingrese el nombre del archivo:</label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="crearArchivo();">Crear</button>
+        </div>
+        </div>
+    </div>
+</div>
 
-<wj-modal id="modal-nuevo-paquete">
+<div class="modal" id="modal-nuevo-paquete">
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Nuevo paquete</h5>
-            <button (click)="cerrarModal('modal-nuevo-paquete');" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
             <div class="form-floating mb-3">
@@ -164,19 +189,19 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button (click)="cerrarModal('modal-nuevo-paquete');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-danger" (click)="crearPaquete(); cerrarModal('modal-nuevo-paquete');">Crear</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="crearPaquete();">Crear</button>
         </div>
         </div>
     </div>
-</wj-modal>
+</div>
 
-<wj-modal id="modal-nuevo-proyecto">
+<div class="modal" id="modal-nuevo-proyecto">
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Nuevo proyecto</h5>
-            <button (click)="cerrarModal('modal-nuevo-proyecto');" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
             <div class="form-floating mb-3">
@@ -185,19 +210,19 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button (click)="cerrarModal('modal-nuevo-proyecto');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-danger" (click)="crearProyecto(); cerrarModal('modal-nuevo-proyecto');">Crear</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" (click)="crearProyecto();">Crear</button>
         </div>
         </div>
     </div>
-</wj-modal>
+</div>
 
-<wj-modal id="modal-info">
+<div class="modal" id="modal-info" #modalinfo>
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Aviso!</h5>
-            <button (click)="cerrarModal('modal-info');" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
             <div class="form-floating mb-3">
@@ -205,8 +230,9 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button (click)="cerrarModal('modal-info');" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
         </div>
         </div>
     </div>
-</wj-modal>
+</div>
+<button id="abrirModalInfo" [hidden]="true" type="button" class="btn btn-danger btnw" data-bs-toggle="modal" data-bs-target="#modal-info" >Nuevo Paquete</button>

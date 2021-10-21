@@ -35,7 +35,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   public proyecto:Proyecto;
 
-  constructor(private servicioProyecto:ProyectoService, private servicioCodigo3d:Codigo3dService, private servicioModal:ModalService, private router:Router) {
+  constructor(private servicioProyecto:ProyectoService, private servicioCodigo3d:Codigo3dService, private router:Router) {
     this.gestionadorPaquete = new GestionadorPaquete();
     if(localStorage.getItem('proyecto')!=null){
       servicioProyecto.getProyecto(localStorage.getItem('proyecto')).subscribe(data=>{
@@ -119,6 +119,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     return this.txtConsola;
   }
 
+  /*
   public abrirModal(id:string):void{
     this.servicioModal.abrir(id);
   }
@@ -126,7 +127,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public cerrarModal(id:string):void{
     this.servicioModal.cerrar(id);
   }
-  
+  */
   
   //+++++++++++++++++METODO TEMPORAL DE SIMULACION++++++++++++++++++++++
   public simular():void{
@@ -195,7 +196,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     if(this.proyecto!=null){
       this.servicioProyecto.enviarProyecto(this.proyecto).subscribe(data=>{
         this.textoInfo = data.descripcion;
-        this.abrirModal("modal-info");
+        document.getElementById("abrirModalInfo").click();
       });
     }
   }

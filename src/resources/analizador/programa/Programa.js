@@ -129,6 +129,8 @@ case 27:
                 }else{
                     if($$[$0] != null){
                         //simboloVariable.valor = $$[$0].valor;
+
+                        agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$$[$0].instruccion,yy.ASIGNACION,null)); 
                     }
                     agregarSimbolo(id,$$[$0-2],"",yy.DEFAULT,yy.VARIABLE);
                 }
@@ -150,6 +152,8 @@ case 28:
                 }else{
                     //simboloVariable.valor = $$[$0-2].valor;
                     agregarSimbolo(id,$$[$0-3],"",yy.DEFAULT,yy.CONSTANTE);
+
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$$[$0].instruccion,yy.ASIGNACION,null)); 
                 }
             }
         }else{
@@ -191,7 +195,7 @@ case 37:
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //TEMP+++++++++++++++++++++++++++++++++++
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-2].toString()),$$[$0].instruccion,"asign",null)); 
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-2].toString()),$$[$0].instruccion,yy.ASIGNACION,null)); 
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -211,7 +215,7 @@ case 38:
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //TEMP+++++++++++++++++++++++++++++++++++
-                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-1].toString()),$$[$01].instruccion,"asign",null));
+                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-1].toString()),$$[$01].instruccion,yy.ASIGNACION,null));
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }

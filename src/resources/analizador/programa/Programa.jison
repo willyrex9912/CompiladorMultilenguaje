@@ -351,6 +351,8 @@ declaracion_variable : tipo ids asignacion  {
                 }else{
                     if($3 != null){
                         //simboloVariable.valor = $3.valor;
+
+                        agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$3.instruccion,yy.ASIGNACION,null)); 
                     }
                     agregarSimbolo(id,$1,"",yy.DEFAULT,yy.VARIABLE);
                 }
@@ -370,6 +372,8 @@ declaracion_variable : tipo ids asignacion  {
                 }else{
                     //simboloVariable.valor = $3.valor;
                     agregarSimbolo(id,$2,"",yy.DEFAULT,yy.CONSTANTE);
+
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$5.instruccion,yy.ASIGNACION,null)); 
                 }
             }
         }else{
@@ -416,7 +420,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //TEMP+++++++++++++++++++++++++++++++++++
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,"asign",null)); 
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,yy.ASIGNACION,null)); 
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -434,7 +438,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //TEMP+++++++++++++++++++++++++++++++++++
-                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,"asign",null));
+                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$1.toString()),$3.instruccion,yy.ASIGNACION,null));
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }

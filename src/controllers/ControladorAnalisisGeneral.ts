@@ -154,6 +154,8 @@ export class ControladorAnalisisGeneral{
         yy.PARAMETRO = this.filtroTipoDatoPrograma.PARAMETRO;
         yy.CONSTANTE = this.filtroTipoDatoPrograma.CONSTANTE;
 
+        yy.ASIGNACION = this.filtroTipoDatoPrograma.ASIGNACION;
+
         yy.POTENCIA = this.filtroTipoDatoPrograma.POTENCIA;
         yy.MODULO = this.filtroTipoDatoPrograma.MODULO;
         yy.DIVISION = this.filtroTipoDatoPrograma.DIVISION;

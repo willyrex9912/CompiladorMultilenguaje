@@ -21,6 +21,9 @@ export class FiltroTipoDatoPrograma{
     public PARAMETRO:string = "parametro";
     public CONSTANTE:string = "constante";
 
+    //tipos de instrucciones
+    public ASIGNACION:string = "asignacion";
+
     //tipos de operaciones
     public POTENCIA:string = "^";
     public MODULO:string = "%";

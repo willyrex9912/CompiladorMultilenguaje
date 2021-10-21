@@ -5,6 +5,8 @@ import * as AnalizadorJava from '../resources/analizador/java/Java';
 import * as AnalizadorPython from '../resources/analizador/python/Python';
 import * as AnalizadorPrograma from '../resources/analizador/programa/Programa';
 import { FiltroTipoDatoPrograma } from 'src/resources/utilidades/FiltroTipoDatoPrograma';
+import { ListaInstruccion } from 'src/model/instruccion/ListaInstruccion';
+import { PilaInstruccion } from 'src/model/instruccion/PilaInstruccion';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
@@ -24,7 +26,7 @@ export class ControladorAnalisisGeneral{
         this.inicializarYYPrograma();
     }
 
-    public analizar(separador):String{
+    public analizar(separador,pila:PilaInstruccion):String{
 
         let respuesta:string = "";
 
@@ -49,6 +51,7 @@ export class ControladorAnalisisGeneral{
         //analizando codigo programa
         if(this.existeCodigo(separador.getCodigoPrograma())){
             AnalizadorPrograma.reset(AnalizadorPrograma.parser.yy);
+            AnalizadorPrograma.parser.yy.PILA_INS = pila;
             AnalizadorPrograma.parse(separador.getCodigoPrograma());
             if(AnalizadorPrograma.getErrores().length>0){
                 respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPrograma.getErrores(),separador.getInicioPrograma());

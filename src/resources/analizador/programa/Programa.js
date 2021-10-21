@@ -85,6 +85,10 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
 
+                        yy.LISTA.agregarTexto("este texto");
+                        yy.LISTA.agregarTexto("este texto 1");
+                        yy.LISTA.agregarTexto("este texto 2");
+                        yy.LISTA.imprimir();
                         /*for(const simbolo in getAmbitoActual()){
                             console.log("-----------------");
                             console.log("Id: "+getAmbitoActual()[simbolo].id);
@@ -115,6 +119,8 @@ break;
 case 22:
 
         nuevoAmbito();
+        //let insM = new Instruccion(null,null,yy.METODO,null,new DataInstruccion($$[$0-2].toString(),null));
+        //agregarInstruccion();
     
 break;
 case 27:
@@ -130,7 +136,7 @@ case 27:
                     if($$[$0] != null){
                         //simboloVariable.valor = $$[$0].valor;
 
-                        agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$$[$0].instruccion,yy.ASIGNACION,null)); 
+                        agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id,null),$$[$0].instruccion,yy.ASIGNACION,null,null)); 
                     }
                     agregarSimbolo(id,$$[$0-2],"",yy.DEFAULT,yy.VARIABLE);
                 }
@@ -153,7 +159,7 @@ case 28:
                     //simboloVariable.valor = $$[$0-2].valor;
                     agregarSimbolo(id,$$[$0-3],"",yy.DEFAULT,yy.CONSTANTE);
 
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id),$$[$0].instruccion,yy.ASIGNACION,null)); 
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id,null),$$[$0].instruccion,yy.ASIGNACION,null,null)); 
                 }
             }
         }else{
@@ -195,7 +201,7 @@ case 37:
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //TEMP+++++++++++++++++++++++++++++++++++
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-2].toString()),$$[$0].instruccion,yy.ASIGNACION,null)); 
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-2].toString(),null),$$[$0].instruccion,yy.ASIGNACION,null,null)); 
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -215,7 +221,7 @@ case 38:
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //TEMP+++++++++++++++++++++++++++++++++++
-                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-1].toString()),$$[$01].instruccion,yy.ASIGNACION,null));
+                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-1].toString(),null),$$[$01].instruccion,yy.ASIGNACION,null,null));
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }
@@ -391,7 +397,7 @@ case 126:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
-                    operacion.instruccion = new Instruccion(null,null,yy.INT,Number($$[$0]));
+                    operacion.instruccion = new Instruccion(null,null,yy.INT,Number($$[$0]),null);
                     this.$ = operacion;
                 
 break;
@@ -399,7 +405,7 @@ case 127:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.FLOAT;
-                    operacion.instruccion = new Instruccion(null,null,yy.FLOAT,$$[$0].toString());
+                    operacion.instruccion = new Instruccion(null,null,yy.FLOAT,$$[$0].toString(),null);
                     this.$ = operacion;
                 
 break;
@@ -407,7 +413,7 @@ case 128:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.CHAR;
-                    operacion.instruccion = new Instruccion(null,null,yy.CHAR,$$[$0].toString());
+                    operacion.instruccion = new Instruccion(null,null,yy.CHAR,$$[$0].toString(),null);
                     this.$ = operacion;
                 
 break;
@@ -421,7 +427,7 @@ case 129:
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
-                    operacion.instruccion = new Instruccion(null,null,yy.ID,$$[$0].toString());
+                    operacion.instruccion = new Instruccion(null,null,yy.ID,$$[$0].toString(),null);
                     this.$ = operacion;
                 
 break;
@@ -689,12 +695,18 @@ _handle_error:
         return instrucciones;
     }
 
-    function Instruccion(opr1,opr2,opr,resultado){
+    function Instruccion(opr1,opr2,opr,resultado,data){
         this.opr1 = opr1;
         this.opr2 = opr2;
         this.opr = opr;
         this.resultado = resultado;
         this.instrucciones = [];
+        this.data = data;
+    }
+
+    function DataInstruccion(nombreMetodo,condicion){
+        this.nombreMetodo = nombreMetodo;
+        this.condicion = condicion;
     }
 
     function agregarInstruccion(ins){
@@ -719,7 +731,6 @@ _handle_error:
         tipoDatoSwtich = "";
         instrucciones.splice(0, instrucciones.length);
         pilaInstrucciones.splice(0, pilaInstrucciones.length);
-        let instruccionesGlobales = new Instruccion(null,null,yy.METODO,null);
     }
 
     function nuevoAmbito(){
@@ -758,7 +769,7 @@ _handle_error:
                     operacion.tipoResultado = tipoResultado;
                     operacion.operacionPendiente = $1;
 
-                    let ins = new Instruccion($1.instruccion,$2.instruccion,$2.operacionPendiente,null);
+                    let ins = new Instruccion($1.instruccion,$2.instruccion,$2.operacionPendiente,null,null);
                     operacion.instruccion = ins;
 
                     return operacion;
@@ -793,7 +804,7 @@ _handle_error:
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
 
-                        let ins = new Instruccion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
+                        let ins = new Instruccion($2.instruccion,$3.instruccion,$3.operacionPendiente,null,null);
                         operacion.instruccion = ins;
 
                         return operacion;

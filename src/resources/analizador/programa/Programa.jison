@@ -257,6 +257,10 @@
 %%
 
 inicial :  a1 EOF   {
+                        /*yy.LISTA.agregarTexto("este texto");
+                        yy.LISTA.agregarTexto("este texto 1");
+                        yy.LISTA.agregarTexto("este texto 2");
+                        yy.LISTA.imprimir();*/
                         /*for(const simbolo in getAmbitoActual()){
                             console.log("-----------------");
                             console.log("Id: "+getAmbitoActual()[simbolo].id);

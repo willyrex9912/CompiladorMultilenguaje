@@ -9,8 +9,17 @@ export class PilaInstruccion extends Array<Instruccion>{
 
     public apilar(instruccion:Instruccion){
         if(this.length){
-            this[-1].instrucciones.push(instruccion);
-            this.push(instruccion);
+            this[this.length-1].instrucciones.push(instruccion);
+            if(
+                instruccion.tipo=="Metodo" || 
+                instruccion.tipo=="If" || 
+                instruccion.tipo=="For" || 
+                instruccion.tipo=="While" || 
+                instruccion.tipo=="DoWhile" ||
+                instruccion.tipo=="Switch"
+            ){
+                this.push(instruccion);
+            }
         }else{
             if(instruccion.tipo=="Metodo"){
                 this.push(instruccion);

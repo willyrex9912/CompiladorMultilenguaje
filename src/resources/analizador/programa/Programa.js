@@ -114,13 +114,13 @@ break;
 case 21:
 
         cerrarAmbito();
+        yy.PILA_INS.sacar();
     
 break;
 case 22:
 
         nuevoAmbito();
-        //let insM = new Instruccion(null,null,yy.METODO,null,new DataInstruccion($$[$0-2].toString(),null));
-        //agregarInstruccion();
+        yy.PILA_INS.apilar(yy.nuevoMetodo($$[$0-2].toString()));
     
 break;
 case 27:

@@ -326,13 +326,13 @@ instrucciones_b_p : declaracion_variable PUNTO_Y_COMA
 
 metodo_principal : metodo_principal_p LLAVE_A instrucciones LLAVE_C {
         cerrarAmbito();
+        yy.PILA_INS.sacar();
     }
     ;
 
 metodo_principal_p : PR_VOID PR_MAIN PARENT_A PARENT_C {
         nuevoAmbito();
-        //let insM = new Instruccion(null,null,yy.METODO,null,new DataInstruccion($2.toString(),null));
-        //agregarInstruccion();
+        yy.PILA_INS.apilar(yy.nuevoMetodo($2.toString()));
     }
     ;
 

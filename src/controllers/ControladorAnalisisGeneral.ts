@@ -185,6 +185,7 @@ export class ControladorAnalisisGeneral{
         yy.nuevaAsignacion = this.controladorInstrucciones.nuevaAsignacion;
         yy.nuevaOperacion = this.controladorInstrucciones.nuevaOperacion;
         yy.nuevaDeclaracion = this.controladorInstrucciones.nuevaDeclaracion;
+        yy.nuevoMetodo = this.controladorInstrucciones.nuevoMetodo;
     }
 
     public getInstrucciones():Array<any>{

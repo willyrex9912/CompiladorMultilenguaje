@@ -3,7 +3,7 @@ import { Instruccion } from "./Instruccion";
 export class Operacion implements Instruccion{
 
     tipo:string = "Operacion";
-    
+    instrucciones:Array<Instruccion>;
 
     constructor(
         private opr1:Instruccion,
@@ -12,11 +12,6 @@ export class Operacion implements Instruccion{
         private resultado:any
     ){
 
-    }
-    instrucciones: Array<Instruccion>;
-
-    agregarInstruccion(instruccion: Instruccion): void {
-        throw new Error("Method not implemented.");
     }
 
 }

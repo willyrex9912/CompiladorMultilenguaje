@@ -1,18 +1,21 @@
 import { Asignacion } from "src/model/instruccion/Asignacion";
+import { Declaracion } from "src/model/instruccion/Declaracion";
 import { Instruccion } from "src/model/instruccion/Instruccion";
+import { Operacion } from "src/model/instruccion/Operacion";
+import { PilaInstruccion } from "src/model/instruccion/PilaInstruccion";
 
 export class ControladorInstrucciones{
     
-    public agregarAsignacion(asignacion:Asignacion,instrucciones:Array<Instruccion>,pilaInstrucciones:Array<Asignacion>):void{
-        if(pilaInstrucciones.length){
-            pilaInstrucciones[-1].agregarInstruccion(asignacion);
-        }else{
-            instrucciones.push(asignacion);
-        }
+    public nuevaAsignacion(opr1:string,opr2:Instruccion):Asignacion{
+        return new Asignacion(opr1,opr2);
     }
 
-    public agregarDeclaracion():void{
+    public nuevaDeclaracion(opr1:string,opr2:Instruccion):Declaracion{
+        return new Declaracion(opr1,opr2);
+    }
 
+    public nuevaOperacion(opr1:Instruccion, opr2:Instruccion, opr:string, resultado:any):Operacion{
+        return new Operacion(opr1,opr2,opr,resultado);
     }
 
 }

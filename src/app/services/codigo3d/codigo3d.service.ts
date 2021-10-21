@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Confirmacion } from 'src/model/Confirmacion';
 import { Asignacion } from 'src/model/instruccion/Asignacion';
 import { Instruccion } from 'src/model/instruccion/Instruccion';
+import { ListaInstruccion } from 'src/model/instruccion/ListaInstruccion';
 import { Operacion } from 'src/model/instruccion/Operacion';
 
 @Injectable({
@@ -19,11 +20,7 @@ export class Codigo3dService {
     return this.httpClient.post<Confirmacion>(this.url,instrucciones);
   }*/
 
-  public enviarInstrucciones(){
-    let instrucciones:Array<Instruccion> = new Array();
-    //instrucciones.push(new Asignacion("x",new Operacion(null,null,"int",12),null,"asignacion"));
-    instrucciones.push(new Operacion(null,null,"int",12));
-    console.log(instrucciones);
+  public enviarInstrucciones(instrucciones:ListaInstruccion){
     return this.httpClient.post<Confirmacion>(this.url,instrucciones);
   }
 

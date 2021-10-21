@@ -5,8 +5,8 @@ import * as AnalizadorJava from '../resources/analizador/java/Java';
 import * as AnalizadorPython from '../resources/analizador/python/Python';
 import * as AnalizadorPrograma from '../resources/analizador/programa/Programa';
 import { FiltroTipoDatoPrograma } from 'src/resources/utilidades/FiltroTipoDatoPrograma';
-import { ListaInstruccion } from 'src/model/instruccion/ListaInstruccion';
 import { PilaInstruccion } from 'src/model/instruccion/PilaInstruccion';
+import { ControladorInstrucciones } from './ControladorInstrucciones';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
@@ -15,12 +15,14 @@ export class ControladorAnalisisGeneral{
     private filtroTipoDatoJava:FiltroTipoDatoJava;
     private filtroTipoDatoPython:FiltroTipoDatoPython;
     private filtroTipoDatoPrograma:FiltroTipoDatoPrograma;
+    private controladorInstrucciones:ControladorInstrucciones;
 
     public constructor(){
         this.constructorRespuesta = new ConstructorMensajeError();
         this.filtroTipoDatoJava = new FiltroTipoDatoJava();
         this.filtroTipoDatoPython = new FiltroTipoDatoPython();
         this.filtroTipoDatoPrograma = new FiltroTipoDatoPrograma();
+        this.controladorInstrucciones = new ControladorInstrucciones();
         this.inicializarYYJava();
         this.inicializarYYPython();
         this.inicializarYYPrograma();
@@ -179,6 +181,10 @@ export class ControladorAnalisisGeneral{
         yy.DEFAULT = this.filtroTipoDatoPrograma.DEFAULT;
         
         yy.filtrarOperacion = this.filtroTipoDatoPrograma.filtrarOperacion;
+
+        yy.nuevaAsignacion = this.controladorInstrucciones.nuevaAsignacion;
+        yy.nuevaOperacion = this.controladorInstrucciones.nuevaOperacion;
+        yy.nuevaDeclaracion = this.controladorInstrucciones.nuevaDeclaracion;
     }
 
     public getInstrucciones():Array<any>{

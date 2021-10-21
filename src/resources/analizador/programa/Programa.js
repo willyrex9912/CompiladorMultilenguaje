@@ -85,10 +85,10 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
 
-                        yy.LISTA.agregarTexto("este texto");
+                        /*yy.LISTA.agregarTexto("este texto");
                         yy.LISTA.agregarTexto("este texto 1");
                         yy.LISTA.agregarTexto("este texto 2");
-                        yy.LISTA.imprimir();
+                        yy.LISTA.imprimir();*/
                         /*for(const simbolo in getAmbitoActual()){
                             console.log("-----------------");
                             console.log("Id: "+getAmbitoActual()[simbolo].id);
@@ -135,8 +135,7 @@ case 27:
                 }else{
                     if($$[$0] != null){
                         //simboloVariable.valor = $$[$0].valor;
-
-                        agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id,null),$$[$0].instruccion,yy.ASIGNACION,null,null)); 
+                        yy.PILA_INS.apilar(yy.nuevaDeclaracion(id,$$[$0].instruccion));
                     }
                     agregarSimbolo(id,$$[$0-2],"",yy.DEFAULT,yy.VARIABLE);
                 }
@@ -159,7 +158,7 @@ case 28:
                     //simboloVariable.valor = $$[$0-2].valor;
                     agregarSimbolo(id,$$[$0-3],"",yy.DEFAULT,yy.CONSTANTE);
 
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,id,null),$$[$0].instruccion,yy.ASIGNACION,null,null)); 
+                    yy.PILA_INS.apilar(yy.nuevaDeclaracion(id,$$[$0].instruccion));
                 }
             }
         }else{
@@ -201,7 +200,7 @@ case 37:
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //TEMP+++++++++++++++++++++++++++++++++++
-                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-2].toString(),null),$$[$0].instruccion,yy.ASIGNACION,null,null)); 
+                    yy.PILA_INS.apilar(yy.nuevaAsignacion($$[$0-2].toString(),$$[$0].instruccion));
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -221,7 +220,7 @@ case 38:
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //TEMP+++++++++++++++++++++++++++++++++++
-                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-1].toString(),null),$$[$01].instruccion,yy.ASIGNACION,null,null));
+                yy.PILA_INS.apilar(yy.nuevaAsignacion($$[$0-1].toString(),$$[$01].instruccion));
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }
@@ -397,7 +396,7 @@ case 126:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
-                    operacion.instruccion = new Instruccion(null,null,yy.INT,Number($$[$0]),null);
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.INT,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -405,7 +404,7 @@ case 127:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.FLOAT;
-                    operacion.instruccion = new Instruccion(null,null,yy.FLOAT,$$[$0].toString(),null);
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.FLOAT,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -413,7 +412,7 @@ case 128:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.CHAR;
-                    operacion.instruccion = new Instruccion(null,null,yy.CHAR,$$[$0].toString(),null);
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.CHAR,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -427,7 +426,7 @@ case 129:
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
-                    operacion.instruccion = new Instruccion(null,null,yy.ID,$$[$0].toString(),null);
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.ID,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -769,8 +768,7 @@ _handle_error:
                     operacion.tipoResultado = tipoResultado;
                     operacion.operacionPendiente = $1;
 
-                    let ins = new Instruccion($1.instruccion,$2.instruccion,$2.operacionPendiente,null,null);
-                    operacion.instruccion = ins;
+                    operacion.instruccion = yy.nuevaOperacion($1.instruccion,$2.instruccion,$2.operacionPendiente,null);
 
                     return operacion;
                 }else{
@@ -804,8 +802,7 @@ _handle_error:
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
 
-                        let ins = new Instruccion($2.instruccion,$3.instruccion,$3.operacionPendiente,null,null);
-                        operacion.instruccion = ins;
+                        operacion.instruccion = yy.nuevaOperacion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
 
                         return operacion;
                     }else{

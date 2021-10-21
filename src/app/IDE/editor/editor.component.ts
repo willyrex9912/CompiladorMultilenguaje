@@ -99,13 +99,13 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
 
   public generarCodigo3d(){
-    console.log(this.analizador.getInstrucciones());
+    console.log(this.listaInstruccion);
     /*
     this.servicioCodigo3d.enviarInstrucciones(this.analizador.getInstrucciones()).subscribe(data=>{
       console.log(data);
     });
     */
-    this.servicioCodigo3d.enviarInstrucciones().subscribe(data=>{
+    this.servicioCodigo3d.enviarInstrucciones(this.listaInstruccion).subscribe(data=>{
       console.log(data);
     });
   }

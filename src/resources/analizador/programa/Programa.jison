@@ -796,18 +796,19 @@ g3 : PARENT_A a3 PARENT_C { $$ = $2; }
 g3 : INT        {
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
-                    let ins = new Instruccion(null,null,yy.INT,Number($1));
-                    operacion.instruccion = ins;
+                    operacion.instruccion = new Instruccion(null,null,yy.INT,Number($1));
                     $$ = operacion;
                 }
     | FLOAT    {
                     operacion = new Object();
                     operacion.tipoResultado = yy.FLOAT;
+                    operacion.instruccion = new Instruccion(null,null,yy.FLOAT,$1.toString());
                     $$ = operacion;
                 }
     | CHAR      {
                     operacion = new Object();
                     operacion.tipoResultado = yy.CHAR;
+                    operacion.instruccion = new Instruccion(null,null,yy.CHAR,$1.toString());
                     $$ = operacion;
                 }
     | ID        {
@@ -819,8 +820,7 @@ g3 : INT        {
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
-                    let insId = new Instruccion(null,null,yy.ID,$1.toString());
-                    operacion.instruccion = insId;
+                    operacion.instruccion = new Instruccion(null,null,yy.ID,$1.toString());
                     $$ = operacion;
                 }
     ;

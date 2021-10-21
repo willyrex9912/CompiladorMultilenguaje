@@ -389,8 +389,7 @@ case 126:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
-                    let ins = new Instruccion(null,null,yy.INT,Number($$[$0]));
-                    operacion.instruccion = ins;
+                    operacion.instruccion = new Instruccion(null,null,yy.INT,Number($$[$0]));
                     this.$ = operacion;
                 
 break;
@@ -398,6 +397,7 @@ case 127:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.FLOAT;
+                    operacion.instruccion = new Instruccion(null,null,yy.FLOAT,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -405,6 +405,7 @@ case 128:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.CHAR;
+                    operacion.instruccion = new Instruccion(null,null,yy.CHAR,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -418,8 +419,7 @@ case 129:
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
-                    let insId = new Instruccion(null,null,yy.ID,$$[$0].toString());
-                    operacion.instruccion = insId;
+                    operacion.instruccion = new Instruccion(null,null,yy.ID,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -793,7 +793,7 @@ _handle_error:
 
                         return operacion;
                     }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                        errorSemantico("Operandos incorrectos para el operador "+$3.operacionPendiente+" .",linea,columna);
                         return null;
                     }
                 }else{

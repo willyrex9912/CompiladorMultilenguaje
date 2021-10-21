@@ -191,8 +191,7 @@ case 37:
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //TEMP+++++++++++++++++++++++++++++++++++
-                    let ins = new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-2].toString()),$$[$0].instruccion,"asign",null);
-                    instrucciones.push(ins);     
+                    agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-2].toString()),$$[$0].instruccion,"asign",null)); 
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$$[$0].tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -212,8 +211,7 @@ case 38:
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //TEMP+++++++++++++++++++++++++++++++++++
-                let ins = new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-1].toString()),$$[$01].instruccion,"asign",null);
-                instrucciones.push(ins); 
+                agregarInstruccion(new Instruccion(new Instruccion(null,null,yy.ID,$$[$0-1].toString()),$$[$01].instruccion,"asign",null));
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }
@@ -681,18 +679,10 @@ _handle_error:
     let ids = [];
     let tipoDatoSwtich = "";
     let instrucciones = [];
+    let pilaInstrucciones = [];
 
     exports.getInstrucciones = function(){
         return instrucciones;
-    }
-
-    function nuevaInstruccion(opr1,opr2,ins1,ins2,opr){
-        Instruccion = new Object();
-        Instruccion.opr1 = opr1;
-        Instruccion.opr2 = opr2;
-        Instruccion.ins1 = ins1;
-        Instruccion.ins2 = ins2;
-        Instruccion.opr = opr;
     }
 
     function Instruccion(opr1,opr2,opr,resultado){
@@ -700,6 +690,15 @@ _handle_error:
         this.opr2 = opr2;
         this.opr = opr;
         this.resultado = resultado;
+        this.instrucciones = [];
+    }
+
+    function agregarInstruccion(ins){
+        if(pilaInstrucciones.length){
+            pilaInstrucciones.at(-1).push(ins);
+        }else{
+            instrucciones.push(ins);
+        }
     }
 
     exports.getErrores = function (){
@@ -715,6 +714,8 @@ _handle_error:
         ids.splice(0, ids.length);
         tipoDatoSwtich = "";
         instrucciones.splice(0, instrucciones.length);
+        pilaInstrucciones.splice(0, pilaInstrucciones.length);
+        let instruccionesGlobales = new Instruccion(null,null,yy.METODO,null);
     }
 
     function nuevoAmbito(){

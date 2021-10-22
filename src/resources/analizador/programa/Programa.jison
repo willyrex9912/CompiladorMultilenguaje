@@ -573,12 +573,17 @@ ciclo_do_while : PR_DO inicio_do LLAVE_A instrucciones LLAVE_C fin_do
             if($9.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$9.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+            
+            yy.PILA_INS.sacarDoWhile($9.instruccion);
         }catch(exception){
         }
     }
     ;
 
-inicio_do : { nuevoAmbito(); };
+inicio_do : { 
+        nuevoAmbito(); 
+        yy.PILA_INS.apilar(yy.nuevoDoWhile(null));
+    };
 
 fin_do : { cerrarAmbito(); };
 

@@ -1,3 +1,4 @@
+import { DoWhile } from "../ciclo/DoWhile";
 import { Else } from "../condicional/Else";
 import { ElseIf } from "../condicional/ElseIf";
 import { If } from "../condicional/If";
@@ -14,36 +15,53 @@ export class PilaInstruccion extends Array<Instruccion>{
     }
 
     public apilar(instruccion:Instruccion){
-        if(this.length){
-            if(instruccion.tipo!="ElseIf" && instruccion.tipo!="Else"){
-                this.ultimo().instrucciones.push(instruccion);
-            }
+        try{
+            if(this.length){
+                if(instruccion.tipo!="ElseIf" && instruccion.tipo!="Else"){
+                    this.ultimo().instrucciones.push(instruccion);
+                }
 
-            if(
-                instruccion.tipo=="Metodo" || 
-                instruccion.tipo=="If" || 
-                instruccion.tipo=="ElseIf" || 
-                instruccion.tipo=="Else" || 
-                instruccion.tipo=="For" || 
-                instruccion.tipo=="While" || 
-                instruccion.tipo=="DoWhile" ||
-                instruccion.tipo=="Switch"
-            ){
-                this.push(instruccion);
+                if(
+                    instruccion.tipo=="Metodo" || 
+                    instruccion.tipo=="If" || 
+                    instruccion.tipo=="ElseIf" || 
+                    instruccion.tipo=="Else" || 
+                    instruccion.tipo=="For" || 
+                    instruccion.tipo=="While" || 
+                    instruccion.tipo=="DoWhile" ||
+                    instruccion.tipo=="Switch"
+                ){
+                    this.push(instruccion);
+                }
+                this.filtroIns(instruccion);
+            }else{
+                if(instruccion.tipo=="Metodo"){
+                    this.push(instruccion);
+                }
+                this.listaPrincipal.agregar(instruccion);
             }
-            this.filtroIns(instruccion);
-        }else{
-            if(instruccion.tipo=="Metodo"){
-                this.push(instruccion);
-            }
-            this.listaPrincipal.agregar(instruccion);
+        }catch(e){
+            console.log(e);
         }
     }
 
     public sacar():void{
-        let ins = this.pop();
-        if(ins.tipo=="If"){
-            this.auxIf.pop();
+        try{
+            let ins = this.pop();
+            if(ins.tipo=="If"){
+                this.auxIf.pop();
+            }
+        }catch(e){
+            console.log(e);
+        }
+    }
+
+    public sacarDoWhile(condicion:Instruccion):void{
+        try{
+            let ins = this.pop() as DoWhile;
+            ins.setCondicion(condicion);
+        }catch(e){
+            console.log(e);
         }
     }
 

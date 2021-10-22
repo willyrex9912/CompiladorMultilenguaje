@@ -1,4 +1,5 @@
 import { Asignacion } from "src/model/instruccion/Asignacion";
+import { DoWhile } from "src/model/instruccion/ciclo/DoWhile";
 import { While } from "src/model/instruccion/ciclo/While";
 import { Else } from "src/model/instruccion/condicional/Else";
 import { ElseIf } from "src/model/instruccion/condicional/ElseIf";
@@ -9,7 +10,11 @@ import { Metodo } from "src/model/instruccion/Metodo";
 import { Operacion } from "src/model/instruccion/Operacion";
 
 export class ControladorInstrucciones{
-    
+
+    public nuevoDoWhile(condicion:Instruccion):DoWhile{
+        return new DoWhile(condicion);
+    }
+
     public nuevoWhile(condicion:Instruccion):While{
         return new While(condicion);
     }

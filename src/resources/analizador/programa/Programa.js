@@ -245,7 +245,7 @@ case 42:
         }
     
 break;
-case 43: case 66: case 69: case 74: case 78: case 81:
+case 43: case 66: case 69: case 78: case 81:
  nuevoAmbito(); 
 break;
 case 44: case 67: case 70: case 75: case 82:
@@ -296,8 +296,16 @@ case 73:
             if($$[$0-2].tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-2].tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+            
+            yy.PILA_INS.sacarDoWhile($$[$0-2].instruccion);
         }catch(exception){
         }
+    
+break;
+case 74:
+ 
+        nuevoAmbito(); 
+        yy.PILA_INS.apilar(yy.nuevoDoWhile(null));
     
 break;
 case 77:

@@ -1,10 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Confirmacion } from 'src/model/Confirmacion';
-import { Asignacion } from 'src/model/instruccion/Asignacion';
-import { Instruccion } from 'src/model/instruccion/Instruccion';
-import { ListaInstruccion } from 'src/model/instruccion/ListaInstruccion';
-import { Operacion } from 'src/model/instruccion/Operacion';
+import { ListaInstruccion } from 'src/model/instruccion/estructura/ListaInstruccion';
 
 @Injectable({
   providedIn: 'root'

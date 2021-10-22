@@ -1,12 +1,26 @@
 import { Asignacion } from "src/model/instruccion/Asignacion";
+import { Else } from "src/model/instruccion/condicional/Else";
+import { ElseIf } from "src/model/instruccion/condicional/ElseIf";
+import { If } from "src/model/instruccion/condicional/If";
 import { Declaracion } from "src/model/instruccion/Declaracion";
 import { Instruccion } from "src/model/instruccion/Instruccion";
 import { Metodo } from "src/model/instruccion/Metodo";
 import { Operacion } from "src/model/instruccion/Operacion";
-import { PilaInstruccion } from "src/model/instruccion/PilaInstruccion";
 
 export class ControladorInstrucciones{
     
+    public nuevoElse():Else{
+        return new Else();
+    }
+
+    public nuevoElseIf(condicion:Instruccion):ElseIf{
+        return new ElseIf(condicion);
+    }
+
+    public nuevoIf(condicion:Instruccion):If{
+        return new If(condicion);
+    }
+
     public nuevoMetodo(nombre:string):Metodo{
         return new Metodo(nombre);
     }

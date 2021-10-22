@@ -5,8 +5,8 @@ import * as AnalizadorJava from '../resources/analizador/java/Java';
 import * as AnalizadorPython from '../resources/analizador/python/Python';
 import * as AnalizadorPrograma from '../resources/analizador/programa/Programa';
 import { FiltroTipoDatoPrograma } from 'src/resources/utilidades/FiltroTipoDatoPrograma';
-import { PilaInstruccion } from 'src/model/instruccion/PilaInstruccion';
 import { ControladorInstrucciones } from './ControladorInstrucciones';
+import { PilaInstruccion } from 'src/model/instruccion/estructura/PilaInstruccion';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
@@ -186,6 +186,9 @@ export class ControladorAnalisisGeneral{
         yy.nuevaOperacion = this.controladorInstrucciones.nuevaOperacion;
         yy.nuevaDeclaracion = this.controladorInstrucciones.nuevaDeclaracion;
         yy.nuevoMetodo = this.controladorInstrucciones.nuevoMetodo;
+        yy.nuevoIf = this.controladorInstrucciones.nuevoIf;
+        yy.nuevoElseIf = this.controladorInstrucciones.nuevoElseIf;
+        yy.nuevoElse = this.controladorInstrucciones.nuevoElse;
     }
 
     public getInstrucciones():Array<any>{

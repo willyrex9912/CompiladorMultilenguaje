@@ -1,4 +1,4 @@
-import { Instruccion } from "./Instruccion";
+import { Instruccion } from "../Instruccion";
 
 export class ListaInstruccion extends Array<Instruccion> {
 

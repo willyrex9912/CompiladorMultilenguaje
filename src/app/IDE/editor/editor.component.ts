@@ -11,8 +11,8 @@ import { ProyectoService } from 'src/app/services/proyecto/proyecto.service';
 import { GestionadorPaquete } from 'src/resources/utilidades/proyecto/GestionadorPaquete';
 import { Archivo } from 'src/model/Proyecto/Archivo';
 import { Codigo3dService } from 'src/app/services/codigo3d/codigo3d.service';
-import { ListaInstruccion } from 'src/model/instruccion/ListaInstruccion';
-import { PilaInstruccion } from 'src/model/instruccion/PilaInstruccion';
+import { ListaInstruccion } from 'src/model/instruccion/estructura/ListaInstruccion';
+import { PilaInstruccion } from 'src/model/instruccion/estructura/PilaInstruccion';
 
 @Component({
   selector: 'app-editor',
@@ -96,6 +96,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     console.clear();
     const aceEditor = ace.edit(this.editor.nativeElement);
     this.txtConsola = this.analizador.analizar(aceEditor.getValue(),this.pilaInstruccion);
+    console.log(this.listaInstruccion);
   }
 
   public generarCodigo3d(){

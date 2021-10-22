@@ -1,5 +1,4 @@
-import { ListaInstruccion } from 'src/model/instruccion/ListaInstruccion';
-import { PilaInstruccion } from 'src/model/instruccion/PilaInstruccion';
+import { PilaInstruccion } from 'src/model/instruccion/estructura/PilaInstruccion';
 import * as Separador from '../resources/analizador/separador/Separador'
 import { ControladorAnalisisGeneral } from './ControladorAnalisisGeneral';
 

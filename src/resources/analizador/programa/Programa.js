@@ -227,8 +227,34 @@ case 38:
         }
     
 break;
-case 42: case 77:
+case 41:
 
+        yy.PILA_INS.sacar();
+    
+break;
+case 42:
+
+        try{
+            if($$[$0-1].tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-1].tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+
+            yy.PILA_INS.apilar(yy.nuevoIf($$[$0-1].instruccion));
+
+        }catch(exception){
+        }
+    
+break;
+case 43: case 66: case 69: case 74: case 78: case 81:
+ nuevoAmbito(); 
+break;
+case 44: case 67: case 70: case 75: case 79: case 82:
+ cerrarAmbito(); 
+break;
+case 52:
+
+        nuevoAmbito();
+        yy.PILA_INS.apilar(yy.nuevoElseIf($$[$0-1].instruccion));
         try{
             if($$[$0-1].tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-1].tipoResultado+" .",this._$.first_line,this._$.first_column);
@@ -237,21 +263,16 @@ case 42: case 77:
         }
     
 break;
-case 43: case 55: case 66: case 69: case 74: case 78: case 81:
- nuevoAmbito(); 
+case 53: case 56:
+ 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    
 break;
-case 44: case 53: case 56: case 67: case 70: case 75: case 79: case 82:
- cerrarAmbito(); 
-break;
-case 52:
-
-        nuevoAmbito();
-        try{
-            if($$[$0-1].tipoResultado!=yy.BOOLEAN){
-                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-1].tipoResultado+" .",this._$.first_line,this._$.first_column);
-            }
-        }catch(exception){
-        }
+case 55:
+ 
+        nuevoAmbito(); 
+        yy.PILA_INS.apilar(yy.nuevoElse());
     
 break;
 case 58:
@@ -274,6 +295,16 @@ case 73:
         try{
             if($$[$0-2].tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-2].tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(exception){
+        }
+    
+break;
+case 77:
+
+        try{
+            if($$[$0-1].tipoResultado!=yy.BOOLEAN){
+                errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-1].tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
         }catch(exception){
         }

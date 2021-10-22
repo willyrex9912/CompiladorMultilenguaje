@@ -189,6 +189,7 @@ export class ControladorAnalisisGeneral{
         yy.nuevoIf = this.controladorInstrucciones.nuevoIf;
         yy.nuevoElseIf = this.controladorInstrucciones.nuevoElseIf;
         yy.nuevoElse = this.controladorInstrucciones.nuevoElse;
+        yy.nuevoWhile = this.controladorInstrucciones.nuevoWhile;
     }
 
     public getInstrucciones():Array<any>{

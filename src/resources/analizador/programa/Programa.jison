@@ -89,34 +89,6 @@
     let ambitoActual = [];
     let ids = [];
     let tipoDatoSwtich = "";
-    let instrucciones = [];
-    let pilaInstrucciones = [];
-
-    exports.getInstrucciones = function(){
-        return instrucciones;
-    }
-
-    function Instruccion(opr1,opr2,opr,resultado,data){
-        this.opr1 = opr1;
-        this.opr2 = opr2;
-        this.opr = opr;
-        this.resultado = resultado;
-        this.instrucciones = [];
-        this.data = data;
-    }
-
-    function DataInstruccion(nombreMetodo,condicion){
-        this.nombreMetodo = nombreMetodo;
-        this.condicion = condicion;
-    }
-
-    function agregarInstruccion(ins){
-        if(pilaInstrucciones.length){
-            pilaInstrucciones.at(-1).push(ins);
-        }else{
-            instrucciones.push(ins);
-        }
-    }
 
     exports.getErrores = function (){
         return errores;
@@ -130,8 +102,6 @@
         ambitoActual = [yy.GLOBAL];
         ids.splice(0, ids.length);
         tipoDatoSwtich = "";
-        instrucciones.splice(0, instrucciones.length);
-        pilaInstrucciones.splice(0, pilaInstrucciones.length);
     }
 
     function nuevoAmbito(){
@@ -624,6 +594,8 @@ parte_while : PR_WHILE inicio_while PARENT_A expresion_multiple PARENT_C {
             if($4.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+
+            yy.PILA_INS.apilar(yy.nuevoWhile($4.instruccion));
         }catch(exception){
         }
     }
@@ -631,7 +603,10 @@ parte_while : PR_WHILE inicio_while PARENT_A expresion_multiple PARENT_C {
 
 inicio_while : { nuevoAmbito(); };
 
-fin_while : { cerrarAmbito(); };
+fin_while : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    };
 
 //------------------------------------------------------------------------------------
 

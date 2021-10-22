@@ -1,4 +1,5 @@
 import { Asignacion } from "src/model/instruccion/Asignacion";
+import { While } from "src/model/instruccion/ciclo/While";
 import { Else } from "src/model/instruccion/condicional/Else";
 import { ElseIf } from "src/model/instruccion/condicional/ElseIf";
 import { If } from "src/model/instruccion/condicional/If";
@@ -9,6 +10,10 @@ import { Operacion } from "src/model/instruccion/Operacion";
 
 export class ControladorInstrucciones{
     
+    public nuevoWhile(condicion:Instruccion):While{
+        return new While(condicion);
+    }
+
     public nuevoElse():Else{
         return new Else();
     }

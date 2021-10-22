@@ -248,7 +248,7 @@ break;
 case 43: case 66: case 69: case 74: case 78: case 81:
  nuevoAmbito(); 
 break;
-case 44: case 67: case 70: case 75: case 79: case 82:
+case 44: case 67: case 70: case 75: case 82:
  cerrarAmbito(); 
 break;
 case 52:
@@ -263,7 +263,7 @@ case 52:
         }
     
 break;
-case 53: case 56:
+case 53: case 56: case 79:
  
         cerrarAmbito(); 
         yy.PILA_INS.sacar();
@@ -306,6 +306,8 @@ case 77:
             if($$[$0-1].tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$$[$0-1].tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+
+            yy.PILA_INS.apilar(yy.nuevoWhile($$[$0-1].instruccion));
         }catch(exception){
         }
     
@@ -718,34 +720,6 @@ _handle_error:
     let ambitoActual = [];
     let ids = [];
     let tipoDatoSwtich = "";
-    let instrucciones = [];
-    let pilaInstrucciones = [];
-
-    exports.getInstrucciones = function(){
-        return instrucciones;
-    }
-
-    function Instruccion(opr1,opr2,opr,resultado,data){
-        this.opr1 = opr1;
-        this.opr2 = opr2;
-        this.opr = opr;
-        this.resultado = resultado;
-        this.instrucciones = [];
-        this.data = data;
-    }
-
-    function DataInstruccion(nombreMetodo,condicion){
-        this.nombreMetodo = nombreMetodo;
-        this.condicion = condicion;
-    }
-
-    function agregarInstruccion(ins){
-        if(pilaInstrucciones.length){
-            pilaInstrucciones.at(-1).push(ins);
-        }else{
-            instrucciones.push(ins);
-        }
-    }
 
     exports.getErrores = function (){
         return errores;
@@ -759,8 +733,6 @@ _handle_error:
         ambitoActual = [yy.GLOBAL];
         ids.splice(0, ids.length);
         tipoDatoSwtich = "";
-        instrucciones.splice(0, instrucciones.length);
-        pilaInstrucciones.splice(0, pilaInstrucciones.length);
     }
 
     function nuevoAmbito(){

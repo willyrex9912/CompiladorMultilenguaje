@@ -41,7 +41,8 @@ export class PilaInstruccion extends Array<Instruccion>{
     }
 
     public sacar():void{
-        if(this.pop().tipo=="If"){
+        let ins = this.pop();
+        if(ins.tipo=="If"){
             this.auxIf.pop();
         }
     }

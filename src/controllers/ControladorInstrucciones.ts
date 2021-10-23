@@ -1,15 +1,25 @@
 import { Asignacion } from "src/model/instruccion/Asignacion";
 import { DoWhile } from "src/model/instruccion/ciclo/DoWhile";
+import { For } from "src/model/instruccion/ciclo/For";
 import { While } from "src/model/instruccion/ciclo/While";
 import { Else } from "src/model/instruccion/condicional/Else";
 import { ElseIf } from "src/model/instruccion/condicional/ElseIf";
 import { If } from "src/model/instruccion/condicional/If";
 import { Declaracion } from "src/model/instruccion/Declaracion";
+import { IncDec } from "src/model/instruccion/inc-dec/IncDec";
 import { Instruccion } from "src/model/instruccion/Instruccion";
 import { Metodo } from "src/model/instruccion/Metodo";
 import { Operacion } from "src/model/instruccion/Operacion";
 
 export class ControladorInstrucciones{
+
+    public nuevoFor(accionInicial:Instruccion,condicion:Instruccion,accionPosterior:Instruccion):For{
+        return new For(accionInicial,condicion,accionPosterior);
+    }
+
+    public nuevoIncDec(id:string,opr:string):IncDec{
+        return new IncDec(id,opr);
+    }
 
     public nuevoDoWhile(condicion:Instruccion):DoWhile{
         return new DoWhile(condicion);

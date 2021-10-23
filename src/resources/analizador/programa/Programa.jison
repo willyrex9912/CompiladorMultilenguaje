@@ -280,7 +280,7 @@ instrucciones_p: instrucciones_b_p
     ;
 
 instrucciones_b_p : declaracion_variable PUNTO_Y_COMA
-    | asignacion_variable PUNTO_Y_COMA
+    | asignacion_variable PUNTO_Y_COMA { yy.PILA_INS.apilar($1); }
     | instruccion_if
     | instruccion_switch
     | ciclo_for
@@ -398,7 +398,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                     //TEMP+++++++++++++++++++++++++++++++++++
-                    yy.PILA_INS.apilar(yy.nuevaAsignacion($1.toString(),$3.instruccion));
+                    $$ = yy.nuevaAsignacion($1.toString(),$3.instruccion);
                 }else{
                     errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
                 }
@@ -416,7 +416,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //TEMP+++++++++++++++++++++++++++++++++++
-                yy.PILA_INS.apilar(yy.nuevaAsignacion($1.toString(),$3.instruccion));
+                $$ = yy.nuevoIncDec($1.toString(),$2);
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }
@@ -424,8 +424,8 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
     }
     ;
 
-inc_dec : INCREMENTO
-    | DECREMENTO
+inc_dec : INCREMENTO { $$ = yy.SUMA; }
+    | DECREMENTO { $$ = yy.RESTA; }
     ;
 
 //------------------------------------------------------------------------------------
@@ -626,24 +626,51 @@ ciclo_for : PR_FOR inicio_for PARENT_A ciclo_for_p PARENT_C LLAVE_A instruccione
 
 inicio_for : { nuevoAmbito(); };
 
-fin_for : { cerrarAmbito(); };  
+fin_for : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    };  
 
 ciclo_for_p : primera_exp PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior {
         try{
             if($3.tipoResultado!=yy.BOOLEAN){
             errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column); 
             }
+
+            yy.PILA_INS.apilar(yy.nuevoFor($1,$3.instruccion,$5));
         }catch(e){
         }
     }
     ;
 
-primera_exp : declaracion_variable
-    | asignacion_variable
-    ;
+primera_exp : ID ASIGNACION expresion_multiple {
+        //declaracion y asignacion
+        try{
+            if($3.tipoResultado==yy.INT){
+                    if(existeSimbolo($1.toString(),yy.VARIABLE) || existeSimbolo($1.toString(),yy.CONSTANTE)){
+                        errorSemantico("La variable "+$1.toString()+" ya ha sido declarada.",this._$.first_line,this._$.first_column);
+                    }else{
+                        $$ = yy.nuevaDeclaracion($1.toString(),$3.instruccion);
+                        agregarSimbolo($1.toString(),yy.INT,"",yy.DEFAULT,yy.VARIABLE);
+                    }
+            }else{
+                errorSemantico("Tipo de dato requerido : "+yy.INT+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+        }catch(e){
+            console.log(e);
+            $$ = null;
+        }
+    }
+    ; 
 
-accion_posterior : asignacion_variable
-    | /*Lambda*/
+
+/*primera_exp : declaracion_variable { $$ = $1; }
+    | asignacion_variable { $$ = $1; }
+    ;
+*/
+
+accion_posterior : asignacion_variable { $$ = $1; }
+    |  { $$ = null; }
     ;
 
 //------------------------------------------------------------------------------------

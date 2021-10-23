@@ -191,6 +191,8 @@ export class ControladorAnalisisGeneral{
         yy.nuevoElse = this.controladorInstrucciones.nuevoElse;
         yy.nuevoWhile = this.controladorInstrucciones.nuevoWhile;
         yy.nuevoDoWhile = this.controladorInstrucciones.nuevoDoWhile;
+        yy.nuevoFor = this.controladorInstrucciones.nuevoFor;
+        yy.nuevoIncDec = this.controladorInstrucciones.nuevoIncDec;
     }
 
     public getInstrucciones():Array<any>{

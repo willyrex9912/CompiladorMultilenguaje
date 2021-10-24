@@ -2,11 +2,9 @@ import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, ViewChildren, 
 import { Router } from '@angular/router';
 import * as ace from "ace-builds";
 import { Analizador } from 'src/controllers/ControladorAnalisis';
-import { Cuadrupla } from 'src/model/Cuadrupla';
 
 import * as $ from 'jquery'; import 'jstree';
 import { Proyecto } from 'src/model/Proyecto/Proyecto';
-import { ModalService } from 'src/app/modal/servicio/modal.service';
 import { ProyectoService } from 'src/app/services/proyecto/proyecto.service';
 import { GestionadorPaquete } from 'src/resources/utilidades/proyecto/GestionadorPaquete';
 import { Archivo } from 'src/model/Proyecto/Archivo';
@@ -30,12 +28,12 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public idPaquete:string = "";
   public nombreProyecto:string = "";
   public textoInfo:string = "";
-  //private banderaExpandir = true;
   public gestionadorPaquete:GestionadorPaquete;
   public codigoPrincipal = "";
   public archivoActual:Archivo;
 
   public proyecto:Proyecto;
+  public codigo3d = "";
 
   private listaInstruccion:ListaInstruccion;
   private pilaInstruccion:PilaInstruccion;
@@ -48,12 +46,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
       });
       localStorage.setItem('proyecto',null);
     }
-    
-    //console.log(this.router.getCurrentNavigation().extras.state.nombre);
-    
-    //+++++++++++++TEMP++++++++++++++++++++++++++++++++++++++++++++++++
-    //this.proyecto = new Proyecto('proyecto1');
-    //this.simular();
   }
 
   ngOnInit(): void {
@@ -101,13 +93,8 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   public generarCodigo3d(){
     console.log(this.listaInstruccion);
-    /*
-    this.servicioCodigo3d.enviarInstrucciones(this.analizador.getInstrucciones()).subscribe(data=>{
-      console.log(data);
-    });
-    */
     this.servicioCodigo3d.enviarInstrucciones(this.listaInstruccion).subscribe(data=>{
-      console.log(data);
+      this.codigo3d = data.descripcion;
     });
   }
 
@@ -142,43 +129,14 @@ export class EditorComponent implements OnInit, AfterViewInit {
   }
   */
   
-  //+++++++++++++++++METODO TEMPORAL DE SIMULACION++++++++++++++++++++++
-  public simular():void{
-    //this.proyecto.agregarPaquete('backend.analizador');
-    this.gestionadorPaquete.crearPaquete('backend.controladores.mensaje',this.proyecto);
-    this.gestionadorPaquete.crearPaquete('backend.controladores.alerta',this.proyecto);
-    this.gestionadorPaquete.crearPaquete('backend.controladores.data',this.proyecto);
-    this.gestionadorPaquete.crearPaquete('backend.controladores.password',this.proyecto);
-    this.gestionadorPaquete.crearPaquete('backend.error',this.proyecto);
-    this.gestionadorPaquete.crearPaquete('frontend.vistas.principal',this.proyecto);
-    this.gestionadorPaquete.crearPaquete('frontend.vistas.secundaria',this.proyecto);
-    this.gestionadorPaquete.crearPaquete('frontend.controladores.password',this.proyecto);
-    this.gestionadorPaquete.nuevoArchivo('backend.analizador.lexer',this.proyecto,"");
-    this.gestionadorPaquete.nuevoArchivo('frontend.vistas.principal.modelos.modelo',this.proyecto,"");
-    this.gestionadorPaquete.nuevoArchivo('backend.recuperador.lexer',this.proyecto,"");
-    this.gestionadorPaquete.nuevoArchivo('backend.controller',this.proyecto,"");
-    this.gestionadorPaquete.nuevoArchivo('backend.controller2',this.proyecto,"");
-    this.gestionadorPaquete.nuevoArchivo('main',this.proyecto,"");
-    console.log('METODOS CREADOS');
-    console.log(this.proyecto)
-    let nombrePaquete = 'frontend.vistas';
-    let paquete = this.gestionadorPaquete.buscarPaquete(nombrePaquete,this.proyecto);
-    if(paquete==null){
-      console.log("No se ha encontrado el paquete "+nombrePaquete);
-    }else{
-      console.log("Paquete "+nombrePaquete+" cuenta con "+paquete.paquetes.length+" paquetes.");
-    }
-  }
 
   public crearArchivo():void{
     if(this.idValido(this.idArchivo)){
-      //this.proyecto.crearArchivo(this.idArchivo);
       this.gestionadorPaquete.nuevoArchivo(this.idArchivo,this.proyecto,"");
       this.idArchivo = "";
     }else{
       this.idArchivo = "";
     }
-    //this.reexpandir();
   }
 
   public crearPaquete():void{
@@ -188,17 +146,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }else{
       this.idPaquete = "";
     }
-    //this.reexpandir();
   }
-
-  /*
-  reexpandir():void{
-    if(this.banderaExpandir){
-      this.expandir();
-      this.banderaExpandir = false;
-    }
-  }
-  */
 
   private idValido(id:string):boolean{
     return /^([a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*)$/.test(id);

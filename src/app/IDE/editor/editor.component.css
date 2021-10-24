@@ -13,3 +13,9 @@ li.archivo {
 .btnw {
     width: 95%;
 }
+
+#cod3d {
+    height: 500px; 
+    margin-top: 25px;
+    font-size: 125%;
+}

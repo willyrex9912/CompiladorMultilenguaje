@@ -1,23 +1,28 @@
 import { DoWhile } from "../ciclo/DoWhile";
+import { Case } from "../condicional/Case";
+import { Default } from "../condicional/Default";
 import { Else } from "../condicional/Else";
 import { ElseIf } from "../condicional/ElseIf";
 import { If } from "../condicional/If";
+import { Switch } from "../condicional/Switch";
 import { Instruccion } from "../Instruccion";
 import { ListaInstruccion } from "./ListaInstruccion";
 
 export class PilaInstruccion extends Array<Instruccion>{
 
     private auxIf:Array<If>;
+    private auxSwitch:Array<Switch>;
 
     constructor(private listaPrincipal:ListaInstruccion){
         super();
         this.auxIf = new Array();
+        this.auxSwitch = new Array();
     }
 
     public apilar(instruccion:Instruccion){
         try{
             if(this.length){
-                if(instruccion.tipo!="ElseIf" && instruccion.tipo!="Else"){
+                if(instruccion.tipo!="ElseIf" && instruccion.tipo!="Else" && instruccion.tipo!="Case" && instruccion.tipo!="Default"){
                     this.ultimo().instrucciones.push(instruccion);
                 }
 
@@ -29,7 +34,9 @@ export class PilaInstruccion extends Array<Instruccion>{
                     instruccion.tipo=="For" || 
                     instruccion.tipo=="While" || 
                     instruccion.tipo=="DoWhile" ||
-                    instruccion.tipo=="Switch"
+                    instruccion.tipo=="Switch" ||
+                    instruccion.tipo=="Case" ||
+                    instruccion.tipo=="Default"
                 ){
                     this.push(instruccion);
                 }
@@ -50,6 +57,8 @@ export class PilaInstruccion extends Array<Instruccion>{
             let ins = this.pop();
             if(ins.tipo=="If"){
                 this.auxIf.pop();
+            }else if(ins.tipo=="Switch"){
+                this.auxSwitch.pop();
             }
         }catch(e){
             console.log(e);
@@ -72,6 +81,12 @@ export class PilaInstruccion extends Array<Instruccion>{
             this.ultimoIf().instruccionesElseIf.push(instruccion as ElseIf);
         }else if(instruccion.tipo=="Else"){
             this.ultimoIf().instruccionElse = instruccion as Else;
+        }else if(instruccion.tipo=="Switch"){
+            this.auxSwitch.push(instruccion as Switch);
+        }else if(instruccion.tipo=="Case"){
+            this.ultimoSwitch().casos.push(instruccion as Case);
+        }else if(instruccion.tipo=="Default"){
+            this.ultimoSwitch().casoDefault = instruccion as Default;
         }
     }
 
@@ -81,6 +96,10 @@ export class PilaInstruccion extends Array<Instruccion>{
 
     private ultimoIf():If{
         return this.auxIf[this.auxIf.length-1];
+    }
+
+    private ultimoSwitch():Switch{
+        return this.auxSwitch[this.auxSwitch.length-1];
     }
 
 }

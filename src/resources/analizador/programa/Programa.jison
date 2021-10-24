@@ -511,7 +511,9 @@ fin_else : {
 // INSTRUCCION SWITCH --------------------------------------------------------------
 
 
-instruccion_switch : inicio_switch instruccion_switch_c_p 
+instruccion_switch : inicio_switch instruccion_switch_c_p {
+        yy.PILA_INS.sacar();
+    }
     ;
 
 inicio_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C {
@@ -519,6 +521,7 @@ inicio_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C {
             errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.CHAR+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
         }
         tipoDatoSwtich = $3.tipoResultado;
+        yy.PILA_INS.apilar(yy.nuevoSwitch($3.instruccion));
     }
     ;
 
@@ -532,23 +535,45 @@ instruccion_switch_t_p : instruccion_switch_b_p
     | instruccion_switch_b_p instruccion_switch_t_p
     ;
 
-instruccion_switch_b_p : PR_CASE inicio_cas_sw expresion_multiple DOS_PUNTOS instrucciones instruccion_break fin_cas_sw {
-        if($3.tipoResultado != tipoDatoSwtich){
-            errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
-        }
+instruccion_switch_b_p : PR_CASE inicio_cas_sw case_p DOS_PUNTOS instrucciones instruccion_break fin_cas_sw {
+        
+    }
+    ;
+
+case_p : expresion_multiple {
+        //try{
+            if($1.tipoResultado != tipoDatoSwtich){
+                errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$1.tipoResultado+" .",this._$.first_line,this._$.first_column);
+            }
+
+            yy.PILA_INS.apilar(yy.nuevoCase($1.instruccion));
+        //}catch(e){
+            //console.log(e);
+        //}
     }
     ;
 
 inicio_cas_sw : { nuevoAmbito(); };
 
-fin_cas_sw : { cerrarAmbito(); }; 
+fin_cas_sw : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    }
+    ; 
 
 instruccion_switch_default : PR_DEFAULT inicio_def_sw DOS_PUNTOS instrucciones fin_def_sw
     ;
 
-inicio_def_sw : { nuevoAmbito(); };
+inicio_def_sw : { 
+        nuevoAmbito(); 
+        yy.PILA_INS.apilar(yy.nuevoDefault());
+    };
 
-fin_def_sw : { cerrarAmbito(); };  
+fin_def_sw : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    }
+    ;  
 
 //------------------------------------------------------------------------------------
 

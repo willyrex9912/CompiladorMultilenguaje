@@ -2,9 +2,12 @@ import { Asignacion } from "src/model/instruccion/Asignacion";
 import { DoWhile } from "src/model/instruccion/ciclo/DoWhile";
 import { For } from "src/model/instruccion/ciclo/For";
 import { While } from "src/model/instruccion/ciclo/While";
+import { Case } from "src/model/instruccion/condicional/Case";
+import { Default } from "src/model/instruccion/condicional/Default";
 import { Else } from "src/model/instruccion/condicional/Else";
 import { ElseIf } from "src/model/instruccion/condicional/ElseIf";
 import { If } from "src/model/instruccion/condicional/If";
+import { Switch } from "src/model/instruccion/condicional/Switch";
 import { Declaracion } from "src/model/instruccion/Declaracion";
 import { IncDec } from "src/model/instruccion/inc-dec/IncDec";
 import { Instruccion } from "src/model/instruccion/Instruccion";
@@ -15,6 +18,18 @@ export class ControladorInstrucciones{
 
     public nuevoFor(accionInicial:Instruccion,condicion:Instruccion,accionPosterior:Instruccion):For{
         return new For(accionInicial,condicion,accionPosterior);
+    }
+
+    public nuevoSwitch(variable:Instruccion):Switch{
+        return new Switch(variable);
+    }
+
+    public nuevoCase(variable:Instruccion):Case{
+        return new Case(variable);
+    }
+
+    public nuevoDefault():Default{
+        return new Default();
     }
 
     public nuevoIncDec(id:string,opr:string):IncDec{

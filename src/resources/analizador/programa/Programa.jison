@@ -580,7 +580,7 @@ fin_def_sw : {
 
 // INSTRUCCION BREAK ----------------------------------------------------------------
 
-instruccion_break : PR_BREAK PUNTO_Y_COMA
+instruccion_break : PR_BREAK PUNTO_Y_COMA { yy.PILA_INS.apilar(yy.nuevoBreak()); }
     | /*Lambda*/
     ;
 

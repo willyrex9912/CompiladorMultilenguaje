@@ -317,6 +317,9 @@ case 70:
         yy.PILA_INS.apilar(yy.nuevoDefault());
     
 break;
+case 72:
+ yy.PILA_INS.apilar(yy.nuevoBreak()); 
+break;
 case 74:
 
         try{

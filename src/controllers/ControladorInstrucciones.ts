@@ -13,8 +13,13 @@ import { IncDec } from "src/model/instruccion/inc-dec/IncDec";
 import { Instruccion } from "src/model/instruccion/Instruccion";
 import { Metodo } from "src/model/instruccion/Metodo";
 import { Operacion } from "src/model/instruccion/Operacion";
+import { Break } from "src/model/instruccion/saltos/Break";
 
 export class ControladorInstrucciones{
+
+    public nuevoBreak():Break{
+        return new Break();
+    }
 
     public nuevoFor(accionInicial:Instruccion,condicion:Instruccion,accionPosterior:Instruccion):For{
         return new For(accionInicial,condicion,accionPosterior);

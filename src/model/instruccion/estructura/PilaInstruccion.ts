@@ -22,7 +22,13 @@ export class PilaInstruccion extends Array<Instruccion>{
     public apilar(instruccion:Instruccion){
         try{
             if(this.length){
-                if(instruccion.tipo!="ElseIf" && instruccion.tipo!="Else" && instruccion.tipo!="Case" && instruccion.tipo!="Default"){
+                if(
+                    instruccion.tipo!="ElseIf" && 
+                    instruccion.tipo!="Else" && 
+                    instruccion.tipo!="Case" && 
+                    instruccion.tipo!="Default" &&
+                    instruccion.tipo!="Break"
+                ){
                     this.ultimo().instrucciones.push(instruccion);
                 }
 
@@ -87,6 +93,14 @@ export class PilaInstruccion extends Array<Instruccion>{
             this.ultimoSwitch().casos.push(instruccion as Case);
         }else if(instruccion.tipo=="Default"){
             this.ultimoSwitch().casoDefault = instruccion as Default;
+        }else if(instruccion.tipo=="Break"){
+            if(this.ultimo().tipo=="Case"){
+                (this.ultimo() as Case).setBreak();
+            }else if(this.ultimo().tipo=="Case"){
+                (this.ultimo() as Default).setBreak();
+            }else{
+                this.ultimo().instrucciones.push(instruccion);
+            }
         }
     }
 

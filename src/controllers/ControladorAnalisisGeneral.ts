@@ -196,6 +196,7 @@ export class ControladorAnalisisGeneral{
         yy.nuevoSwitch = this.controladorInstrucciones.nuevoSwitch;
         yy.nuevoCase = this.controladorInstrucciones.nuevoCase;
         yy.nuevoDefault = this.controladorInstrucciones.nuevoDefault;
+        yy.nuevoBreak = this.controladorInstrucciones.nuevoBreak;
     }
 
     public getInstrucciones():Array<any>{

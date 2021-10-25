@@ -574,17 +574,22 @@ instruccion_println : PR_PRINTLN PARENT_A expresion_multiple PARENT_C PUNTO_Y_CO
 
 //CONDICIONAL IF ELSE-IF ELSE --------------------------------------------------------
 
-instruccion_if : instruccion_if_b_p LLAVE_A instrucciones_metodo LLAVE_C fin_if instruccion_if_p
+instruccion_if : instruccion_if_b_p LLAVE_A instrucciones_metodo LLAVE_C fin_if instruccion_if_p {
+        yy.PILA_INS.sacar();
+    }
     ;
+
+inicio_if : { nuevoAmbito(); };
 
 fin_if : { cerrarAmbito(); };
 
-instruccion_if_b_p : PR_IF PARENT_A expresion_multiple PARENT_C {
-        nuevoAmbito();
+instruccion_if_b_p : PR_IF inicio_if PARENT_A expresion_multiple PARENT_C {
         try{
             if($3.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+
+            yy.PILA_INS.apilar(yy.nuevoIf($4.instruccion));
         }catch(exception){
         }
     }
@@ -603,10 +608,14 @@ instrucciones_else_if : instruccion_else_if
 instruccion_else_if : instruccion_else_if_b_p  LLAVE_A instrucciones_metodo LLAVE_C fin_else_if
     ;
 
-fin_else_if : { cerrarAmbito(); };
+fin_else_if : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    };
 
 instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
         nuevoAmbito();
+        yy.PILA_INS.apilar(yy.nuevoElseIf($4.instruccion));
         try{
             if($4.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
@@ -619,9 +628,15 @@ instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
 instruccion_else : PR_ELSE inicio_else LLAVE_A instrucciones_metodo LLAVE_C fin_else
     ;
 
-inicio_else : { nuevoAmbito(); };
+inicio_else : { 
+        nuevoAmbito(); 
+        yy.PILA_INS.apilar(yy.nuevoElse());
+    };
 
-fin_else : { cerrarAmbito(); };
+fin_else : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    };
 
 //------------------------------------------------------------------------------------
 

@@ -37,6 +37,9 @@ export class EditorComponent implements OnInit, AfterViewInit {
 
   private listaInstruccion:ListaInstruccion;
   private pilaInstruccion:PilaInstruccion;
+  
+  private listaInstruccionJava:ListaInstruccion;
+  private pilaInstruccionJava:PilaInstruccion;
 
   constructor(private servicioProyecto:ProyectoService, private servicioCodigo3d:Codigo3dService, private router:Router) {
     this.gestionadorPaquete = new GestionadorPaquete();
@@ -83,11 +86,16 @@ export class EditorComponent implements OnInit, AfterViewInit {
   
 
   public compilar(){
+    this.guardarProyectoSinAviso();
     this.listaInstruccion = new ListaInstruccion();
     this.pilaInstruccion = new PilaInstruccion(this.listaInstruccion);
+
+    this.listaInstruccionJava = new ListaInstruccion();
+    this.pilaInstruccionJava = new PilaInstruccion(this.listaInstruccionJava);
     console.clear();
     const aceEditor = ace.edit(this.editor.nativeElement);
-    this.txtConsola = this.analizador.analizar(aceEditor.getValue(),this.pilaInstruccion);
+    //this.txtConsola = this.analizador.analizar(aceEditor.getValue(),this.pilaInstruccion,this.pilaInstruccionJava);
+    this.txtConsola = this.analizador.nuevoanalizar(this.proyecto,this.pilaInstruccion,this.pilaInstruccionJava);
     console.log(this.listaInstruccion);
   }
 
@@ -159,6 +167,13 @@ export class EditorComponent implements OnInit, AfterViewInit {
         this.textoInfo = data.descripcion;
         document.getElementById("abrirModalInfo").click();
       });
+    }
+  }
+
+  public guardarProyectoSinAviso():void{
+    this.guardarCambios();
+    if(this.proyecto!=null){
+      this.servicioProyecto.enviarProyecto(this.proyecto);
     }
   }
 

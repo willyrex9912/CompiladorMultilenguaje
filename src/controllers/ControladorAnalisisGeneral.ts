@@ -28,7 +28,7 @@ export class ControladorAnalisisGeneral{
         this.inicializarYYPrograma();
     }
 
-    public analizar(separador,pila:PilaInstruccion):String{
+    public analizar(separador,pila:PilaInstruccion,pilaJava:PilaInstruccion):string{
 
         let respuesta:string = "";
 
@@ -104,6 +104,22 @@ export class ControladorAnalisisGeneral{
         yy.DEFAULT = this.filtroTipoDatoJava.DEFAULT;
         
         yy.filtrarOperacion = this.filtroTipoDatoJava.filtrarOperacion;
+
+        yy.nuevaAsignacion = this.controladorInstrucciones.nuevaAsignacion;
+        yy.nuevaOperacion = this.controladorInstrucciones.nuevaOperacion;
+        yy.nuevaDeclaracion = this.controladorInstrucciones.nuevaDeclaracion;
+        yy.nuevoMetodo = this.controladorInstrucciones.nuevoMetodo;
+        yy.nuevoIf = this.controladorInstrucciones.nuevoIf;
+        yy.nuevoElseIf = this.controladorInstrucciones.nuevoElseIf;
+        yy.nuevoElse = this.controladorInstrucciones.nuevoElse;
+        yy.nuevoWhile = this.controladorInstrucciones.nuevoWhile;
+        yy.nuevoDoWhile = this.controladorInstrucciones.nuevoDoWhile;
+        yy.nuevoFor = this.controladorInstrucciones.nuevoFor;
+        yy.nuevoIncDec = this.controladorInstrucciones.nuevoIncDec;
+        yy.nuevoSwitch = this.controladorInstrucciones.nuevoSwitch;
+        yy.nuevoCase = this.controladorInstrucciones.nuevoCase;
+        yy.nuevoDefault = this.controladorInstrucciones.nuevoDefault;
+        yy.nuevoBreak = this.controladorInstrucciones.nuevoBreak;
     }
 
     private inicializarYYPython(){

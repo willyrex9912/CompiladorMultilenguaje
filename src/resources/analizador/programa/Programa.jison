@@ -220,6 +220,16 @@
         return null;
     }
 
+    function implementarInclude(paquete){
+        if(paquete=="JAVA.*"){
+            
+        }else if(paquete=="PY"){
+
+        }else{
+            //ejecutar busqueda archivo
+        }
+    }
+
 %}
 
 %%
@@ -256,7 +266,9 @@ a1 : instrucciones_include declaraciones metodo_principal
     | /*++++++++++++POR EL MOMENTO+++++++++++++++++*/ err
     ;
 
-include : PR_INCLUDE PAQUETE 
+include : PR_INCLUDE PAQUETE {
+        implementarInclude($2.toString());
+    }
     ;
 
 instrucciones_include :  instrucciones_include_p

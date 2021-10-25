@@ -31,21 +31,21 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public gestionadorPaquete:GestionadorPaquete;
   public codigoPrincipal = "";
   public archivoActual:Archivo;
-
   public proyecto:Proyecto;
   public codigo3d = "";
-
   private listaInstruccion:ListaInstruccion;
   private pilaInstruccion:PilaInstruccion;
-  
   private listaInstruccionJava:ListaInstruccion;
   private pilaInstruccionJava:PilaInstruccion;
+  public cod3dDeshabilitado = true;
+  public compilarDeshabilitado = true;
 
   constructor(private servicioProyecto:ProyectoService, private servicioCodigo3d:Codigo3dService, private router:Router) {
     this.gestionadorPaquete = new GestionadorPaquete();
-    if(localStorage.getItem('proyecto')!=null){
+    if(localStorage.getItem('proyecto')!=null && localStorage.getItem('proyecto')!="null"){
       servicioProyecto.getProyecto(localStorage.getItem('proyecto')).subscribe(data=>{
         this.proyecto = data;
+        this.compilarDeshabilitado = false;
       });
       localStorage.setItem('proyecto',null);
     }
@@ -96,6 +96,11 @@ export class EditorComponent implements OnInit, AfterViewInit {
     const aceEditor = ace.edit(this.editor.nativeElement);
     //this.txtConsola = this.analizador.analizar(aceEditor.getValue(),this.pilaInstruccion,this.pilaInstruccionJava);
     this.txtConsola = this.analizador.nuevoanalizar(this.proyecto,this.pilaInstruccion,this.pilaInstruccionJava);
+    if(this.txtConsola=="Compilación exitosa."){
+      this.cod3dDeshabilitado = false;
+    }else{
+      this.cod3dDeshabilitado = true;
+    }
     console.log(this.listaInstruccion);
   }
 
@@ -173,13 +178,22 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public guardarProyectoSinAviso():void{
     this.guardarCambios();
     if(this.proyecto!=null){
-      this.servicioProyecto.enviarProyecto(this.proyecto);
+      this.servicioProyecto.enviarProyecto(this.proyecto).subscribe(data=>{});
     }
   }
 
   public crearProyecto():void{
     this.proyecto = new Proyecto(this.nombreProyecto);
     this.nombreProyecto = "";
+    this.compilarDeshabilitado = false;
+  }
+
+  public cerrarProyecto():void{
+    if(this.proyecto!=null){
+      this.guardarProyectoSinAviso();
+      this.proyecto = null;
+      this.compilarDeshabilitado = true;
+    }
   }
 
   public actualizarCodigoEditor(id:string):void{
@@ -192,9 +206,8 @@ export class EditorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  public mostrarProyecto(){
-    console.log(this.proyecto);
-    console.log(this.codigoPrincipal);
+  public mostrarProyectos(){
+    this.router.navigate(["proyectos"]);
   }
 
   public guardarCambios():void{

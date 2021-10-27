@@ -220,14 +220,8 @@
         return null;
     }
 
-    function implementarInclude(paquete){
-        if(paquete=="JAVA.*"){
-            
-        }else if(paquete=="PY"){
-
-        }else{
-            //ejecutar busqueda archivo
-        }
+    function implementarInclude(paquete,yy){
+        return yy.importador.importar(paquete,yy.PILA_INS,yy.ARCHIVOS_JAVA,yy.ARCHIVOS_PYTHON,yy.arch_actual);
     }
 
 %}
@@ -267,7 +261,11 @@ a1 : instrucciones_include declaraciones metodo_principal
     ;
 
 include : PR_INCLUDE PAQUETE {
-        implementarInclude($2.toString());
+        if(yy.importador.importar($2.toString(),yy.PILA_INS,yy.ARCHIVOS_JAVA,yy.ARCHIVOS_PYTHON,yy.arch_actual)){
+            //todo bien
+        }else{
+            errorSemantico("Error al importar "+$2.toString()+" .",this._$.first_line,this._$.first_column);
+        }
     }
     ;
 

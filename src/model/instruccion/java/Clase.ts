@@ -9,4 +9,8 @@ export class Clase implements Instruccion{
         this.instrucciones = new Array();
     }
 
+    public getNombre():string{
+        return this.nombre;
+    }
+
 }

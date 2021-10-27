@@ -2,7 +2,7 @@ import { ListaInstruccion } from "../instruccion/estructura/ListaInstruccion";
 import { PilaInstruccion } from "../instruccion/estructura/PilaInstruccion";
 import { Instruccion } from "../instruccion/Instruccion";
 
-export class ArchivoInstruccion {
+export class ArchivoInstrucciones {
 
     private pilaInstruccion:PilaInstruccion;
     private listaInstruccion:ListaInstruccion;

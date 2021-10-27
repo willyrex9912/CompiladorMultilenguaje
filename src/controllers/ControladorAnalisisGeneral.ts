@@ -7,6 +7,8 @@ import * as AnalizadorPrograma from '../resources/analizador/programa/Programa';
 import { FiltroTipoDatoPrograma } from 'src/resources/utilidades/FiltroTipoDatoPrograma';
 import { ControladorInstrucciones } from './ControladorInstrucciones';
 import { PilaInstruccion } from 'src/model/instruccion/estructura/PilaInstruccion';
+import { ArchivoInstrucciones } from 'src/model/archivoinstruccion/ArchivoInstrucciones';
+import { Importador } from 'src/model/archivoinstruccion/Importador';
 //import * as Filtro from '../resources/utilidades/FiltroTipoDato'
 
 export class ControladorAnalisisGeneral{
@@ -16,6 +18,7 @@ export class ControladorAnalisisGeneral{
     private filtroTipoDatoPython:FiltroTipoDatoPython;
     private filtroTipoDatoPrograma:FiltroTipoDatoPrograma;
     private controladorInstrucciones:ControladorInstrucciones;
+    private importador:Importador;
 
     public constructor(){
         this.constructorRespuesta = new ConstructorMensajeError();
@@ -23,6 +26,7 @@ export class ControladorAnalisisGeneral{
         this.filtroTipoDatoPython = new FiltroTipoDatoPython();
         this.filtroTipoDatoPrograma = new FiltroTipoDatoPrograma();
         this.controladorInstrucciones = new ControladorInstrucciones();
+        this.importador = new Importador();
         this.inicializarYYJava();
         this.inicializarYYPython();
         this.inicializarYYPrograma();
@@ -63,7 +67,7 @@ export class ControladorAnalisisGeneral{
         return respuesta;
     }
 
-    public analizarCodigoPrograma(separador,pila:PilaInstruccion):string{
+    public analizarCodigoPrograma(separador,pila:PilaInstruccion,archivosJava:Array<ArchivoInstrucciones>,archivosPython:Array<ArchivoInstrucciones>,idArchivoActual:string):string{
 
         let respuesta:string = "";
 
@@ -71,6 +75,10 @@ export class ControladorAnalisisGeneral{
         if(this.existeCodigo(separador.getCodigoPrograma())){
             AnalizadorPrograma.reset(AnalizadorPrograma.parser.yy);
             AnalizadorPrograma.parser.yy.PILA_INS = pila;
+            AnalizadorPrograma.parser.yy.ARCHIVOS_JAVA = archivosJava;
+            AnalizadorPrograma.parser.yy.ARCHIVOS_PYTHON = archivosPython;
+            AnalizadorPrograma.parser.yy.arch_actual = idArchivoActual;
+            AnalizadorPrograma.parser.yy.importador = this.importador;
             AnalizadorPrograma.parse(separador.getCodigoPrograma());
             if(AnalizadorPrograma.getErrores().length>0){
                 respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPrograma.getErrores(),separador.getInicioPrograma());

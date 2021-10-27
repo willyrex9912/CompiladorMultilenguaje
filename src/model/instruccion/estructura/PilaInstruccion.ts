@@ -19,6 +19,14 @@ export class PilaInstruccion extends Array<Instruccion>{
         this.auxSwitch = new Array();
     }
 
+    public apilarDirecto(instruccion:Instruccion){
+        this.listaPrincipal.agregar(instruccion);
+    }
+
+    public apilarGrupoDirecto(instrucciones:Array<Instruccion>){
+        this.listaPrincipal.agregarGrupo(instrucciones);
+    }
+
     public apilar(instruccion:Instruccion){
         try{
             if(this.length){
@@ -50,7 +58,7 @@ export class PilaInstruccion extends Array<Instruccion>{
                 }
                 this.filtroIns(instruccion);
             }else{
-                if(instruccion.tipo=="Metodo"){
+                if(instruccion.tipo=="Metodo" || instruccion.tipo=="Clase"){
                     this.push(instruccion);
                 }
                 this.listaPrincipal.agregar(instruccion);
@@ -83,6 +91,7 @@ export class PilaInstruccion extends Array<Instruccion>{
     }
 
     private filtroIns(instruccion:Instruccion){
+        console.log(instruccion);
         if(instruccion.tipo=="If"){
             this.auxIf.push(instruccion as If);
         }else if(instruccion.tipo=="ElseIf"){

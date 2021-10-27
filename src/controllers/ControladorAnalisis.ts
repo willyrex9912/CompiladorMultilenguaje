@@ -1,4 +1,5 @@
-import { ArchivoInstruccion } from 'src/model/archivoinstruccion/ArchivoInstruccion';
+import { ArchivoInstrucciones } from 'src/model/archivoinstruccion/ArchivoInstrucciones';
+import { ListaArchivoInstrucciones } from 'src/model/archivoinstruccion/ListaArchivoInstrucciones';
 import { ListaInstruccion } from 'src/model/instruccion/estructura/ListaInstruccion';
 import { PilaInstruccion } from 'src/model/instruccion/estructura/PilaInstruccion';
 import { Instruccion } from 'src/model/instruccion/Instruccion';
@@ -36,38 +37,51 @@ export class Analizador{
     }
 
     public nuevoanalizar(proyecto:Proyecto,instruccionesFinales:ListaInstruccion):string{
-        let archivosJava:Array<ArchivoInstruccion> = new Array();
-        let archivosPrograma:Array<ArchivoInstruccion> = new Array();
+        let archivosJava:ListaArchivoInstrucciones = new ListaArchivoInstrucciones();
+        let archivosPython:ListaArchivoInstrucciones = new ListaArchivoInstrucciones();
 
 
         let resultado:string = "";
         let archivos:Array<Archivo> = this.recuperadorArchivos.recuperar(proyecto);
+
         for(let i=0;i<archivos.length;i++){
             resultado += "";
             Separador.reset();
             Separador.parse(archivos[i].codigo);
 
             //let txt = this.analizadorGeneral.analizar(Separador,pila,pilaJava);
-            let archInsJava:ArchivoInstruccion = new ArchivoInstruccion(archivos[i].id);
+            let archInsJava:ArchivoInstrucciones = new ArchivoInstrucciones(archivos[i].id);
             let txt:string = "";
-            console.log(archInsJava.getPila());
             txt += this.analizadorGeneral.analizarCodigoJava(Separador,archInsJava.getPila());
             if(archInsJava.getInstrucciones().length){
                 archivosJava.push(archInsJava);
-            }
-
-            let archInsPrograma:ArchivoInstruccion = new ArchivoInstruccion(archivos[i].id);
-            txt += this.analizadorGeneral.analizarCodigoPrograma(Separador,archInsPrograma.getPila());
-            if(archInsPrograma.getInstrucciones().length){
-                archivosPrograma.push(archInsPrograma);
-            }
-            
+            }            
             
             if(txt!=""){
                 resultado += "Archivo: "+archivos[i].id+"\n";
                 resultado += txt;
             }
         }
+
+        for(let i=0;i<archivos.length;i++){
+            resultado += "";
+            Separador.reset();
+            Separador.parse(archivos[i].codigo);
+
+            let archInsPrograma:ArchivoInstrucciones = new ArchivoInstrucciones(archivos[i].id);
+            let txt = this.analizadorGeneral.analizarCodigoPrograma(Separador,archInsPrograma.getPila(),archivosJava,archivosPython,archivos[i].id);
+            if(archInsPrograma.getInstrucciones().length){
+                if(instruccionesFinales.length==0){
+                    instruccionesFinales.push.apply(instruccionesFinales,archInsPrograma.getInstrucciones());
+                }
+            }
+            
+            if(txt!=""){
+                resultado += "Archivo: "+archivos[i].id+"\n";
+                resultado += txt;
+            }
+        }
+
         if(resultado==""){
             return "Compilación exitosa.";
         }else{

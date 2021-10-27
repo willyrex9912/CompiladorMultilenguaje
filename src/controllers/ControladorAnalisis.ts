@@ -68,6 +68,24 @@ export class Analizador{
             Separador.reset();
             Separador.parse(archivos[i].codigo);
 
+            let archInsPy:ArchivoInstrucciones = new ArchivoInstrucciones(archivos[i].id);
+            let txt:string = "";
+            txt += this.analizadorGeneral.analizarCodigoPython(Separador,archInsPy.getPila());
+            if(archInsPy.getInstrucciones().length){
+                archivosPython.push(archInsPy);
+            }            
+            
+            if(txt!=""){
+                resultado += "Archivo: "+archivos[i].id+"\n";
+                resultado += txt;
+            }
+        }
+
+        for(let i=0;i<archivos.length;i++){
+            resultado += "";
+            Separador.reset();
+            Separador.parse(archivos[i].codigo);
+
             let archInsPrograma:ArchivoInstrucciones = new ArchivoInstrucciones(archivos[i].id);
             let txt = this.analizadorGeneral.analizarCodigoPrograma(Separador,archInsPrograma.getPila(),archivosJava,archivosPython,archivos[i].id);
             if(archInsPrograma.getInstrucciones().length){

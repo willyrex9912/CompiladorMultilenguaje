@@ -110,6 +110,7 @@ break;
 case 8:
 
         ambitoActual.pop();
+        yy.PILA_INS.sacar();
     
 break;
 case 9:
@@ -117,6 +118,7 @@ case 9:
         let funcion = $$[$0-3]+cadParametros;
         ambitoActual.push(funcion);
         agregarSimbolo(funcion,"","global",yy.PUBLIC,yy.METODO);
+        yy.PILA_INS.apilar(yy.nuevoMetodo(funcion));
         cadParametros = "";
         pushSimbolosParametros();
     
@@ -138,12 +140,16 @@ case 28:
                 try{
                     id_a = ids.pop();
                     let sim_id_a = validarVariable(id_a,yy);
+
+                    let valpop = vals.pop();
+
                     if(sim_id_a==null){
                         //Declaracion y asignacion
-                        agregarSimbolo(id_a,vals.pop().tipoResultado,ambitoActual.at(-1),yy.PRIVATE,yy.VARIABLE);
+                        agregarSimbolo(id_a,valpop.tipoResultado,ambitoActual.at(-1),yy.PRIVATE,yy.VARIABLE);
                     }else{
                         //Asignacion
                     }
+                    yy.PILA_INS.apilar(yy.nuevaAsignacion(id_a,valpop.instruccion));
                 }catch(error){
                 }
             }
@@ -315,6 +321,7 @@ case 92:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.INT,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -322,6 +329,7 @@ case 93:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.DOUBLE;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.DOUBLE,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -329,6 +337,7 @@ case 94:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.STRING;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.STRING,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -336,6 +345,7 @@ case 95:
 
                     operacion = new Object();
                     operacion.tipoResultado = yy.BOOLEAN;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.BOOLEAN,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -349,6 +359,7 @@ case 96:
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.ID,$$[$0].toString());
                     this.$ = operacion;
                 
 break;
@@ -646,18 +657,17 @@ _handle_error:
         try{
             if($2!=null){
                 //Analizar tipo de resultado
-                if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
-                    if(tipoResultado!=null){
-                        operacion = new Object();
-                        operacion.tipoResultado = tipoResultado;
-                        operacion.operacionPendiente = $1;
-                        return operacion;
-                    }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
-                        return null;
-                    }
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+
+                    operacion.instruccion = yy.nuevaOperacion($1.instruccion,$2.instruccion,$2.operacionPendiente,null);
+
+                    return operacion;
                 }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
                     return null;
                 }
             }else{
@@ -674,18 +684,24 @@ _handle_error:
                 operacion = new Object();
                 operacion.tipoResultado = $2.tipoResultado;
                 operacion.operacionPendiente = $1;
+
+                operacion.instruccion = $2.instruccion;
+
                 return operacion;
             }else{
                 //Analizar tipo de resultado
                 if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$1);
+                    let tipoResultado = yy.filtrarOperacion($2.tipoResultado,$3.tipoResultado,$3.operacionPendiente);
                     if(tipoResultado!=null){
                         operacion = new Object();
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
+
+                        operacion.instruccion = yy.nuevaOperacion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
+
                         return operacion;
                     }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$1+" .",linea,columna);
+                        errorSemantico("Operandos incorrectos para el operador "+$3.operacionPendiente+" .",linea,columna);
                         return null;
                     }
                 }else{

@@ -19,8 +19,18 @@ export class Importador {
                 }
                 return false;
             }
-        }else{
+        }else if(tipo=="PY"){
             //importacion del codigo de python
+            if(archivo=="*"){
+                //incluir todo el codigo en el archivo
+                for(let i = 0;i<listaPython.length;i++){
+                    if(listaPython[i].getId()==idArchivoActual){
+                        pila.apilarGrupoDirecto(listaPython[i].getInstrucciones());
+                        return true;
+                    }
+                }
+                return false;
+            }
         }
         return false;
     }

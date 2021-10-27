@@ -153,18 +153,17 @@
         try{
             if($2!=null){
                 //Analizar tipo de resultado
-                if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
-                    if(tipoResultado!=null){
-                        operacion = new Object();
-                        operacion.tipoResultado = tipoResultado;
-                        operacion.operacionPendiente = $1;
-                        return operacion;
-                    }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
-                        return null;
-                    }
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+
+                    operacion.instruccion = yy.nuevaOperacion($1.instruccion,$2.instruccion,$2.operacionPendiente,null);
+
+                    return operacion;
                 }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
                     return null;
                 }
             }else{
@@ -181,6 +180,9 @@
                 operacion = new Object();
                 operacion.tipoResultado = $2.tipoResultado;
                 operacion.operacionPendiente = $1;
+
+                operacion.instruccion = $2.instruccion;
+
                 return operacion;
             }else{
                 //Analizar tipo de resultado
@@ -190,6 +192,9 @@
                         operacion = new Object();
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
+
+                        operacion.instruccion = yy.nuevaOperacion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
+
                         return operacion;
                     }else{
                         errorSemantico("Operandos incorrectos para el operador "+$3.operacionPendiente+" .",linea,columna);
@@ -299,6 +304,7 @@ err : error {
 
 declaracion_funcion : declaracion_funcion_p DOS_PUNTOS declaracion_funcion_b_p {
         ambitoActual.pop();
+        yy.PILA_INS.sacar();
     }
     ;
 
@@ -306,6 +312,7 @@ declaracion_funcion_p : PR_DEF ID PARENT_A parametros_b_p PARENT_C {
         let funcion = $2+cadParametros;
         ambitoActual.push(funcion);
         agregarSimbolo(funcion,"","global",yy.PUBLIC,yy.METODO);
+        yy.PILA_INS.apilar(yy.nuevoMetodo(funcion));
         cadParametros = "";
         pushSimbolosParametros();
     }
@@ -370,12 +377,16 @@ manejo_variable: ids ASIGNACION valores {
                 try{
                     id_a = ids.pop();
                     let sim_id_a = validarVariable(id_a,yy);
+
+                    let valpop = vals.pop();
+
                     if(sim_id_a==null){
                         //Declaracion y asignacion
-                        agregarSimbolo(id_a,vals.pop().tipoResultado,ambitoActual.at(-1),yy.PRIVATE,yy.VARIABLE);
+                        agregarSimbolo(id_a,valpop.tipoResultado,ambitoActual.at(-1),yy.PRIVATE,yy.VARIABLE);
                     }else{
                         //Asignacion
                     }
+                    yy.PILA_INS.apilar(yy.nuevaAsignacion(id_a,valpop.instruccion));
                 }catch(error){
                 }
             }
@@ -667,21 +678,25 @@ g3 : PARENT_A a3 PARENT_C { $$ = $2; }
 g3 : INT        {
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.INT,$1.toString());
                     $$ = operacion;
                 }
     | DOUBLE    {
                     operacion = new Object();
                     operacion.tipoResultado = yy.DOUBLE;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.DOUBLE,$1.toString());
                     $$ = operacion;
                 }
     | STRING    {
                     operacion = new Object();
                     operacion.tipoResultado = yy.STRING;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.STRING,$1.toString());
                     $$ = operacion;
                 }
     | BOOLEAN   {
                     operacion = new Object();
                     operacion.tipoResultado = yy.BOOLEAN;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.BOOLEAN,$1.toString());
                     $$ = operacion;
                 }
     | ID        {
@@ -693,6 +708,7 @@ g3 : INT        {
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.ID,$1.toString());
                     $$ = operacion;
                 }
     ;

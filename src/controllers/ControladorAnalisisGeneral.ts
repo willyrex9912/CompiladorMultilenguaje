@@ -105,7 +105,7 @@ export class ControladorAnalisisGeneral{
         return respuesta;
     }
 
-    public analizarPython(separador,pila:PilaInstruccion):string{
+    public analizarCodigoPython(separador,pila:PilaInstruccion):string{
 
         let respuesta:string = "";
 
@@ -165,6 +165,10 @@ export class ControladorAnalisisGeneral{
         
         yy.filtrarOperacion = this.filtroTipoDatoJava.filtrarOperacion;
 
+        this.agregarMetodos(yy);
+    }
+
+    private agregarMetodos(yy:any):void{
         yy.nuevaAsignacion = this.controladorInstrucciones.nuevaAsignacion;
         yy.nuevaOperacion = this.controladorInstrucciones.nuevaOperacion;
         yy.nuevaDeclaracion = this.controladorInstrucciones.nuevaDeclaracion;
@@ -215,6 +219,8 @@ export class ControladorAnalisisGeneral{
         yy.OR = this.filtroTipoDatoPython.OR;
         
         yy.filtrarOperacion = this.filtroTipoDatoPython.filtrarOperacion;
+
+        this.agregarMetodos(yy);
     }
 
     private inicializarYYPrograma(){
@@ -259,21 +265,7 @@ export class ControladorAnalisisGeneral{
         
         yy.filtrarOperacion = this.filtroTipoDatoPrograma.filtrarOperacion;
 
-        yy.nuevaAsignacion = this.controladorInstrucciones.nuevaAsignacion;
-        yy.nuevaOperacion = this.controladorInstrucciones.nuevaOperacion;
-        yy.nuevaDeclaracion = this.controladorInstrucciones.nuevaDeclaracion;
-        yy.nuevoMetodo = this.controladorInstrucciones.nuevoMetodo;
-        yy.nuevoIf = this.controladorInstrucciones.nuevoIf;
-        yy.nuevoElseIf = this.controladorInstrucciones.nuevoElseIf;
-        yy.nuevoElse = this.controladorInstrucciones.nuevoElse;
-        yy.nuevoWhile = this.controladorInstrucciones.nuevoWhile;
-        yy.nuevoDoWhile = this.controladorInstrucciones.nuevoDoWhile;
-        yy.nuevoFor = this.controladorInstrucciones.nuevoFor;
-        yy.nuevoIncDec = this.controladorInstrucciones.nuevoIncDec;
-        yy.nuevoSwitch = this.controladorInstrucciones.nuevoSwitch;
-        yy.nuevoCase = this.controladorInstrucciones.nuevoCase;
-        yy.nuevoDefault = this.controladorInstrucciones.nuevoDefault;
-        yy.nuevoBreak = this.controladorInstrucciones.nuevoBreak;
+        this.agregarMetodos(yy);
     }
 
     public getInstrucciones():Array<any>{

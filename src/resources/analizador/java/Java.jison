@@ -151,18 +151,17 @@
         try{
             if($2!=null){
                 //Analizar tipo de resultado
-                if($2!=null){
-                    let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
-                    if(tipoResultado!=null){
-                        operacion = new Object();
-                        operacion.tipoResultado = tipoResultado;
-                        operacion.operacionPendiente = $1;
-                        return operacion;
-                    }else{
-                        errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
-                        return null;
-                    }
+                let tipoResultado = yy.filtrarOperacion($1.tipoResultado,$2.tipoResultado,$2.operacionPendiente);
+                if(tipoResultado!=null){
+                    operacion = new Object();
+                    operacion.tipoResultado = tipoResultado;
+                    operacion.operacionPendiente = $1;
+
+                    operacion.instruccion = yy.nuevaOperacion($1.instruccion,$2.instruccion,$2.operacionPendiente,null);
+
+                    return operacion;
                 }else{
+                    errorSemantico("Operandos incorrectos para el operador "+$2.operacionPendiente+" .",linea,columna);
                     return null;
                 }
             }else{
@@ -179,6 +178,9 @@
                 operacion = new Object();
                 operacion.tipoResultado = $2.tipoResultado;
                 operacion.operacionPendiente = $1;
+
+                operacion.instruccion = $2.instruccion;
+
                 return operacion;
             }else{
                 //Analizar tipo de resultado
@@ -188,6 +190,9 @@
                         operacion = new Object();
                         operacion.tipoResultado = tipoResultado;
                         operacion.operacionPendiente = $1;
+
+                        operacion.instruccion = yy.nuevaOperacion($2.instruccion,$3.instruccion,$3.operacionPendiente,null);
+
                         return operacion;
                     }else{
                         errorSemantico("Operandos incorrectos para el operador "+$3.operacionPendiente+" .",linea,columna);
@@ -385,8 +390,8 @@ instrucciones_metodo : instrucciones_metodo_p
     | instrucciones_metodo_p instrucciones_metodo
     ;
 
-instrucciones_metodo_p : declaracion_variable PUNTO_Y_COMA
-    | asignacion_variable PUNTO_Y_COMA
+instrucciones_metodo_p : declaracion_variable PUNTO_Y_COMA { yy.PILA_INS.apilar($1); }
+    | asignacion_variable PUNTO_Y_COMA { yy.PILA_INS.apilar($1); }
     | instruccion_if
     | ciclo_for
     | ciclo_while
@@ -417,7 +422,7 @@ declaracion_variable : visibilidad tipo ids asignacion {
                     }else{
                         if($4 != null){
                             //simboloVariable.valor = $4.valor;
-                            yy.PILA_INS.apilar(yy.nuevaDeclaracion(id,$4.instruccion));
+                            $$ = yy.nuevaDeclaracion(id,$4.instruccion);
                         }
                         //-w-agregarSimbolo(id,$2,ambitoActual.at(-1),$1,yy.VARIABLE);
                         agregarSimbolo(id,$2,"",$1,yy.VARIABLE);
@@ -671,12 +676,17 @@ ciclo_do_while : PR_DO inicio_do llill fin_do
             if($9.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$9.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+
+            yy.PILA_INS.sacarDoWhile($7.instruccion);
         }catch(exception){
         }
     }
     ;
 
-inicio_do : { nuevoAmbito(); };
+inicio_do : { 
+        nuevoAmbito(); 
+        yy.PILA_INS.apilar(yy.nuevoDoWhile(null));
+    };
 
 fin_do : { cerrarAmbito(); };
 
@@ -692,6 +702,8 @@ parte_while : PR_WHILE inicio_while PARENT_A expresion_multiple PARENT_C {
             if($4.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$4.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
+
+            yy.PILA_INS.apilar(yy.nuevoWhile($4.instruccion));
         }catch(exception){
         }
     }
@@ -699,49 +711,54 @@ parte_while : PR_WHILE inicio_while PARENT_A expresion_multiple PARENT_C {
 
 inicio_while : { nuevoAmbito(); };
 
-fin_while : { cerrarAmbito(); };
+fin_while : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    };
 
 //------------------------------------------------------------------------------------
 
 //CICLO FOR --------------------------------------------------------------------------
 
 ciclo_for : PR_FOR inicio_for PARENT_A ciclo_for_p PARENT_C llill fin_for {
-        //-w-ambitoActual.pop();
+        
     }
     ;
 
 inicio_for : { nuevoAmbito(); };
 
-fin_for : { cerrarAmbito(); };  
+fin_for : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    };  
 
-/* -w-
-ciclo_for_b_p : PR_FOR {
-        //-w-ambitoActual.push(ambitoActual.at(-1)+"_for");
-    }
-    ;*/
 
 ciclo_for_p : primera_exp PUNTO_Y_COMA expresion_multiple PUNTO_Y_COMA accion_posterior {
         try{
             if($3.tipoResultado!=yy.BOOLEAN){
             errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column); 
             }
+
+            yy.PILA_INS.apilar(yy.nuevoFor($1,$3.instruccion,$5));
         }catch(e){
         }
     }
     ;
 
-primera_exp : declaracion_variable
-    | asignacion_variable
+primera_exp : declaracion_variable { $$ = $1; }
+    | asignacion_variable { $$ = $1; }
     ;
 
-accion_posterior : asignacion_variable
-    | /*Lambda*/
+accion_posterior : asignacion_variable { $$ = $1; }
+    | /*Lambda*/ { $$ = null; }
     ;
 
 //------------------------------------------------------------------------------------
 
 
-instruccion_switch : inicio_switch instruccion_switch_c_p 
+instruccion_switch : inicio_switch instruccion_switch_c_p {
+        yy.PILA_INS.sacar();
+    }
     ;
 
 inicio_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C {
@@ -749,6 +766,7 @@ inicio_switch : PR_SWITCH  PARENT_A expresion_multiple PARENT_C {
             errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.CHAR+","+yy.STRING+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
         }
         tipoDatoSwtich = $3.tipoResultado;
+        yy.PILA_INS.apilar(yy.nuevoSwitch($3.instruccion));
     }
     ;
 
@@ -762,12 +780,21 @@ instruccion_switch_t_p : instruccion_switch_b_p
     | instruccion_switch_b_p instruccion_switch_t_p
     ;
 
-instruccion_switch_b_p : PR_CASE inicio_cas_sw expresion_multiple case_ins instruccion_break fin_cas_sw{
-        if($3.tipoResultado != tipoDatoSwtich){
-            errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
-        }
+instruccion_switch_b_p : PR_CASE inicio_cas_sw case_p case_ins instruccion_break fin_cas_sw{
+
     }
     ;
+
+
+case_p : expresion_multiple {
+        if($1.tipoResultado != tipoDatoSwtich){
+            errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$1.tipoResultado+" .",this._$.first_line,this._$.first_column);
+        }
+
+        yy.PILA_INS.apilar(yy.nuevoCase($1.instruccion));
+    }
+    ;
+
 
 case_ins : DOS_PUNTOS 
     | DOS_PUNTOS instrucciones_metodo
@@ -775,14 +802,24 @@ case_ins : DOS_PUNTOS
 
 inicio_cas_sw : { nuevoAmbito(); };
 
-fin_cas_sw : { cerrarAmbito(); }; 
+fin_cas_sw : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    }
+    ; 
 
 instruccion_switch_default : PR_DEFAULT inicio_def_sw case_ins fin_def_sw
     ;
 
-inicio_def_sw : { nuevoAmbito(); };
+inicio_def_sw : { 
+        nuevoAmbito(); 
+        yy.PILA_INS.apilar(yy.nuevoDefault());
+    };
 
-fin_def_sw : { cerrarAmbito(); };  
+fin_def_sw : { 
+        cerrarAmbito(); 
+        yy.PILA_INS.sacar();
+    };  
 
 //------------------------------------------------------------------------------------
 

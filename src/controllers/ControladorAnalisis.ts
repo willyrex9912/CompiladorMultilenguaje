@@ -1,4 +1,7 @@
+import { ArchivoInstruccion } from 'src/model/archivoinstruccion/ArchivoInstruccion';
+import { ListaInstruccion } from 'src/model/instruccion/estructura/ListaInstruccion';
 import { PilaInstruccion } from 'src/model/instruccion/estructura/PilaInstruccion';
+import { Instruccion } from 'src/model/instruccion/Instruccion';
 import { Archivo } from 'src/model/Proyecto/Archivo';
 import { Proyecto } from 'src/model/Proyecto/Proyecto';
 import { RecuperadorArchivos } from 'src/resources/utilidades/proyecto/RecuperadorArchivos';
@@ -32,15 +35,34 @@ export class Analizador{
         return this.analizadorGeneral.getInstrucciones();
     }
 
-    public nuevoanalizar(proyecto:Proyecto,pila:PilaInstruccion,pilaJava:PilaInstruccion):string{
-        
+    public nuevoanalizar(proyecto:Proyecto,instruccionesFinales:ListaInstruccion):string{
+        let archivosJava:Array<ArchivoInstruccion> = new Array();
+        let archivosPrograma:Array<ArchivoInstruccion> = new Array();
+
+
         let resultado:string = "";
         let archivos:Array<Archivo> = this.recuperadorArchivos.recuperar(proyecto);
         for(let i=0;i<archivos.length;i++){
             resultado += "";
             Separador.reset();
             Separador.parse(archivos[i].codigo);
-            let txt = this.analizadorGeneral.analizar(Separador,pila,pilaJava);
+
+            //let txt = this.analizadorGeneral.analizar(Separador,pila,pilaJava);
+            let archInsJava:ArchivoInstruccion = new ArchivoInstruccion(archivos[i].id);
+            let txt:string = "";
+            console.log(archInsJava.getPila());
+            txt += this.analizadorGeneral.analizarCodigoJava(Separador,archInsJava.getPila());
+            if(archInsJava.getInstrucciones().length){
+                archivosJava.push(archInsJava);
+            }
+
+            let archInsPrograma:ArchivoInstruccion = new ArchivoInstruccion(archivos[i].id);
+            txt += this.analizadorGeneral.analizarCodigoPrograma(Separador,archInsPrograma.getPila());
+            if(archInsPrograma.getInstrucciones().length){
+                archivosPrograma.push(archInsPrograma);
+            }
+            
+            
             if(txt!=""){
                 resultado += "Archivo: "+archivos[i].id+"\n";
                 resultado += txt;

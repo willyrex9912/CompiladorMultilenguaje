@@ -11,6 +11,7 @@ import { Archivo } from 'src/model/Proyecto/Archivo';
 import { Codigo3dService } from 'src/app/services/codigo3d/codigo3d.service';
 import { ListaInstruccion } from 'src/model/instruccion/estructura/ListaInstruccion';
 import { PilaInstruccion } from 'src/model/instruccion/estructura/PilaInstruccion';
+import { Instruccion } from 'src/model/instruccion/Instruccion';
 
 @Component({
   selector: 'app-editor',
@@ -33,10 +34,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public archivoActual:Archivo;
   public proyecto:Proyecto;
   public codigo3d = "";
-  private listaInstruccion:ListaInstruccion;
-  private pilaInstruccion:PilaInstruccion;
-  private listaInstruccionJava:ListaInstruccion;
-  private pilaInstruccionJava:PilaInstruccion;
+  public listaInstruccion:ListaInstruccion;
   public cod3dDeshabilitado = true;
   public compilarDeshabilitado = true;
 
@@ -88,14 +86,10 @@ export class EditorComponent implements OnInit, AfterViewInit {
   public compilar(){
     this.guardarProyectoSinAviso();
     this.listaInstruccion = new ListaInstruccion();
-    this.pilaInstruccion = new PilaInstruccion(this.listaInstruccion);
-
-    this.listaInstruccionJava = new ListaInstruccion();
-    this.pilaInstruccionJava = new PilaInstruccion(this.listaInstruccionJava);
     console.clear();
-    const aceEditor = ace.edit(this.editor.nativeElement);
+    //const aceEditor = ace.edit(this.editor.nativeElement);
     //this.txtConsola = this.analizador.analizar(aceEditor.getValue(),this.pilaInstruccion,this.pilaInstruccionJava);
-    this.txtConsola = this.analizador.nuevoanalizar(this.proyecto,this.pilaInstruccion,this.pilaInstruccionJava);
+    this.txtConsola = this.analizador.nuevoanalizar(this.proyecto,this.listaInstruccion);
     if(this.txtConsola=="Compilación exitosa."){
       this.cod3dDeshabilitado = false;
     }else{

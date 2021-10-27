@@ -343,10 +343,12 @@ a1 : declaracion_clase
 declaracion_clase : declaracion_clase_p LLAVE_A instrucciones_clase LLAVE_C {
         //-w-ambitoActual.pop();
         cerrarAmbito();
+        yy.PILA_INS.sacar();
     }
     | declaracion_clase_p LLAVE_A LLAVE_C { 
         //-w-ambitoActual.pop(); 
         cerrarAmbito();
+        yy.PILA_INS.sacar();
     }
     | err
     ;
@@ -358,6 +360,7 @@ declaracion_clase_p : PR_PUBLIC PR_CLASS ID {
             agregarSimbolo($3,"","",yy.PUBLIC,yy.CLASE);
             //-w-ambitoActual.push("class "+$3);
             nuevoAmbito();
+            yy.PILA_INS.apilar(yy.nuevaClase($3.toString()));
         }
     ;
 
@@ -414,6 +417,7 @@ declaracion_variable : visibilidad tipo ids asignacion {
                     }else{
                         if($4 != null){
                             //simboloVariable.valor = $4.valor;
+                            yy.PILA_INS.apilar(yy.nuevaDeclaracion(id,$4.instruccion));
                         }
                         //-w-agregarSimbolo(id,$2,ambitoActual.at(-1),$1,yy.VARIABLE);
                         agregarSimbolo(id,$2,"",$1,yy.VARIABLE);
@@ -458,6 +462,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                $$ = yy.nuevaAsignacion($1.toString(),$3.instruccion);
             }else{
                 errorSemantico("Tipo de dato requerido : "+simId.tipo+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
@@ -473,6 +478,7 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
                 //++++++++++++++++++++++++AGREGAR EN CUADRUPLA++++++++++++++++++++++++
+                $$ = yy.nuevoIncDec($1.toString(),$2);
             }else{
                 errorSemantico("Tipo de dato requerido : "+yy.INT+","+yy.DOUBLE+" . Obtenido: "+simId_a.tipo+" .",this._$.first_line,this._$.first_column);
             }
@@ -480,8 +486,8 @@ asignacion_variable : ID ASIGNACION expresion_multiple {
     }
     ;
 
-inc_dec : INCREMENTO
-    | DECREMENTO
+inc_dec : INCREMENTO { $$ = yy.SUMA; }
+    | DECREMENTO { $$ = yy.RESTA; }
     ;
 
 //------------------------------------------------------------------------------------
@@ -509,16 +515,18 @@ declaracion_metodo : visibilidad tipo declaracion_metodo_p {
     }
     ;
 
-declaracion_metodo_p : declaracion_metodo_p_a LLAVE_A instrucciones_metodo LLAVE_C { 
+declaracion_metodo_p : declaracion_metodo_p_a llill { 
         //-w-ambitoActual.pop(); 
         cerrarAmbito();
         ambitoClase = true;
+        yy.PILA_INS.sacar();
     }
-    | declaracion_metodo_p_a LLAVE_A LLAVE_C { 
+    /*| declaracion_metodo_p_a LLAVE_A LLAVE_C { 
         //-w-ambitoActual.pop();
         cerrarAmbito();
         ambitoClase = true; 
-    }
+        yy.PILA_INS.sacar();
+    }*/
     ;
 
 declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
@@ -530,6 +538,8 @@ declaracion_metodo_p_a : ID PARENT_A parametros_b_p PARENT_C {
         //-w-agregarSimbolo(ambitoActual.at(-1)+"_"+$1+cadParametros,"",ambitoActual.at(-1),"",yy.METODO);
         agregarSimbolo($1+cadParametros,"","","",yy.METODO);
         nuevoAmbito();
+
+        yy.PILA_INS.apilar(yy.nuevoMetodo($1+cadParametros));
         
         //-w-ambitoActual.push(ambitoActual.at(-1)+"_"+$1+cadParametros);
         ambitoClase = false;
@@ -572,9 +582,20 @@ instruccion_println : PR_PRINTLN PARENT_A expresion_multiple PARENT_C PUNTO_Y_CO
 
 //------------------------------------------------------------------------------------
 
+
+//PRODUCCION LLAVE INSTRUCCIONES LLAVE ----------------------------------------------
+
+llill :  LLAVE_A instrucciones_metodo LLAVE_C
+    | LLAVE_A LLAVE_C 
+    ;
+
+//-----------------------------------------------------------------------------------
+
+
+
 //CONDICIONAL IF ELSE-IF ELSE --------------------------------------------------------
 
-instruccion_if : instruccion_if_b_p LLAVE_A instrucciones_metodo LLAVE_C fin_if instruccion_if_p {
+instruccion_if : instruccion_if_b_p llill fin_if instruccion_if_p {
         yy.PILA_INS.sacar();
     }
     ;
@@ -585,7 +606,7 @@ fin_if : { cerrarAmbito(); };
 
 instruccion_if_b_p : PR_IF inicio_if PARENT_A expresion_multiple PARENT_C {
         try{
-            if($3.tipoResultado!=yy.BOOLEAN){
+            if($4.tipoResultado!=yy.BOOLEAN){
                 errorSemantico("Tipo de dato requerido : "+yy.BOOLEAN+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
             }
 
@@ -605,7 +626,7 @@ instrucciones_else_if : instruccion_else_if
     | instrucciones_else_if instruccion_else_if
     ;
 
-instruccion_else_if : instruccion_else_if_b_p  LLAVE_A instrucciones_metodo LLAVE_C fin_else_if
+instruccion_else_if : instruccion_else_if_b_p  llill fin_else_if
     ;
 
 fin_else_if : { 
@@ -625,7 +646,7 @@ instruccion_else_if_b_p : PR_ELSE PR_IF PARENT_A expresion_multiple PARENT_C {
     }
     ;
 
-instruccion_else : PR_ELSE inicio_else LLAVE_A instrucciones_metodo LLAVE_C fin_else
+instruccion_else : PR_ELSE inicio_else llill fin_else
     ;
 
 inicio_else : { 
@@ -644,7 +665,7 @@ fin_else : {
 
 // CICLO DO WHILE --------------------------------------------------------------------
 
-ciclo_do_while : PR_DO inicio_do LLAVE_A instrucciones_metodo LLAVE_C fin_do
+ciclo_do_while : PR_DO inicio_do llill fin_do
     PR_WHILE PARENT_A expresion_multiple PARENT_C PUNTO_Y_COMA {
         try{
             if($9.tipoResultado!=yy.BOOLEAN){
@@ -663,7 +684,7 @@ fin_do : { cerrarAmbito(); };
 
 // CICLO WHILE --------------------------------------------------------------------
 
-ciclo_while : parte_while LLAVE_A instrucciones_metodo LLAVE_C fin_while
+ciclo_while : parte_while llill fin_while
     ;
 
 parte_while : PR_WHILE inicio_while PARENT_A expresion_multiple PARENT_C {
@@ -684,7 +705,7 @@ fin_while : { cerrarAmbito(); };
 
 //CICLO FOR --------------------------------------------------------------------------
 
-ciclo_for : PR_FOR inicio_for PARENT_A ciclo_for_p PARENT_C LLAVE_A instrucciones_metodo LLAVE_C fin_for {
+ciclo_for : PR_FOR inicio_for PARENT_A ciclo_for_p PARENT_C llill fin_for {
         //-w-ambitoActual.pop();
     }
     ;
@@ -741,18 +762,22 @@ instruccion_switch_t_p : instruccion_switch_b_p
     | instruccion_switch_b_p instruccion_switch_t_p
     ;
 
-instruccion_switch_b_p : PR_CASE inicio_cas_sw expresion_multiple DOS_PUNTOS instrucciones_metodo instruccion_break fin_cas_sw {
+instruccion_switch_b_p : PR_CASE inicio_cas_sw expresion_multiple case_ins instruccion_break fin_cas_sw{
         if($3.tipoResultado != tipoDatoSwtich){
             errorSemantico("Tipo de dato requerido : "+tipoDatoSwtich+" . Obtenido: "+$3.tipoResultado+" .",this._$.first_line,this._$.first_column);
         }
     }
     ;
 
+case_ins : DOS_PUNTOS 
+    | DOS_PUNTOS instrucciones_metodo
+    ;
+
 inicio_cas_sw : { nuevoAmbito(); };
 
 fin_cas_sw : { cerrarAmbito(); }; 
 
-instruccion_switch_default : PR_DEFAULT inicio_def_sw DOS_PUNTOS instrucciones_metodo fin_def_sw
+instruccion_switch_default : PR_DEFAULT inicio_def_sw case_ins fin_def_sw
     ;
 
 inicio_def_sw : { nuevoAmbito(); };
@@ -922,26 +947,31 @@ g3 : PARENT_A a3 PARENT_C { $$ = $2; }
 g3 : INT        {
                     operacion = new Object();
                     operacion.tipoResultado = yy.INT;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.INT,$1.toString());
                     $$ = operacion;
                 }
     | DOUBLE    {
                     operacion = new Object();
                     operacion.tipoResultado = yy.DOUBLE;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.DOUBLE,$1.toString());
                     $$ = operacion;
                 }
     | CHAR      {
                     operacion = new Object();
                     operacion.tipoResultado = yy.CHAR;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.CHAR,$1.toString());
                     $$ = operacion;
                 }
     | STRING    {
                     operacion = new Object();
                     operacion.tipoResultado = yy.STRING;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.STRING,$1.toString());
                     $$ = operacion;
                 }
     | BOOLEAN   {
                     operacion = new Object();
                     operacion.tipoResultado = yy.BOOLEAN;
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.BOOLEAN,$1.toString());
                     $$ = operacion;
                 }
     | ID        {
@@ -953,6 +983,7 @@ g3 : INT        {
                     }else{
                         operacion.tipoResultado = sim_id_a.tipo;
                     }
+                    operacion.instruccion = yy.nuevaOperacion(null,null,yy.ID,$1.toString());
                     $$ = operacion;
                 }
     ;

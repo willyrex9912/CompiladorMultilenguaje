@@ -27,13 +27,15 @@ export class PilaInstruccion extends Array<Instruccion>{
                     instruccion.tipo!="Else" && 
                     instruccion.tipo!="Case" && 
                     instruccion.tipo!="Default" &&
-                    instruccion.tipo!="Break"
+                    instruccion.tipo!="Break" &&
+                    instruccion.tipo!="Clase"
                 ){
                     this.ultimo().instrucciones.push(instruccion);
                 }
 
                 if(
                     instruccion.tipo=="Metodo" || 
+                    instruccion.tipo=="Clase" || 
                     instruccion.tipo=="If" || 
                     instruccion.tipo=="ElseIf" || 
                     instruccion.tipo=="Else" || 

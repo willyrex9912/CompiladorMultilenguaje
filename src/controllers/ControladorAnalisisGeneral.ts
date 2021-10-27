@@ -63,6 +63,58 @@ export class ControladorAnalisisGeneral{
         return respuesta;
     }
 
+    public analizarCodigoPrograma(separador,pila:PilaInstruccion):string{
+
+        let respuesta:string = "";
+
+        //analizando codigo programa
+        if(this.existeCodigo(separador.getCodigoPrograma())){
+            AnalizadorPrograma.reset(AnalizadorPrograma.parser.yy);
+            AnalizadorPrograma.parser.yy.PILA_INS = pila;
+            AnalizadorPrograma.parse(separador.getCodigoPrograma());
+            if(AnalizadorPrograma.getErrores().length>0){
+                respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPrograma.getErrores(),separador.getInicioPrograma());
+            }
+        }
+
+        return respuesta;
+    }
+
+    public analizarCodigoJava(separador,pila:PilaInstruccion):string{
+
+        let respuesta:string = "";
+
+        //analizando codigo java
+        if(this.existeCodigo(separador.getCodigoJava())){
+            AnalizadorJava.reset();
+            AnalizadorJava.parser.yy.PILA_INS = pila;
+            AnalizadorJava.parse(separador.getCodigoJava());
+            if(AnalizadorJava.getErrores().length>0){
+                respuesta += this.constructorRespuesta.construirMensaje(AnalizadorJava.getErrores(),separador.getInicioJava());
+            }
+        }
+
+        return respuesta;
+    }
+
+    public analizarPython(separador,pila:PilaInstruccion):string{
+
+        let respuesta:string = "";
+
+        //analizando codigo python
+        if(this.existeCodigo(separador.getCodigoPython())){
+            AnalizadorPython.reset();
+            AnalizadorPython.parser.yy.PILA_INS = pila;
+            AnalizadorPython.parse(separador.getCodigoPython()+"\n");
+            if(AnalizadorPython.getErrores().length>0){
+                respuesta += this.constructorRespuesta.construirMensaje(AnalizadorPython.getErrores(),separador.getInicioPython());
+            }
+        }
+
+        return respuesta;
+    }
+
+
     public existeCodigo(codigo:String):Boolean{
         return !(codigo.trim()=="");
     }
@@ -120,6 +172,7 @@ export class ControladorAnalisisGeneral{
         yy.nuevoCase = this.controladorInstrucciones.nuevoCase;
         yy.nuevoDefault = this.controladorInstrucciones.nuevoDefault;
         yy.nuevoBreak = this.controladorInstrucciones.nuevoBreak;
+        yy.nuevaClase = this.controladorInstrucciones.nuevaClase;
     }
 
     private inicializarYYPython(){

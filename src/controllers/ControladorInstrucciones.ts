@@ -11,6 +11,7 @@ import { Switch } from "src/model/instruccion/condicional/Switch";
 import { Declaracion } from "src/model/instruccion/Declaracion";
 import { IncDec } from "src/model/instruccion/inc-dec/IncDec";
 import { Instruccion } from "src/model/instruccion/Instruccion";
+import { Clase } from "src/model/instruccion/java/Clase";
 import { Metodo } from "src/model/instruccion/Metodo";
 import { Operacion } from "src/model/instruccion/Operacion";
 import { Break } from "src/model/instruccion/saltos/Break";
@@ -19,6 +20,10 @@ export class ControladorInstrucciones{
 
     public nuevoBreak():Break{
         return new Break();
+    }
+
+    public nuevaClase(nombre:string):Clase{
+        return new Clase(nombre);
     }
 
     public nuevoFor(accionInicial:Instruccion,condicion:Instruccion,accionPosterior:Instruccion):For{

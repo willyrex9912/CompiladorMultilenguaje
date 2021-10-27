@@ -378,7 +378,7 @@ instrucciones_clase : instrucciones_clase_p
     | instrucciones_clase_p instrucciones_clase
     ;
 
-instrucciones_clase_p : declaracion_variable PUNTO_Y_COMA
+instrucciones_clase_p : declaracion_variable PUNTO_Y_COMA { yy.PILA_INS.apilar($1); }
     | declaracion_metodo
     ;
 

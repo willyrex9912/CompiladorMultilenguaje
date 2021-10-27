@@ -137,7 +137,7 @@ case 8:
             yy.PILA_INS.apilar(yy.nuevaClase($$[$0].toString()));
         
 break;
-case 15: case 16:
+case 11: case 15: case 16:
  yy.PILA_INS.apilar($$[$0-1]); 
 break;
 case 24:
